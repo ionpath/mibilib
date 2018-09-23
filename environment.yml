@@ -1,0 +1,9 @@
+name: mibitracker-client
+channels:
+- conda-forge
+- defaults
+dependencies:
+- pip=18.0=py36_1
+- python=3.6.3=0
+- requests=2.14.2=py36_0
+- setuptools=40.4.0
