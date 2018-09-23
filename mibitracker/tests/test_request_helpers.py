@@ -8,13 +8,14 @@ mibitof/notebooks/MibiRequestsTesting.
 """
 
 import io
-from mock import patch
 import os
-import requests
-from requests.exceptions import HTTPError
 import shutil
 import tempfile
 import unittest
+
+from mock import patch
+import requests
+from requests.exceptions import HTTPError
 
 from mibitracker import request_helpers
 

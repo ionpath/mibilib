@@ -268,7 +268,7 @@ class MibiRequests(object):
                 self._upload_mibitiff(response['url'], fh)
         except TypeError:
             try:
-                tiff_file.seek(0)                
+                tiff_file.seek(0)
             except:
                 raise TypeError('tiff_file must be a string or file object')
             self._upload_mibitiff(response['url'], tiff_file)
