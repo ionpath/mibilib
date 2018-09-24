@@ -4,10 +4,10 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6
-    working_directory: ~/mibitracker
+    working_directory: ~/mibitracker-client
     steps:
       - checkout:
-          path: ~/mibitracker
+          path: ~/mibitracker-client
       - restore_cache:
           key: cache1-{{ checksum "environment_dev.yml" }}
       - run:
@@ -45,7 +45,7 @@ jobs:
             ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
             ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-build -b html docs/source docs/build/html
       - persist_to_workspace:
-          root: ~/mibitracker
+          root: ~/mibitracker-client
           paths:
             - docs
 
