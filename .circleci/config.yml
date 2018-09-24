@@ -17,12 +17,12 @@ jobs:
                 echo "Installing Miniconda ...";
                 wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O ~/miniconda.sh;
                 bash ~/miniconda.sh -b -f -p ~/miniconda;
-                ~/miniconda/bin/conda env create -f environment.yml;
+                ~/miniconda/bin/conda env create -f environment_dev.yml;
             else
                 echo "Using cached Miniconda install";
             fi
       - save_cache:
-          key: cache1-{{ checksum "environment.yml" }}
+          key: cache1-{{ checksum "environment_dev.yml" }}
           paths:
             - ~/miniconda/envs/mibitracker-client-dev
       - run:
