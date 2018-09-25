@@ -17,6 +17,7 @@ library's dependencies.
 ```bash
 cd <path/to/where/you/want/to/install/project>
 git clone https://github.com/ionpath/mibitracker-client
+cd mibitracker-client
 ```
 
 ### Create conda environment
