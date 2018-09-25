@@ -1,6 +1,7 @@
 # mibitracker-client
 
-Python client for IONpath MIBItracker API.
+Python client for IONpath MIBItracker API. Full documentation can be found at
+https://ionpath.github.io/mibitracker-client/.
 
 ## Setup
 

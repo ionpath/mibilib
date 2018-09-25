@@ -1,6 +1,6 @@
 # mibitracker-client-doc
 Documentation for the mibitracker-client package is available at
-http://mibitof-doc.appspot.com.
+https://ionpath.github.io/mibitracker-client/.
 
 This directory contains the configuration for sphinx to auto-generate
 the documentation.
