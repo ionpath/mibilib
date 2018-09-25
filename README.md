@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/ionpath/mibitracker-client.svg?style=svg&circle-token=e798611a4abf9f2503a532c8ad5fd02d849d85a0)](https://circleci.com/gh/ionpath/mibitracker-client)
+
 # mibitracker-client
 
 Python client for IONpath MIBItracker API. Full documentation can be found at
