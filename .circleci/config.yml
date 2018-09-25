@@ -2,9 +2,6 @@ version: 2
 
 jobs:
   build:
-    branches:
-      ignore:
-        - gh-pages
     docker:
       - image: circleci/python:3.6
     working_directory: ~/mibitracker-client
@@ -72,3 +69,7 @@ workflows:
   run:
     jobs:
       - build
+          filters:
+            branches:
+              ignore:
+                - gh-pages
