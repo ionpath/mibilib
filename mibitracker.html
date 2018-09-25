@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mibitracker package &mdash; IONpath MIBItracker Client 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="IONpath MIBItracker Client 0.0.1 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mibitracker-package">
+<h1>mibitracker package<a class="headerlink" href="#mibitracker-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mibitracker.mibitracker_exceptions">
+<span id="mibitracker-mibitracker-exceptions-module"></span><h2>mibitracker.mibitracker_exceptions module<a class="headerlink" href="#module-mibitracker.mibitracker_exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Provides a custom exception for MibiTracker API requests.</p>
+<dl class="exception">
+<dt id="mibitracker.mibitracker_exceptions.MibiTrackerError">
+<em class="property">exception </em><code class="descclassname">mibitracker.mibitracker_exceptions.</code><code class="descname">MibiTrackerError</code><a class="headerlink" href="#mibitracker.mibitracker_exceptions.MibiTrackerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+<p>Raise for exceptions where the response from the MibiTracker API is
+invalid or unexpected.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mibitracker.request_helpers">
+<span id="mibitracker-request-helpers-module"></span><h2>mibitracker.request_helpers module<a class="headerlink" href="#module-mibitracker.request_helpers" title="Permalink to this headline">¶</a></h2>
+<p>Helper class for making and retrying requests to the MIBItracker.</p>
+<dl class="class">
+<dt id="mibitracker.request_helpers.MibiRequests">
+<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email</em>, <em>password</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Helper class for making requests to the MibiTracker.</p>
+<p>This is an opinionated way of using <code class="docutils literal"><span class="pre">requests.Session</span></code> with the following
+features:</p>
+<ul>
+<li><p class="first">In the case of specified HTTP errors, requests are retried.</p>
+</li>
+<li><p class="first">All responses call <code class="docutils literal"><span class="pre">raise_for_status()</span></code>.</p>
+</li>
+<li><dl class="first docutils">
+<dt>An instance requests an authorization token upon initialization, and</dt>
+<dd><p class="first last">includes it in a default header for all future requests. No token
+refresh capabilities are built in, so if the token expires a new
+instance needs to be initialized.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; The string url to the backend of a MibiTracker instance, e.g.
+<code class="docutils literal"><span class="pre">'https://backend-dot-mibitracker-demo.appspot.com'</span></code>.</li>
+<li><strong>email</strong> &#8211; The string email address of your MibiTracker account.</li>
+<li><strong>password</strong> &#8211; The string password of your MibiTracker account.</li>
+<li><strong>retries</strong> &#8211; The max number of retries for HTTP status errors. Defaults
+to <code class="docutils literal"><span class="pre">MAX_RETRIES</span></code> which is set to 3.</li>
+<li><strong>retry_methods</strong> &#8211; The HTTP methods to retry. Defaults to
+<code class="docutils literal"><span class="pre">RETRY_METHOD_WHITELIST</span></code> which is the defaults to <code class="docutils literal"><span class="pre">urllib3</span></code>&#8216;s
+whitelist with the addition of POST.</li>
+<li><strong>retry_codes</strong> &#8211; The HTTP status codes to retry. Defaults to <code class="docutils literal"><span class="pre">(502,</span> <span class="pre">503)</span></code>,
+which are associated with transient errors seen on app engine.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="mibitracker.request_helpers.MibiRequests.url">
+<code class="descname">url</code><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string url to the backend of a MibiTracker instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mibitracker.request_helpers.MibiRequests.session">
+<code class="descname">session</code><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="docutils literal"><span class="pre">StatusCheckedSession</span></code> that includes an authorization
+header and automatically raises for HTTP status errors.</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">HTTPError</span></code> &#8211;
+Raised by <code class="docutils literal"><span class="pre">requests.raise_for_status()</span></code>, i.e. if a
+response&#8217;s status code is &gt;= 400.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.download_file">
+<code class="descname">download_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.download_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads a file from MibiTracker storage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; The path to the file in storage. This usually can be
+constructed from the run and image folders.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns: An open file object containing the downloaded file&#8217;s data,</dt>
+<dd>rewound to the beginning of the file.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.copy_run">
+<code class="descname">copy_run</code><span class="sig-paren">(</span><em>old_label</em>, <em>new_label</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.copy_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a copy of the run corresponding to the label.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>old_label</strong> &#8211; The label of the run to copy.</li>
+<li><strong>new_label</strong> &#8211; The label to use for the copied run.</li>
+<li><strong>kwargs</strong> &#8211; Any key-value pair that can be included in the json when
+creating the new run to differentiate it from the old run,
+such as a different project id or FOV size (such as if images
+were cropped from their originals).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple of the response JSON returned by old run and from creating
+its copy, respectively.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.copy_run_image_metadata">
+<code class="descname">copy_run_image_metadata</code><span class="sig-paren">(</span><em>old_run_label</em>, <em>new_run_label</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.copy_run_image_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>This updates image metadata but not the actual TIFF data.</p>
+<p>Each new image will remain unavailable until a TIFF is uploaded.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>old_run_label</strong> &#8211; The label of the run whose images&#8217; metadata is to
+be copied.</li>
+<li><strong>new_run_label</strong> &#8211; The label of the run whose images&#8217; metadata will be
+updated. This run must already exist.</li>
+<li><strong>kwargs</strong> &#8211; Any key-value pair that can be included in the json when
+updating the the images to differentiate them from the old
+runs&#8217;, such as a different project id or frame (such as if
+images were cropped from their originals).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dictionary with keys of the original image IDs, and values of the
+response JSON returned when updating the new images.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.upload_mibitiff">
+<code class="descname">upload_mibitiff</code><span class="sig-paren">(</span><em>tiff_file</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_mibitiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a single TIFF to the MibiTracker.</p>
+<p>This uses the &#8216;run&#8217; and &#8216;folder&#8217; fields in the MibiTiff&#8217;s description to
+associate this with the correct image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tiff_file</strong> &#8211; A string path to a TIFF file or an open file object
+containing the TIFF data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The response from the MibiTracker after uploading the file and
+queuing it to be processed into viewable data.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211;
+Raised if tiff_file is not a string path or file object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.upload_channel">
+<code class="descname">upload_channel</code><span class="sig-paren">(</span><em>image_id</em>, <em>image_file</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a grayscale PNG or TIFF to the MibiTracker.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image_id</strong> &#8211; The integer id of the run to associate the tiff image
+with.</li>
+<li><strong>image_file</strong> &#8211; A string path to a PNG file or an open file object of
+the file to upload.</li>
+<li><strong>filename</strong> &#8211; The name to use for the file being uploaded. If
+image_file is a path, this can be omitted and that file&#8217;s name
+will be used. It should be the name of the channel/layer with
+an extension to indicate format, such as &#8220;CD45.tiff&#8221; or
+&#8220;cell_boundaries.png&#8221;.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MibiTracker after uploading the file.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211;
+Raised if image_file is not a string path or file object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.run_images">
+<code class="descname">run_images</code><span class="sig-paren">(</span><em>run_label</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.run_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a JSON array of image metadata from a given run label.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>run_label</strong> &#8211; The unique string label of a run.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of dicts of of image metadata for the specified run.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.image_conjugates">
+<code class="descname">image_conjugates</code><span class="sig-paren">(</span><em>image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.image_conjugates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a JSON array of panel conjugates from a given image id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image_id</strong> &#8211; The integer id of an image.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of dicts of antibody conjugate details from the image&#8217;s
+panel. This will be an empty list of the image does not have a
+section assigned, or if its section does not have a panel assigned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.image_id">
+<code class="descname">image_id</code><span class="sig-paren">(</span><em>run_name</em>, <em>point_name</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.image_id" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Gets the primary key of an image given the specified run and point</dt>
+<dd>names.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>run_name</strong> &#8211; The name of the run the image belongs to.</li>
+<li><strong>point_name</strong> &#8211; The name of the point. It should be in the format of
+<cite>Point(n)</cite> where n is the point number.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An int id corresponding to the primary key of the image.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211;
+Raised if no images match the specified run and point
+names or if more than one image matches the specified run and
+point names</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.create_imageset">
+<code class="descname">create_imageset</code><span class="sig-paren">(</span><em>image_ids</em>, <em>imageset_name</em>, <em>imageset_description=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.create_imageset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new imageset with the specified images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_ids</strong> &#8211; A list of ints of ids of the images in MibiTracker
+corresponding to the images to be added to the new imageset.</li>
+<li><strong>imageset_name</strong> &#8211; A string name for the new imageset.</li>
+<li><strong>imageset_description</strong> &#8211; (optional) A string description for the new
+imageset. Defaults to None.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mibitracker.request_helpers.StatusCheckedSession">
+<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">StatusCheckedSession</code><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">requests.sessions.Session</span></code></p>
+<p>Raises for HTTP errors and adds any response JSON to the message.</p>
+<dl class="method">
+<dt id="mibitracker.request_helpers.StatusCheckedSession.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.StatusCheckedSession.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.StatusCheckedSession.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.put" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.StatusCheckedSession.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mibitracker">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mibitracker" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">mibitracker package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-mibitracker.mibitracker_exceptions">mibitracker.mibitracker_exceptions module</a></li>
+<li><a class="reference internal" href="#module-mibitracker.request_helpers">mibitracker.request_helpers module</a></li>
+<li><a class="reference internal" href="#module-mibitracker">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/mibitracker.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, IONpath Inc..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/mibitracker.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

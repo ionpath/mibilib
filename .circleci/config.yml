@@ -1,0 +1,62 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6
+    working_directory: ~/mibitracker-client
+    steps:
+      - checkout:
+          path: ~/mibitracker-client
+      - restore_cache:
+          key: cache1-{{ checksum "environment_dev.yml" }}
+      - run:
+          name: Install Python deps in a conda env if not cached
+          command: |
+            if [[ ! -d ~/miniconda/envs/mibitracker-client-dev ]]; then
+                echo "Installing Miniconda ...";
+                wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O ~/miniconda.sh;
+                bash ~/miniconda.sh -b -f -p ~/miniconda;
+                ~/miniconda/bin/conda env create -f environment_dev.yml;
+            else
+                echo "Using cached Miniconda install";
+            fi
+      - save_cache:
+          key: cache1-{{ checksum "environment_dev.yml" }}
+          paths:
+            - ~/miniconda/envs/mibitracker-client-dev
+      - run:
+          name: Run tests
+          command: |
+            ~/miniconda/envs/mibitracker-client-dev/bin/coverage run -m py.test mibitracker
+            ~/miniconda/envs/mibitracker-client-dev/bin/coverage html -i --omit=mibitracker/tests/*
+      - run:
+          name: Run pylint on files changed from master
+          command: |
+            if  [ $CIRCLE_BRANCH != "master" ]; then
+                ls -r mibitracker/*.py | grep -v "test_.*\.py$" | xargs ~/miniconda/envs/mibitracker-client-dev/bin/pylint
+                ls -r mibitracker/tests/test_*.py | xargs ~/miniconda/envs/mibitracker-client-dev/bin/pylint --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument
+            fi
+      - store_artifacts:
+          path: htmlcov
+      - run:
+          name: Generate docs
+          command: |
+            if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
+              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
+              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-build -b html docs/source docs/build/html
+              git config --global user.email $(git --no-pager show -s --format='%ae' HEAD)
+              git config --global user.name $(git --no-pager show -s --format='%an' HEAD)
+              git rm -r --cached *
+
+            fi
+      - persist_to_workspace:
+          root: ~/mibitracker-client
+          paths:
+            - docs
+
+workflows:
+  version: 2
+  run:
+    jobs:
+      - build
