@@ -39,16 +39,25 @@ jobs:
             fi
       - store_artifacts:
           path: htmlcov
-      - run:
-          name: Generate docs
+      - deploy:
+          name: Deploy docs
           command: |
-            if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
-              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
-              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-build -b html docs/source docs/build/html
+            if [ $CIRCLE_BRANCH == "master" ]; then
               git config --global user.email $(git --no-pager show -s --format='%ae' HEAD)
               git config --global user.name $(git --no-pager show -s --format='%an' HEAD)
-              git rm -r --cached *
-
+              git clone https://github.com/ionpath/mibitracker-client out
+              cd out
+              git checkout gh-pages || git checkout --orphan gh-pages
+              git rm -rf .
+              cd ..
+              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
+              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-build -b html docs/source out
+              mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
+              cd out
+              touch .nojekyll
+              git add -A
+              git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+              git push origin gh-pages
             fi
       - persist_to_workspace:
           root: ~/mibitracker-client
@@ -59,4 +68,8 @@ workflows:
   version: 2
   run:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages

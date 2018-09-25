@@ -4,16 +4,16 @@ mibitracker package
 Submodules
 ----------
 
-mibitracker.mibitracker_exceptions module
------------------------------------------
+mibitracker\.mibitracker\_exceptions module
+-------------------------------------------
 
 .. automodule:: mibitracker.mibitracker_exceptions
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibitracker.request_helpers module
-----------------------------------
+mibitracker\.request\_helpers module
+------------------------------------
 
 .. automodule:: mibitracker.request_helpers
     :members:
