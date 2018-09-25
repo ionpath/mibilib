@@ -47,7 +47,7 @@ jobs:
               git config --global user.name $(git --no-pager show -s --format='%an' HEAD)
               git clone https://github.com/ionpath/mibitracker-client out
               cd out
-              git checkout --orphan gh-pages
+              git checkout gh-pages || git checkout --orphan gh-pages
               git rm -rf .
               cd ..
               ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
