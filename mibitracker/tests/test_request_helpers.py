@@ -5,6 +5,8 @@ Specific helper functions that make use of the MibiTracker API and can be
 tested by running a local instance of the MibiTracker to ensure proper
 integration. A set of examples can be found in
 mibitof/notebooks/MibiRequestsTesting.
+
+Copyright (C) 2018 Ionpath, Inc.  All rights reserved.
 """
 
 import io

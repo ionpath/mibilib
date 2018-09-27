@@ -2,8 +2,9 @@
 
 # mibitracker-client
 
-Python client for IONpath MIBItracker API. Full documentation can be found at
-https://ionpath.github.io/mibitracker-client/.
+Python client for IONpath MIBItracker API.
+
+https://ionpath.github.io/mibitracker-client/
 
 ## Setup
 
@@ -25,3 +26,20 @@ cd mibitracker-client
 conda env create -f environment.yml
 source activate mibitracker-client  # On Windows, omit the 'source' part
 ```
+
+## Usage
+```
+from mibitracker.request_helpers import MibiRequests
+
+
+request = MibiRequests(
+    'https://mibitracker-demo.appspot.com',
+    'user@example.com',
+    'password1234'
+)
+image_id = request.image_id('20180927', 'Point3')
+image_details = request.session.get('{}/{}/'.format(request.url, image_id))
+```
+
+Full documentation can be found at
+https://ionpath.github.io/mibitracker-client/.
