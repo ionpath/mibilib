@@ -33,12 +33,13 @@ from mibitracker.request_helpers import MibiRequests
 
 
 request = MibiRequests(
-    'https://mibitracker-demo.appspot.com',
+    'https://your-mibitracker-backend.appspot.com',
     'user@example.com',
     'password1234'
 )
 image_id = request.image_id('20180927', 'Point3')
-image_details = request.session.get('{}/{}/'.format(request.url, image_id))
+image_details = request.session.get(
+    '{}/images/{}/'.format(request.url, image_id)
 ```
 
 Full documentation can be found at
