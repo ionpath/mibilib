@@ -36,6 +36,41 @@ class TestMibiRequests(unittest.TestCase):
     def tearDown(self):
         self.mock_auth.stop()
 
+    def test_prepare_route(self):
+        self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')
+        self.assertEqual(self.mtu._prepare_route('images/'), '/images/')
+
+    @patch('requests.Session.get')
+    def test_get(self, mock_get):
+        self.mtu.get('images', params={'key': 'value'})
+        mock_get.assert_called_once_with(
+            'https://mibitracker-instance.ionpath.com/images',
+            params={'key': 'value'}
+        )
+
+    @patch('requests.Session.post')
+    def test_post(self, mock_post):
+        self.mtu.post('/images/', data={'key': 'value'})
+        mock_post.assert_called_once_with(
+            'https://mibitracker-instance.ionpath.com/images/',
+            data={'key': 'value'}
+        )
+
+    @patch('requests.Session.put')
+    def test_put(self, mock_put):
+        self.mtu.put('/images/1/', data={'key': 'value'})
+        mock_put.assert_called_once_with(
+            'https://mibitracker-instance.ionpath.com/images/1/',
+            data={'key': 'value'}
+        )
+
+    @patch('requests.Session.delete')
+    def test_delete(self, mock_delete):
+        self.mtu.delete('/images/1/')
+        mock_delete.assert_called_once_with(
+            'https://mibitracker-instance.ionpath.com/images/1/',
+        )
+
     def test_init_sets_retries(self):
         adapter = self.mtu.session.get_adapter(self.mtu.url)
         retries = adapter.max_retries
