@@ -90,13 +90,13 @@ class MibiRequests(object):
         """Makes a GET request to the url using the session.
 
         Args:
-            route: The route to add to the base url, such as '/images/'
-                or '/tissues/?organ=tonsil'.
+            route: The route to add to the base url, such as ``'/images/'``
+                or ``'/tissues/?organ=tonsil'``.
             *args: Passed to ``requests.Session.get``.
             **kwargs: Passes to ``requests.Session.get``.
 
         Returns:
-            The response from `requests.Session.get``.
+            The response from ``requests.Session.get``.
         """
         return self.session.get('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
@@ -105,12 +105,12 @@ class MibiRequests(object):
         """Makes a POST request to the url using the session.
 
         Args:
-            route: The route to add to the base url, such as '/slides/{id}/'.
+            route: The route to add to the base url, such as ``'/slides/1/'``.
             *args: Passed to ``requests.Session.post``.
             **kwargs: Passes to ``requests.Session.post``.
 
         Returns:
-            The response from `requests.Session.post``.
+            The response from ``requests.Session.post``.
         """
         return self.session.post('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
@@ -119,12 +119,12 @@ class MibiRequests(object):
         """Makes a PUT request to the url using the session.
 
         Args:
-            route: The route to add to the base url, such as '/images/{id}/'.
+            route: The route to add to the base url, such as ``'/images/1/'``.
             *args: Passed to ``requests.Session.put``.
-            **kwargs: Passes to ``requests.Session.put``.
+            **kwargs: Passes to ``requests.Session.put`.
 
         Returns:
-            The response from `requests.Session.put``.
+            The response from ``requests.Session.put``.
         """
         return self.session.put('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
@@ -133,13 +133,12 @@ class MibiRequests(object):
         """Makes a DELETE request to the url using the session.
 
         Args:
-            route: The route to add to the base url, such as '/images/'
-                or '/tissues/?organ=tonsil'.
+            route: The route to add to the base url, such as ``'/images/1/'``.
             *args: Passed to ``requests.Session.delete``.
             **kwargs: Passes to ``requests.Session.delete``.
 
         Returns:
-            The response from `requests.Session.delete``.
+            The response from ``requests.Session.delete``.
         """
         return self.session.delete('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
