@@ -42,5 +42,8 @@ image_details = request.session.get(
     '{}/images/{}/'.format(request.url, image_id)
 ```
 
-Full documentation can be found at
+More examples and a general introduction to the MIBItracker API can be found
+in the [MIBItracker_API_Tutorial](MIBItracker_API_Tutorial.ipynb).
+
+Full documentation for this library can be found at
 https://ionpath.github.io/mibitracker-client/.
