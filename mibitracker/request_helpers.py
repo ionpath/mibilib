@@ -80,6 +80,70 @@ class MibiRequests(object):
         token = response.json()['token']
         self.session.headers.update({'Authorization': 'JWT {}'.format(token)})
 
+    @staticmethod
+    def _prepare_route(route):
+        if not route.startswith('/'):
+            return '/{}'.format(route)
+        return route
+
+    def get(self, route='', *args, **kwargs):
+        """Makes a GET request to the url using the session.
+
+        Args:
+            route: The route to add to the base url, such as '/images/'
+                or '/tissues/?organ=tonsil'.
+            *args: Passed to ``requests.Session.get``.
+            **kwargs: Passes to ``requests.Session.get``.
+
+        Returns:
+            The response from `requests.Session.get``.
+        """
+        return self.session.get('{}{}'.format(
+            self.url, self._prepare_route(route)), *args, **kwargs)
+
+    def post(self, route='', *args, **kwargs):
+        """Makes a POST request to the url using the session.
+
+        Args:
+            route: The route to add to the base url, such as '/slides/{id}/'.
+            *args: Passed to ``requests.Session.post``.
+            **kwargs: Passes to ``requests.Session.post``.
+
+        Returns:
+            The response from `requests.Session.post``.
+        """
+        return self.session.post('{}{}'.format(
+            self.url, self._prepare_route(route)), *args, **kwargs)
+
+    def put(self, route='', *args, **kwargs):
+        """Makes a PUT request to the url using the session.
+
+        Args:
+            route: The route to add to the base url, such as '/images/{id}/'.
+            *args: Passed to ``requests.Session.put``.
+            **kwargs: Passes to ``requests.Session.put``.
+
+        Returns:
+            The response from `requests.Session.put``.
+        """
+        return self.session.put('{}{}'.format(
+            self.url, self._prepare_route(route)), *args, **kwargs)
+
+    def delete(self, route='', *args, **kwargs):
+        """Makes a DELETE request to the url using the session.
+
+        Args:
+            route: The route to add to the base url, such as '/images/'
+                or '/tissues/?organ=tonsil'.
+            *args: Passed to ``requests.Session.delete``.
+            **kwargs: Passes to ``requests.Session.delete``.
+
+        Returns:
+            The response from `requests.Session.delete``.
+        """
+        return self.session.delete('{}{}'.format(
+            self.url, self._prepare_route(route)), *args, **kwargs)
+
     def download_file(self, path):
         """Downloads a file from MibiTracker storage.
 
@@ -90,10 +154,7 @@ class MibiRequests(object):
         Returns: An open file object containing the downloaded file's data,
             rewound to the beginning of the file.
         """
-        response = self.session.get(
-            '{}/download/'.format(self.url),
-            params={'path': path}
-        )
+        response = self.get('/download/', params={'path': path})
         url = requests.get(response.json()['url'])
         buf = io.BytesIO()
         buf.write(url.content)
@@ -115,8 +176,7 @@ class MibiRequests(object):
             A tuple of the response JSON returned by old run and from creating
             its copy, respectively.
         """
-        response = self.session.get(
-            '{}/runs/?label={}'.format(self.url, old_label))
+        response = self.get('/runs/?label={}'.format(old_label))
         data = response.json()
         try:
             assert len(data) == 1
@@ -149,11 +209,7 @@ class MibiRequests(object):
         run_data.update(kwargs)
         files = {'xml': (data['filename'], buf, 'application/xml')}
 
-        response = self.session.post(
-            '{}/runs/'.format(self.url),
-            data=run_data,
-            files=files,
-        )
+        response = self.post('/runs/', data=run_data, files=files)
         return data, response.json()
 
     def copy_run_image_metadata(self, old_run_label, new_run_label, **kwargs):
@@ -175,17 +231,14 @@ class MibiRequests(object):
             A dictionary with keys of the original image IDs, and values of the
             response JSON returned when updating the new images.
         """
-        old_images = self.session.get(
-            '{}/images/?run__label={}'.format(self.url, old_run_label))
+        old_images = self.get('/images/?run__label={}'.format(old_run_label))
 
         image_map = {}
         for item in old_images.json():
 
             # Get image from copied run
-            response = self.session.get(
-                '{}/images/?run__label={}&folder={}'.format(
-                    self.url, new_run_label, item['folder']),
-            )
+            response = self.get('/images/?run__label={}&folder={}'.format(
+                new_run_label, item['folder']))
             assert len(response.json()) == 1
             new_image = response.json()[0]
 
@@ -226,8 +279,8 @@ class MibiRequests(object):
                 data = json.dumps(updated_image)
                 headers.update({'content-type': 'application/json'})
 
-            response = self.session.put(
-                '{}/images/{}/'.format(self.url, new_image['id']),
+            response = self.put(
+                '/images/{}/'.format(new_image['id']),
                 files=files,
                 data=data,
                 headers=headers
@@ -263,8 +316,7 @@ class MibiRequests(object):
         Raises:
             TypeError: Raised if tiff_file is not a string path or file object.
         """
-        response = self.session.get(
-            '{}/upload_mibitiff/sign_tiff_url/'.format(self.url)).json()
+        response = self.get('/upload_mibitiff/sign_tiff_url/').json()
         try:
             with open(tiff_file, 'rb') as fh:
                 self._upload_mibitiff(response['url'], fh)
@@ -274,8 +326,8 @@ class MibiRequests(object):
             except:
                 raise TypeError('tiff_file must be a string or file object')
             self._upload_mibitiff(response['url'], tiff_file)
-        return self.session.post(
-            '{}/upload_mibitiff/'.format(self.url),
+        return self.post(
+            '/upload_mibitiff/',
             data=json.dumps({'location': response['location']}),
             headers={'content-type': 'application/json'}
         )
@@ -288,8 +340,8 @@ class MibiRequests(object):
                            'image/{}'.format(ext[1:].lower()))
         }
 
-        response = self.session.post(
-            '{}/upload_channel/'.format(self.url),
+        response = self.post(
+            '/upload_channel/',
             data={'image_id': image_id},
             files=files
         )
@@ -357,8 +409,8 @@ class MibiRequests(object):
             panel. This will be an empty list of the image does not have a
             section assigned, or if its section does not have a panel assigned.
         """
-        return self.session.get(
-            '{}/images/{}/conjugates/'.format(self.url, image_id)).json()
+        return self.get(
+            '/images/{}/conjugates/'.format(image_id)).json()
 
     def image_id(self, run_name, point_name):
         """Gets the primary key of an image given the specified run and point
@@ -377,8 +429,8 @@ class MibiRequests(object):
                 names or if more than one image matches the specified run and
                 point names
         """
-        results = self.session.get(
-            '{}/images/'.format(self.url),
+        results = self.get(
+            '/images/',
             params={
                 'run__label': run_name,
                 'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name)}
@@ -407,8 +459,8 @@ class MibiRequests(object):
             imageset_description: (optional) A string description for the new
                 imageset. Defaults to None.
         """
-        self.session.post(
-            '{}/imagesets/'.format(self.url),
+        self.post(
+            '/imagesets/',
             data=json.dumps({
                 'images': image_ids,
                 'name': imageset_name,
