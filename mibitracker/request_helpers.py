@@ -86,7 +86,7 @@ class MibiRequests(object):
             return '/{}'.format(route)
         return route
 
-    def get(self, route='', *args, **kwargs):
+    def get(self, route, *args, **kwargs):
         """Makes a GET request to the url using the session.
 
         Args:
@@ -101,7 +101,7 @@ class MibiRequests(object):
         return self.session.get('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
-    def post(self, route='', *args, **kwargs):
+    def post(self, route, *args, **kwargs):
         """Makes a POST request to the url using the session.
 
         Args:
@@ -115,7 +115,7 @@ class MibiRequests(object):
         return self.session.post('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
-    def put(self, route='', *args, **kwargs):
+    def put(self, route, *args, **kwargs):
         """Makes a PUT request to the url using the session.
 
         Args:
@@ -129,7 +129,7 @@ class MibiRequests(object):
         return self.session.put('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
-    def delete(self, route='', *args, **kwargs):
+    def delete(self, route, *args, **kwargs):
         """Makes a DELETE request to the url using the session.
 
         Args:

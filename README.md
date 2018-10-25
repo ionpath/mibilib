@@ -38,8 +38,7 @@ request = MibiRequests(
     'password1234'
 )
 image_id = request.image_id('20180927', 'Point3')
-image_details = request.session.get(
-    '{}/images/{}/'.format(request.url, image_id)
+image_details = request.get('/images/{}/'.format(image_id))
 ```
 
 Full documentation can be found at
