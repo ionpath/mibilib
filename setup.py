@@ -7,7 +7,7 @@ setup(name='MIBItrackerClient',
       url='https://github.com/ionpath/mibitracker-client',
       description='Python client for IONpath MIBItracker API.',
       license='GNU General Public License v3.0',
-      python_requires='==3.6',
+      python_requires='>=3.6',
       install_requires=[
           'pip==18.0',
           'requests==2.14.2'
