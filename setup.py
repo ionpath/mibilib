@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-setup(name='MIBItrackerClient',
+setup(name='mibitracker-client',
       version='1.0',
       url='https://github.com/ionpath/mibitracker-client',
       description='Python client for IONpath MIBItracker API.',
@@ -11,5 +11,6 @@ setup(name='MIBItrackerClient',
       install_requires=[
           'pip==18.0',
           'requests==2.14.2'
-    ]
-)
+      ],
+      packages=['mibitracker']
+     )
