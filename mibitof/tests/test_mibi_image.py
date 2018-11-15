@@ -1,0 +1,387 @@
+"""Tests for mibitof.mibi_image"""
+
+import datetime
+import os
+import shutil
+import tempfile
+import unittest
+
+from PIL import Image
+import numpy as np
+from skimage import transform
+
+from mibitof import mibi_image as mi
+
+TEST_DATA = np.arange(12).reshape(2, 2, 3)
+STRING_LABELS = ('1', '2', '3')
+TUPLE_LABELS = (
+    ('Mass1', 'Target1'), ('Mass2', 'Target2'), ('Mass3', 'Target3'))
+MASS_LABELS = ('Mass1', 'Mass2', 'Mass3')
+TARGET_LABELS = ('Target1', 'Target2', 'Target3')
+METADATA = {
+    'run': 'Run', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, 67890), 'size': 500., 'slide': '857',
+    'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
+    'folder': 'Point1/RowNumber0/Depth_Profile0',
+    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'version': None, 'mass_offset': None,
+    'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
+    'check_reg': None, 'filename': '20180703_1234'
+}
+
+
+class TestMibiImage(unittest.TestCase):
+
+    def test_mibi_image_string_labels(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        np.testing.assert_array_equal(image.data, TEST_DATA)
+        self.assertEqual(image.channels, STRING_LABELS)
+        self.assertEqual(image._index, {'1': 0, '2': 1, '3': 2})
+        self.assertIsNone(image.masses)
+        self.assertIsNone(image.targets)
+
+
+    def test_mibi_image_tuple_labels(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        np.testing.assert_array_equal(image.data, TEST_DATA)
+        self.assertEqual(image.channels, TUPLE_LABELS)
+        self.assertEqual(image.masses, MASS_LABELS)
+        self.assertEqual(image.targets, TARGET_LABELS)
+        self.assertEqual(image._index,
+                         {t: i for i, t in enumerate(TUPLE_LABELS)})
+        self.assertEqual(image._mass_index,
+                         {t: i for i, t in enumerate(MASS_LABELS)})
+        self.assertEqual(image._target_index,
+                         {t: i for i, t in enumerate(TARGET_LABELS)})
+
+    def test_data_channel_length_mismatch(self):
+        with self.assertRaises(ValueError):
+            mi.MibiImage(TEST_DATA, STRING_LABELS[:2])
+
+    def test_non_unique_channels(self):
+        with self.assertRaises(ValueError):
+            mi.MibiImage(TEST_DATA, ['1', '2', '1'])
+        with self.assertRaises(ValueError):
+            mi.MibiImage(TEST_DATA, [('1', 'A'), ('2', 'B'), ('3', 'A')])
+        with self.assertRaises(ValueError):
+            mi.MibiImage(TEST_DATA, [('1', 'A'), ('2', 'B'), ('2', 'C')])
+
+    def test_string_datetime(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(datetime.datetime(2017, 9, 16, 15, 26, 0), image.date)
+
+    def test_obj_datetime(self):
+        date = datetime.datetime(2017, 9, 17, 15, 26, 0)
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, date=date)
+        self.assertEqual(image.date, date)
+
+    def test_set_channels(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        image.channels = TUPLE_LABELS
+        self.assertEqual(image.masses, MASS_LABELS)
+
+    def test_get_labels(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        self.assertEqual(image.labels, image.channels)
+
+    def test_set_labels(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        image.labels = TARGET_LABELS
+        self.assertEqual(image.channels, TARGET_LABELS)
+
+    def test_equality(self):
+        first = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        second = mi.MibiImage(TEST_DATA.copy(), STRING_LABELS)
+        self.assertTrue(first == second)
+
+    def test_dtype_inequality(self):
+        first = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        second = mi.MibiImage(TEST_DATA.astype(np.float), STRING_LABELS)
+        self.assertFalse(first == second)
+
+    def test_label_inequality(self):
+        first = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        second = mi.MibiImage(TEST_DATA, TARGET_LABELS)
+        self.assertFalse(first == second)
+
+    def test_data_inequality(self):
+        first = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        second = mi.MibiImage(TEST_DATA.copy(), STRING_LABELS)
+        second.data[0, 0, 0] = 1
+        self.assertFalse(first == second)
+
+    def test_metadata_inequality(self):
+        first = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
+        second = mi.MibiImage(TEST_DATA.copy(), STRING_LABELS)
+        self.assertFalse(first == second)
+
+    def test_getitem(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        np.testing.assert_array_equal(image['2'], image.slice_data('2'))
+        np.testing.assert_array_equal(
+            image[['1', '2']], image.slice_data(['1', '2']))
+
+    def test_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        metadata = METADATA.copy()
+        metadata['date'] = datetime.datetime.strptime(metadata['date'],
+                                                      mi._DATETIME_FORMAT)
+        self.assertEqual(image.metadata(), metadata)
+
+    def test_channel_inds_single_channel(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        np.testing.assert_array_equal(image.channel_inds('2'), 1)
+
+    def test_channel_inds_channel_list(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        np.testing.assert_array_equal(
+            image.channel_inds(np.array(['1', '3'])),
+            np.array([0, 2]))
+
+    def test_channel_inds_single_mass(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        np.testing.assert_array_equal(image.channel_inds('Mass2'), 1)
+
+    def test_channel_inds_mass_list(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        np.testing.assert_array_equal(
+            image.channel_inds(np.array(['Mass1', 'Mass3'])),
+            np.array([0, 2]))
+
+    def test_channel_inds_single_target(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        np.testing.assert_array_equal(image.channel_inds('Mass2'), 1)
+
+    def test_channel_inds_target_list(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        np.testing.assert_array_equal(
+            image.channel_inds(np.array(['Mass1', 'Mass3'])),
+            np.array([0, 2]))
+
+    def test_channel_inds_key_error(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        with self.assertRaises(KeyError):
+            image.channel_inds(np.array(['1', '4']))
+
+    def test_slice_data(self):
+        # Test slicing out single layer.
+        im = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        np.testing.assert_array_equal(im.slice_data('2'), TEST_DATA[:, :, 1])
+        np.testing.assert_array_equal(im.slice_data(['2']),
+                                      TEST_DATA[:, :, [1]])
+        # Test slicing out multiple layers.
+        np.testing.assert_array_equal(im.slice_data(['3', '1']),
+                                      TEST_DATA[:, :, [2, 0]])
+
+    def test_slice_empty_list_from_image(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        empty_data = image.slice_data([])
+        self.assertEqual(empty_data.shape[2], 0)
+        # confirm that this object will be interpreted as False by if:
+        self.assertFalse(empty_data)
+
+    def test_slice_image(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        image_slice = image.slice_image(['1', '3'])
+        self.assertEqual(
+            image_slice,
+            mi.MibiImage(image.slice_data(['1', '3']), ['1', '3']))
+
+        single_slice = image.slice_image('2')
+        self.assertEqual(
+            single_slice,
+            mi.MibiImage(image.slice_data(['2']), ['2']))
+
+    def test_copy(self):
+        first = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        second = first.copy()
+        self.assertTrue(first == second)
+        second.data[:, :, 0] = 0
+        np.testing.assert_array_equal(first.data, TEST_DATA)
+
+    def test_append(self):
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2], ['1', '2'],
+                                   **METADATA)
+        second_image = mi.MibiImage(TEST_DATA[:, :, 1:3], ['3', '4'])
+        first_image.append(second_image)
+        expected = mi.MibiImage(TEST_DATA[:, :, [0, 1, 1, 2]],
+                                ['1', '2', '3', '4'], **METADATA)
+        self.assertEqual(first_image, expected)
+        np.testing.assert_array_equal(
+            first_image.slice_data('4'), second_image.slice_data('4'))
+
+    def test_remove_layers_without_copy(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
+        image.remove_channels(['1', '3'])
+        np.testing.assert_array_equal(image.data, TEST_DATA[:, :, [1]])
+        self.assertEqual(image.channels, tuple('2'))
+        metadata = METADATA.copy()
+        metadata['date'] = datetime.datetime.strptime(metadata['date'],
+                                                      mi._DATETIME_FORMAT)
+        self.assertEqual(image.metadata(), metadata)
+
+    def test_remove_layers_with_copy(self):
+        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
+        new_image = image.remove_channels(['1', '3'], copy=True)
+        np.testing.assert_array_equal(new_image.data, TEST_DATA[:, :, [1]])
+        self.assertEqual(new_image.channels, tuple('2'))
+        # check have not altered original image
+        np.testing.assert_array_equal(image.data, TEST_DATA)
+        self.assertEqual(image.channels, STRING_LABELS)
+
+    def test_resize_integer_without_copy(self):
+        image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
+        data = image.data
+        image.resize(3)
+        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge')
+        self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
+
+    def test_resize_tuple_without_copy(self):
+        image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
+        data = image.data
+        image.resize((3, 3))
+        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge')
+        self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
+
+    def test_resize_integer_with_copy(self):
+        image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
+        image_copy = mi.MibiImage(image.data.copy(), STRING_LABELS)
+        resized = image.resize(3, copy=True)
+        expected = transform.resize(image.data, (3, 3, 3), order=3, mode='edge')
+        self.assertTrue(resized == mi.MibiImage(expected, STRING_LABELS))
+        self.assertTrue(image == image_copy)
+
+    def test_resize_preserve_uint_dtype(self):
+        image = mi.MibiImage(
+            np.random.randint(0, 255, (5, 5, 3)).astype(np.uint8),
+            STRING_LABELS)
+        data = image.data
+        image.resize(3, preserve_type=True)
+        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge',
+                                    preserve_range=True).astype(np.uint8)
+        self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
+
+    def test_resize_preserve_float_dtype(self):
+        image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
+        data = image.data
+        image.resize(3, preserve_type=True)
+        # The return value should not be affected by whether the
+        # dtype is preserved if the input data are floats in the unit interval.
+        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge')
+        self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
+
+    def test_resize_to_larger(self):
+        image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
+        expected = mi.MibiImage(
+            transform.resize(image.data, (6, 6, 3), order=3, mode='edge'),
+            STRING_LABELS)
+        image.resize(6)
+        self.assertTrue(image == expected)
+
+    def test_resize_bad_integer_aspect_ratio(self):
+        image = mi.MibiImage(np.random.rand(5, 4, 3), STRING_LABELS)
+        with self.assertRaises(ValueError):
+            image.resize(3)
+
+    def test_resize_bad_tuple_aspect_ratio(self):
+        image = mi.MibiImage(np.random.rand(5, 4, 3), STRING_LABELS)
+        with self.assertRaises(ValueError):
+            image.resize((4, 4))
+
+
+class TestExportGrayscales(unittest.TestCase):
+
+    def setUp(self):
+        self.test_dir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
+
+    def _test_export_image_helper(self, array, expected, formats=('tif',)):
+        channels = ['1', '2']
+        im = mi.MibiImage(array, channels)
+        for file_format in formats:
+            im.export_grayscales(self.test_dir, file_format=file_format)
+            for i, label in enumerate(channels):
+                image = Image.open('%s.%s' % (
+                    os.path.join(self.test_dir, label), file_format))
+                roundtripped = np.array(image.getdata()).reshape(image.size)
+                image.close()
+                np.testing.assert_array_equal(roundtripped, expected[:, :, i])
+
+    def test_export_uint8_image(self):
+        data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint8)
+        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+
+    def test_export_low_uint16_image(self):
+        data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
+        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+
+    def test_export_high_uint16_image(self):
+        data = np.random.randint(
+            256, 2 ** 16 - 1, (10, 10, 2)).astype(np.uint16)
+        self._test_export_image_helper(data, data)
+
+    def test_export_int_in_uint8_range_image(self):
+        data = np.random.randint(0, 255, (10, 10, 2)).astype(np.int32)
+        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+
+    def test_export_int_in_uint16_range_image(self):
+        data = np.random.randint(256, 2 ** 16 - 1, (10, 10, 2)).astype(np.int64)
+        self._test_export_image_helper(data, data)
+
+    def test_export_bool_image(self):
+        data = np.random.randint(0, 1, (10, 10, 2)).astype(np.bool)
+        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+
+    def test_export_int_below_uint16_range_image(self):
+        array = np.random.randint(-10, -1, (10, 10, 2))
+        im = mi.MibiImage(array, ['1', '2'])
+        with self.assertRaises(TypeError):
+            im.export_grayscales('path')
+
+    def test_export_int_above_uint16_range_image(self):
+        array = np.random.randint(2 ** 16, 2 ** 16 + 1, (10, 10, 2))
+        im = mi.MibiImage(array, ['1', '2'])
+        with self.assertRaises(TypeError):
+            im.export_grayscales('path')
+
+    def test_export_float_unit_interval_image(self):
+        data = np.random.randint(0, 1, (10, 10, 2)).astype(np.float32)
+        self._test_export_image_helper(data, 255 * data, formats=('tif', 'png'))
+
+    def test_export_float_outside_unit_interval(self):
+        array = np.random.rand(10, 10, 2) + 1.
+        im = mi.MibiImage(array, ['1', '2'])
+        with self.assertRaises(TypeError):
+            im.export_grayscales('path')
+
+    def test_export_other_type(self):
+        array = np.random.randint(0, 10, (10, 10, 2)).astype(np.complex)
+        im = mi.MibiImage(array, ['1', '2'])
+        with self.assertRaises(TypeError):
+            im.export_grayscales('path')
+
+    def test_error_when_saving_uint16_png(self):
+        array = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
+        im = mi.MibiImage(array, ['1', '2'])
+        with self.assertRaises(IOError):
+            im.export_grayscales('path', file_format='png')
+
+    def test_export_resized_grayscales(self):
+        im = mi.MibiImage(
+            np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16),
+            ['1', '2'])
+        resized = im.resize(5, copy=True, preserve_type=True)
+        im.export_grayscales(self.test_dir, size=5)
+        images = [
+            Image.open('%s.%s' % (os.path.join(self.test_dir, label), 'tif'))
+            for label in im.channels]
+        for i, image in enumerate(images):
+            roundtripped = np.array(image.getdata()).reshape((5, 5))
+            np.testing.assert_array_equal(
+                roundtripped, resized.data[:, :, i])
+
+
+if __name__ == '__main__':
+    unittest.main()
