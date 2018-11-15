@@ -16,5 +16,5 @@ setup(name='mibitracker-client',
           'pip==18.0',
           'requests==2.14.2'
       ],
-      packages=['mibitracker']
+      packages=['mibitracker', 'mibitof']
      )
