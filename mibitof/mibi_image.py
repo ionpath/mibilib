@@ -4,8 +4,7 @@ import datetime
 import os
 
 import numpy as np
-from PIL import Image
-from skimage import transform
+from skimage import io as skio, transform
 
 # THe format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
@@ -255,8 +254,8 @@ class MibiImage(object):
         try:
             return [self._target_index[i] for i in channels]
         except (KeyError, AttributeError):
-            raise KeyError('Subset of channels, targets or massses not found '
-                           'matching {}'.format(channels))
+            raise KeyError(f'Subset of channels, targets or massses not found '
+                           'matching {channels}')
 
     def slice_data(self, channels):
         """Selects a subset of data from the MibiImage given selected channels.
@@ -409,27 +408,24 @@ class MibiImage(object):
             return MibiImage(_resize(), self.labels, **self.metadata())
         self.data = _resize()
 
-
-    def export_grayscales(self, path, file_format='tif', size=None):
-        """Saves each channel of a MibiImage as a grayscale tif or png.
+    def export_pngs(self, path, size=None):
+        """Saves each channel of a MibiImage as a grayscale png.
 
         If the image data are boolean or integers of any type and are within
         the range of uint8, the values are converted to uint8 before saving.
 
         If the image data are integers of any type and not within the range of
         uint8 but are within the range of uint16, they are converted to uint16
-        before saving. This is only compatible with `file_format='tif'`;
-        attempting this with `file_format='png'` will raise an IOError.
-
-        If the image data are floats of any type and are within the unit
-        interval, they are converted to uint8 after multiplication by 255.
+        before saving.
 
         Otherwise a TypeError is raised.
+
+        For image data that is float, use `mibitof.tiff.write()` for writing
+        as TIFFs, since PNGs do not support float type.
 
         Args:
             path: The path to the folder in which to save the images. This
                 folder must already exist.
-            file_format: Either 'tif' or 'png'.
             size: If None, the images are saved at full resolution. If an
                 integer or tuple, the images are resized by passing this
                 parameter to :meth:`resize`.
@@ -450,38 +446,15 @@ class MibiImage(object):
                 np.issubdtype(data.dtype, np.int)):
             # save as uint8 or uint 16 if already in those ranges
             if dmin >= 0 and dmax < 2 ** 8:
-                converter = _uint8_layer_to_image
+                converter = lambda array: array.astype(np.uint8)
             elif dmin >= 0 and dmax < 2 ** 16:
-                converter = _uint16_layer_to_image
+                converter = lambda array: array.astype(np.uint16)
             else:
                 raise TypeError(
                     'Data are integers outside of uint16 range. You must '
                     'rescale before exporting.')
-
-        elif np.issubdtype(data.dtype, np.float):
-            # convert to uint8 if in unit interval
-            if dmin >= 0 and dmax <= 1:
-                converter = _float_unit_interval_layer_to_image
-            else:
-                raise TypeError(
-                    'Data are floats outside of the unit interval. You must '
-                    'rescale before exporting.'
-                )
         else:
             raise TypeError('Unsupported dtype: %s' % data.dtype.type)
         for i, label in enumerate(self.channels):
             im = converter(data[:, :, i])
-            im.save('%s.%s' % (os.path.join(path, label), file_format))
-
-
-def _uint8_layer_to_image(array):
-    return Image.fromarray(array.astype(np.uint8))
-
-
-def _uint16_layer_to_image(array):
-    return Image.frombytes('I;16', array.shape, array.astype(
-        np.uint16).tobytes())
-
-
-def _float_unit_interval_layer_to_image(array):
-    return Image.fromarray((255 * array).astype(np.uint8))
+            skio.imsave(f'{os.path.join(path, label)}.png', im)

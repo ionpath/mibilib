@@ -6,9 +6,8 @@ import shutil
 import tempfile
 import unittest
 
-from PIL import Image
 import numpy as np
-from skimage import transform
+from skimage import io as skio, transform
 
 from mibitof import mibi_image as mi
 
@@ -39,7 +38,6 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image._index, {'1': 0, '2': 1, '3': 2})
         self.assertIsNone(image.masses)
         self.assertIsNone(image.targets)
-
 
     def test_mibi_image_tuple_labels(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
@@ -297,25 +295,22 @@ class TestExportGrayscales(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def _test_export_image_helper(self, array, expected, formats=('tif',)):
+    def _test_export_image_helper(self, array, expected):
         channels = ['1', '2']
         im = mi.MibiImage(array, channels)
-        for file_format in formats:
-            im.export_grayscales(self.test_dir, file_format=file_format)
-            for i, label in enumerate(channels):
-                image = Image.open('%s.%s' % (
-                    os.path.join(self.test_dir, label), file_format))
-                roundtripped = np.array(image.getdata()).reshape(image.size)
-                image.close()
-                np.testing.assert_array_equal(roundtripped, expected[:, :, i])
+        im.export_pngs(self.test_dir)
+        for i, label in enumerate(channels):
+            roundtripped = skio.imread(
+                f'{os.path.join(self.test_dir, label)}.png')
+            np.testing.assert_array_equal(roundtripped, expected[:, :, i])
 
     def test_export_uint8_image(self):
         data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint8)
-        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+        self._test_export_image_helper(data, data)
 
     def test_export_low_uint16_image(self):
         data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
-        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+        self._test_export_image_helper(data, data)
 
     def test_export_high_uint16_image(self):
         data = np.random.randint(
@@ -324,7 +319,7 @@ class TestExportGrayscales(unittest.TestCase):
 
     def test_export_int_in_uint8_range_image(self):
         data = np.random.randint(0, 255, (10, 10, 2)).astype(np.int32)
-        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+        self._test_export_image_helper(data, data)
 
     def test_export_int_in_uint16_range_image(self):
         data = np.random.randint(256, 2 ** 16 - 1, (10, 10, 2)).astype(np.int64)
@@ -332,53 +327,52 @@ class TestExportGrayscales(unittest.TestCase):
 
     def test_export_bool_image(self):
         data = np.random.randint(0, 1, (10, 10, 2)).astype(np.bool)
-        self._test_export_image_helper(data, data, formats=('tif', 'png'))
+        self._test_export_image_helper(data, data)
 
     def test_export_int_below_uint16_range_image(self):
         array = np.random.randint(-10, -1, (10, 10, 2))
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(TypeError):
-            im.export_grayscales('path')
+            im.export_pngs('path')
 
     def test_export_int_above_uint16_range_image(self):
         array = np.random.randint(2 ** 16, 2 ** 16 + 1, (10, 10, 2))
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(TypeError):
-            im.export_grayscales('path')
+            im.export_pngs('path')
 
     def test_export_float_unit_interval_image(self):
         data = np.random.randint(0, 1, (10, 10, 2)).astype(np.float32)
-        self._test_export_image_helper(data, 255 * data, formats=('tif', 'png'))
+        with self.assertRaises(TypeError):
+            self._test_export_image_helper(data, 255 * data)
 
     def test_export_float_outside_unit_interval(self):
         array = np.random.rand(10, 10, 2) + 1.
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(TypeError):
-            im.export_grayscales('path')
+            im.export_pngs('path')
 
     def test_export_other_type(self):
         array = np.random.randint(0, 10, (10, 10, 2)).astype(np.complex)
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(TypeError):
-            im.export_grayscales('path')
+            im.export_pngs('path')
 
     def test_error_when_saving_uint16_png(self):
         array = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(IOError):
-            im.export_grayscales('path', file_format='png')
+            im.export_pngs('path')
 
-    def test_export_resized_grayscales(self):
+    def test_export_resized_pngs(self):
         im = mi.MibiImage(
             np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16),
             ['1', '2'])
         resized = im.resize(5, copy=True, preserve_type=True)
-        im.export_grayscales(self.test_dir, size=5)
-        images = [
-            Image.open('%s.%s' % (os.path.join(self.test_dir, label), 'tif'))
-            for label in im.channels]
-        for i, image in enumerate(images):
-            roundtripped = np.array(image.getdata()).reshape((5, 5))
+        im.export_pngs(self.test_dir, size=5)
+        images = [skio.imread(f'{os.path.join(self.test_dir, label)}.png')
+                  for label in im.channels]
+        for i, roundtripped in enumerate(images):
             np.testing.assert_array_equal(
                 roundtripped, resized.data[:, :, i])
 
