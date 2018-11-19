@@ -1,4 +1,6 @@
-"""Base module for working with MIBI images."""
+"""Base module for working with MIBI images.
+
+Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import datetime
 import os

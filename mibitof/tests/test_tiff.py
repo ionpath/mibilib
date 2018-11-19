@@ -1,4 +1,6 @@
-"""Tests for mibitof.tiff"""
+"""Tests for mibitof.tiff
+
+Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import datetime
 import os

@@ -1,4 +1,6 @@
-""" Common convenience functions used in mibitof library. """
+""" Common convenience functions used in mibitof library.
+
+Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import re
 import functools

@@ -1,4 +1,6 @@
-"""Tests for mibiscope.util"""
+"""Tests for mibiscope.util
+
+Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import unittest
 from mibitof import util

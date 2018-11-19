@@ -1,4 +1,6 @@
-"""Read and write to and from IonpathMIBI multipage TIFF files."""
+"""Read and write to and from IonpathMIBI multipage TIFF files.
+
+Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import collections
 from fractions import Fraction
