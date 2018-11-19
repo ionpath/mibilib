@@ -28,8 +28,8 @@ jobs:
       - run:
           name: Run tests
           command: |
-            ~/miniconda/envs/mibitracker-client-dev/bin/coverage run -m py.test mibitracker
-            ~/miniconda/envs/mibitracker-client-dev/bin/coverage html -i --omit=mibitracker/tests/*
+            ~/miniconda/envs/mibitracker-client-dev/bin/coverage run -m py.test mibitracker mibitof
+            ~/miniconda/envs/mibitracker-client-dev/bin/coverage html -i --omit=*/tests/*
       - run:
           name: Run pylint on files changed from master
           command: |
