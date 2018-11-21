@@ -1,4 +1,4 @@
-"""Tests for mibiscope.util
+"""Tests for mibitof.util
 
 Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
