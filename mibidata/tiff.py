@@ -11,8 +11,8 @@ import os
 import numpy as np
 from skimage.external.tifffile import TiffFile, TiffWriter
 
-from mibitof import mibi_image as mi
-from mibitof import util
+from mibidata import mibi_image as mi
+from mibidata import util
 
 # Increment this when making functional changes.
 SOFTWARE_VERSION = 'IonpathMIBIv0.1'

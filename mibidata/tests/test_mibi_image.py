@@ -11,7 +11,7 @@ import unittest
 import numpy as np
 from skimage import io as skio, transform
 
-from mibitof import mibi_image as mi
+from mibidata import mibi_image as mi
 
 TEST_DATA = np.arange(12).reshape(2, 2, 3)
 STRING_LABELS = ('1', '2', '3')

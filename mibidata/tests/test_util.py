@@ -3,7 +3,7 @@
 Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import unittest
-from mibitof import util
+from mibidata import util
 
 
 class TestUtil(unittest.TestCase):

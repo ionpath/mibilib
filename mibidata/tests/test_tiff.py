@@ -12,8 +12,8 @@ import numpy as np
 from skimage import io, img_as_ubyte, transform
 from skimage.external.tifffile import TiffFile
 
-from mibitof import mibi_image as mi
-from mibitof import tiff, util
+from mibidata import mibi_image as mi
+from mibidata import tiff, util
 
 DATA = np.arange(500).reshape(10, 10, 5).astype(np.uint16)
 SED = np.arange(100).reshape(10, 10)
