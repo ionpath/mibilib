@@ -257,7 +257,7 @@ class MibiImage(object):
             return [self._target_index[i] for i in channels]
         except (KeyError, AttributeError):
             raise KeyError(f'Subset of channels, targets or massses not found '
-                           'matching {channels}')
+                           f'matching {channels}')
 
     def slice_data(self, channels):
         """Selects a subset of data from the MibiImage given selected channels.
