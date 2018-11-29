@@ -25,6 +25,6 @@ To generated updated .rst files in the source/ directory, and a build/
 directory containing the .html docs, execute the following commands from the
 parent mibitracker-client directory:
 ```
-sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
+sphinx-apidoc -f -o docs/source ./ ./{**,}/tests ./setup.py
 make -C docs/ html
 ```

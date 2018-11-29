@@ -50,7 +50,7 @@ jobs:
               git checkout gh-pages || git checkout --orphan gh-pages
               git rm -rf .
               cd ..
-              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
+              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./ ./{**,}/tests ./setup.py
               ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-build -b html docs/source out
               mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
               cd out
