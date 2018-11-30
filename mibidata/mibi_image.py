@@ -462,5 +462,5 @@ class MibiImage(object):
             im = converter(data[:, :, i])
             png_name = label[1] if isinstance(label, tuple) else label
             with warnings.catch_warnings():
-                warnings.simplefilter('ignore')
+                warnings.simplefilter('ignore', UserWarning)
                 skio.imsave(f'{os.path.join(path, png_name)}.png', im)
