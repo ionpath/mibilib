@@ -1,4 +1,4 @@
-"""Tests for mibitof.mibitracker.helpers.
+"""Tests for mibitracker.helpers.
 
 This tests for the retry and status checking utilities only.
 Specific helper functions that make use of the MibiTracker API and can be
