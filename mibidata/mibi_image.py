@@ -4,6 +4,7 @@ Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import datetime
 import os
+import warnings
 
 import numpy as np
 from skimage import io as skio, transform
@@ -460,4 +461,6 @@ class MibiImage(object):
         for i, label in enumerate(self.channels):
             im = converter(data[:, :, i])
             png_name = label[1] if isinstance(label, tuple) else label
-            skio.imsave(f'{os.path.join(path, png_name)}.png', im)
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore')
+                skio.imsave(f'{os.path.join(path, png_name)}.png', im)
