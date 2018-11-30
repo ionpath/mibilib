@@ -1,0 +1,38 @@
+mibidata package
+================
+
+Submodules
+----------
+
+mibidata\.mibi\_image module
+----------------------------
+
+.. automodule:: mibidata.mibi_image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mibidata\.tiff module
+---------------------
+
+.. automodule:: mibidata.tiff
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mibidata\.util module
+---------------------
+
+.. automodule:: mibidata.util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mibidata
+    :members:
+    :undoc-members:
+    :show-inheritance:

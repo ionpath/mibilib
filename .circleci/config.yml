@@ -28,14 +28,16 @@ jobs:
       - run:
           name: Run tests
           command: |
-            ~/miniconda/envs/mibitracker-client-dev/bin/coverage run -m py.test mibitracker
-            ~/miniconda/envs/mibitracker-client-dev/bin/coverage html -i --omit=mibitracker/tests/*
+            ~/miniconda/envs/mibitracker-client-dev/bin/coverage run -m py.test mibitracker mibidata
+            ~/miniconda/envs/mibitracker-client-dev/bin/coverage html -i --omit=*/tests/*
       - run:
           name: Run pylint on files changed from master
           command: |
             if  [ $CIRCLE_BRANCH != "master" ]; then
                 ls -r mibitracker/*.py | grep -v "test_.*\.py$" | xargs ~/miniconda/envs/mibitracker-client-dev/bin/pylint
+                ls -r mibidata/*.py | grep -v "test_.*\.py$" | xargs ~/miniconda/envs/mibitracker-client-dev/bin/pylint
                 ls -r mibitracker/tests/test_*.py | xargs ~/miniconda/envs/mibitracker-client-dev/bin/pylint --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument
+                ls -r mibidata/tests/test_*.py | xargs ~/miniconda/envs/mibitracker-client-dev/bin/pylint --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument
             fi
       - store_artifacts:
           path: htmlcov
@@ -50,7 +52,7 @@ jobs:
               git checkout gh-pages || git checkout --orphan gh-pages
               git rm -rf .
               cd ..
-              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./mibitracker ./mibitracker/{**,}/tests
+              ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
               ~/miniconda/envs/mibitracker-client-dev/bin/sphinx-build -b html docs/source out
               mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
               cd out
