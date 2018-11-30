@@ -459,4 +459,5 @@ class MibiImage(object):
             raise TypeError('Unsupported dtype: %s' % data.dtype.type)
         for i, label in enumerate(self.channels):
             im = converter(data[:, :, i])
-            skio.imsave(f'{os.path.join(path, label)}.png', im)
+            png_name = label[1] if isinstance(label, tuple) else label
+            skio.imsave(f'{os.path.join(path, png_name)}.png', im)

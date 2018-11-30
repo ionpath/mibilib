@@ -378,6 +378,16 @@ class TestExportGrayscales(unittest.TestCase):
             np.testing.assert_array_equal(
                 roundtripped, resized.data[:, :, i])
 
+    def test_export_with_tuple_channel_names(self):
+        channels = [(1, 'Channel_1'), (2, 'Channel_2')]
+        data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
+        im = mi.MibiImage(data, channels)
+        im.export_pngs(self.test_dir)
+        images = [skio.imread(f'{os.path.join(self.test_dir,  label)}.png')
+                  for (_, label) in im.channels]
+        for i, roundtripped in enumerate(images):
+            np.testing.assert_array_equal(
+                roundtripped, im.data[:, :, i])
 
 if __name__ == '__main__':
     unittest.main()
