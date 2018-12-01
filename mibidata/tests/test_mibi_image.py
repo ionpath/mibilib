@@ -18,6 +18,7 @@ STRING_LABELS = ('1', '2', '3')
 TUPLE_LABELS = (
     ('Mass1', 'Target1'), ('Mass2', 'Target2'), ('Mass3', 'Target3'))
 MASS_LABELS = ('Mass1', 'Mass2', 'Mass3')
+MASS_INTEGERS = (1, 2, 3)
 TARGET_LABELS = ('Target1', 'Target2', 'Target3')
 METADATA = {
     'run': 'Run', 'date': '2017-09-16T15:26:00',
@@ -79,6 +80,20 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         image.channels = TUPLE_LABELS
         self.assertEqual(image.masses, MASS_LABELS)
+
+    def test_set_channels_ints(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        with self.assertRaises(ValueError):
+            image.channels = MASS_INTEGERS
+
+    def test_set_channels_invalid_tuple(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        invalid_tuple_1 = [(c, ) for c in STRING_LABELS]
+        invalid_tuple_3 = [(c, 'a', 'b') for c in STRING_LABELS]
+        with self.assertRaises(ValueError):
+            image.channels = invalid_tuple_1
+        with self.assertRaises(ValueError):
+            image.channels = invalid_tuple_3
 
     def test_get_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -378,6 +393,16 @@ class TestExportGrayscales(unittest.TestCase):
             np.testing.assert_array_equal(
                 roundtripped, resized.data[:, :, i])
 
+    def test_export_with_tuple_channel_names(self):
+        channels = [(1, 'Channel_1'), (2, 'Channel_2')]
+        data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
+        im = mi.MibiImage(data, channels)
+        im.export_pngs(self.test_dir)
+        images = [skio.imread(f'{os.path.join(self.test_dir,  label)}.png')
+                  for (_, label) in im.channels]
+        for i, roundtripped in enumerate(images):
+            np.testing.assert_array_equal(
+                roundtripped, im.data[:, :, i])
 
 if __name__ == '__main__':
     unittest.main()

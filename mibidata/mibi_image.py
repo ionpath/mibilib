@@ -4,6 +4,7 @@ Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 
 import datetime
 import os
+import warnings
 
 import numpy as np
 from skimage import io as skio, transform
@@ -193,8 +194,12 @@ class MibiImage(object):
             self.targets = targets
             self._mass_index = dict(zip(masses, range(length)))
             self._target_index = dict(zip(targets, range(length)))
-        else:
+        elif all(isinstance(c, str) for c in channels):
             self.masses = self.targets = None
+        else:
+            raise ValueError(
+                'Channels must be a list of tuples of (int, str) or a '
+                'list of str')
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
@@ -459,4 +464,7 @@ class MibiImage(object):
             raise TypeError('Unsupported dtype: %s' % data.dtype.type)
         for i, label in enumerate(self.channels):
             im = converter(data[:, :, i])
-            skio.imsave(f'{os.path.join(path, label)}.png', im)
+            png_name = label[1] if isinstance(label, tuple) else label
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore', UserWarning)
+                skio.imsave(f'{os.path.join(path, png_name)}.png', im)
