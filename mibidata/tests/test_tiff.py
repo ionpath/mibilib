@@ -141,7 +141,7 @@ class TestWriteReadTiff(unittest.TestCase):
         with self.assertRaises(ValueError):
             tiff.write(self.filename, image)
         # string rather than tuple channels
-        channels = [c[0] for c in CHANNELS]
+        channels = [c[1] for c in CHANNELS]
         image = mi.MibiImage(DATA, channels, **METADATA)
         with self.assertRaises(ValueError):
             tiff.write(self.filename, image)
