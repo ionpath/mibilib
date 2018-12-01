@@ -18,6 +18,7 @@ STRING_LABELS = ('1', '2', '3')
 TUPLE_LABELS = (
     ('Mass1', 'Target1'), ('Mass2', 'Target2'), ('Mass3', 'Target3'))
 MASS_LABELS = ('Mass1', 'Mass2', 'Mass3')
+MASS_INTEGERS = (1, 2, 3)
 TARGET_LABELS = ('Target1', 'Target2', 'Target3')
 METADATA = {
     'run': 'Run', 'date': '2017-09-16T15:26:00',
@@ -79,6 +80,20 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         image.channels = TUPLE_LABELS
         self.assertEqual(image.masses, MASS_LABELS)
+
+    def test_set_channels_ints(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        with self.assertRaises(ValueError):
+            image.channels = MASS_INTEGERS
+
+    def test_set_channels_invalid_tuple(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        invalid_tuple_1 = [(c, ) for c in STRING_LABELS]
+        invalid_tuple_3 = [(c, 'a', 'b') for c in STRING_LABELS]
+        with self.assertRaises(ValueError):
+            image.channels = invalid_tuple_1
+        with self.assertRaises(ValueError):
+            image.channels = invalid_tuple_3
 
     def test_get_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)

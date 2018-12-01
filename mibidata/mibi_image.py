@@ -194,8 +194,12 @@ class MibiImage(object):
             self.targets = targets
             self._mass_index = dict(zip(masses, range(length)))
             self._target_index = dict(zip(targets, range(length)))
-        else:
+        elif all(isinstance(c, str) for c in channels):
             self.masses = self.targets = None
+        else:
+            raise ValueError(
+                'Channels must be a list of tuples of (int, str) or a '
+                'list of str')
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
