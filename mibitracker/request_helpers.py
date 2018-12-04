@@ -8,7 +8,7 @@ import os
 import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 
 from .mibitracker_exceptions import MibiTrackerError
 
