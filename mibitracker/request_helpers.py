@@ -350,10 +350,9 @@ class MibiRequests(object):
         """Uploads a grayscale PNG or TIFF to the MibiTracker.
 
         Args:
-            image_id: The integer id of the run to associate the tiff image
-                with.
-            image_file: A string path to a PNG file or an open file object of
-                the file to upload.
+            image_id: The integer id of the image to associate the channel with.
+            image_file: A string path to a PNG or TIFF file, or an open file
+                object of a PNG or TIFF file to upload.
             filename: The name to use for the file being uploaded. If
                 image_file is a path, this can be omitted and that file's name
                 will be used. It should be the name of the channel/layer with
