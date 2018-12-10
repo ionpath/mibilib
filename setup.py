@@ -14,7 +14,9 @@ setup(name='mibitracker-client',
       python_requires='==3.6.*',
       install_requires=[
           'pip==18.0',
-          'requests==2.14.2'
+          'requests==2.20.1',
+          'scikit-image=0.13.0',
+          'urllib3=1.22',
       ],
       packages=['mibitracker', 'mibidata']
      )
