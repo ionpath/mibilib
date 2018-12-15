@@ -13,6 +13,7 @@ setup(name='mibitracker-client',
       license='GNU General Public License v3.0',
       python_requires='==3.6.*',
       install_requires=[
+          'numpy==1.13.1',
           'pip==18.0',
           'requests==2.20.1',
           'scikit-image==0.13.0',
