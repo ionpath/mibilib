@@ -2,7 +2,8 @@
 
 # mibitracker-client
 
-Python client for IONpath MIBItracker API.
+Python client for IONpath MIBItracker API, plus utility functions for working
+with MIBItiff images.
 
 https://ionpath.github.io/mibitracker-client/
 
@@ -41,8 +42,11 @@ image_id = request.image_id('20180927', 'Point3')
 image_details = request.get('/images/{}/'.format(image_id))
 ```
 
-More examples and a general introduction to the MIBItracker API can be found
-in the [MIBItracker_API_Tutorial](MIBItracker_API_Tutorial.ipynb).
+More examples can be found in the following notebooks:
+
+ - [MIBItracker_API_Tutorial](MIBItracker_API_Tutorial.ipynb)
+
+ - [MibiImage_Tutorial](MibiImage_Tutorial.ipynb)
 
 Full documentation for this library can be found at
 https://ionpath.github.io/mibitracker-client/.
