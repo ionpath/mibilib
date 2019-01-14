@@ -160,6 +160,30 @@ class MibiRequests(object):
         buf.seek(0)
         return buf
 
+    def search_runs(self, run_name, run_label=None):
+        """Searches for runs which have the name and optionally label.
+
+        Args:
+            run_name: The name of the run the image belongs to.
+            run_label: (optional) The label of the run.
+
+        Returns: A list of JSON data for each run that matches the search.
+            If only ``run_name`` is specified, this list could be of any
+            length as a run's name is not necessarily unique. If
+            ``run_label`` is also specified, this is guaranteed to be
+            unique and the returned list could either be of length
+            zero or one.
+        """
+
+        payload = {'name': run_name}
+
+        if run_label:
+            payload['label'] = run_label
+
+        return self.session.get(
+            '{}{}'.format(self.url, self._prepare_route('/runs/')),
+            params=payload).json()
+
     def copy_run(self, old_label, new_label, **kwargs):
         """Creates a copy of the run corresponding to the label.
 
