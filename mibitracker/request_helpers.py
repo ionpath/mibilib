@@ -181,8 +181,7 @@ class MibiRequests(object):
             payload['label'] = run_label
 
         return self.session.get(
-            '{}{}'.format(self.url, self._prepare_route('/runs/')),
-            params=payload).json()
+            '{}{}'.format(self.url, '/runs/'), params=payload).json()
 
     def copy_run(self, old_label, new_label, **kwargs):
         """Creates a copy of the run corresponding to the label.
