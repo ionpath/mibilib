@@ -234,6 +234,32 @@ constructed from the run and image folders.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.search_runs">
+<code class="descname">search_runs</code><span class="sig-paren">(</span><em>run_name</em>, <em>run_label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.search_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for runs which have the name and optionally label.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>run_name</strong> – The name of the run the image belongs to.</li>
+<li><strong>run_label</strong> – (optional) The label of the run.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns: A list of JSON data for each run that matches the search.</dt>
+<dd>If only <code class="docutils literal"><span class="pre">run_name</span></code> is specified, this list could be of any
+length as a run’s name is not necessarily unique. If
+<code class="docutils literal"><span class="pre">run_label</span></code> is also specified, this is guaranteed to be
+unique and the returned list could either be of length
+zero or one.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.copy_run">
 <code class="descname">copy_run</code><span class="sig-paren">(</span><em>old_label</em>, <em>new_label</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.copy_run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a copy of the run corresponding to the label.</p>
