@@ -1,6 +1,6 @@
 """Tests for mibitof.util
 
-Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import unittest
 from mibidata import util

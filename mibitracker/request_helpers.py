@@ -1,6 +1,6 @@
 """Helper class for making and retrying requests to the MIBItracker.
 
-Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import io
 import json

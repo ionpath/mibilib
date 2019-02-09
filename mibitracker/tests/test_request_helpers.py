@@ -6,7 +6,7 @@ tested by running a local instance of the MibiTracker to ensure proper
 integration. A set of examples can be found in
 mibitof/notebooks/MibiRequestsTesting.
 
-Copyright (C) 2018 Ionpath, Inc.  All rights reserved.
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved.
 """
 
 import io

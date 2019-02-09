@@ -1,6 +1,6 @@
-"""Read and write to and from IonpathMIBI multipage TIFF files.
+"""Read and write to and from IONpath MIBItiff files.
 
-Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import collections
 from fractions import Fraction
@@ -11,11 +11,10 @@ import os
 import numpy as np
 from skimage.external.tifffile import TiffFile, TiffWriter
 
-from mibidata import mibi_image as mi
-from mibidata import util
+from mibidata import mibi_image as mi, util
 
 # Increment this when making functional changes.
-SOFTWARE_VERSION = 'IonpathMIBIv0.1'
+SOFTWARE_VERSION = 'IonpathMIBIv0.2'
 # Coordinates of where the slide labels are within the optical image.
 _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
