@@ -26,7 +26,7 @@ def _load_single_channel(file_name):
 
 def _match_filename(filenames, target):
     """Finds the file whose name matches target, target.tif, or target.tiff"""
-    pattern = re.compile('{}(\.tif)?f?$'.format(re.escape(target)))
+    pattern = re.compile(r'{}(\.tif)?f?$'.format(re.escape(target)))
     matches = [f for f in filenames if re.match(pattern, f)]
     try:
         assert len(matches) == 1
@@ -101,6 +101,9 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     image.tissue = tissue
     image.panel = panel_name
     image.date = run_date
+    image.mass_offset = calibration['MassOffset']
+    image.mass_gain = calibration['MassGain']
+    image.time_resolution = calibration['TimeResolution']
 
     if out is None:
         out = os.path.join(input_folder, 'combined.tiff')
