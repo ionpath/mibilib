@@ -10,4 +10,3 @@ dependencies:
 - requests=2.20.1=py36_0
 - scikit-image=0.14.2
 - setuptools=40.4.0
-- urllib3=1.22
