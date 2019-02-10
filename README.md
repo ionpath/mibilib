@@ -11,21 +11,28 @@ https://ionpath.github.io/mibitracker-client/
 
 ### Install Python 3.6
 Install the Python 3.6 version of [Miniconda](https://conda.io/miniconda.html).
-Even if your system already has a version of Python installed, you will need
-to use the `conda` environment manager to install and manage this
+Even if your system already has a version of Python installed, it is strongly
+recommended to use the `conda` environment manager to install and manage this
 library's dependencies.
 
-### Clone repository
+### Option A: Clone repository and create environement
+This option downloads the source code and creates the development environment.
 ```bash
 cd <path/to/where/you/want/to/install/project>
 git clone https://github.com/ionpath/mibitracker-client
 cd mibitracker-client
 ```
 
-### Create conda environment
 ```bash
 conda env create -f environment.yml
 source activate mibitracker-client  # On Windows, omit the 'source' part
+```
+
+### Option B: Install with pip
+This option is useful if you want this library to be installed as part of an
+existing environment or as a dependency inside a requirements.txt file.
+```
+pip install git+git://github.com/ionpath/mibitracker-client@master
 ```
 
 ## Usage
