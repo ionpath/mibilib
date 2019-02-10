@@ -35,10 +35,37 @@ def _match_filename(filenames, target):
     return matches[0]
 
 
+def merge_mibitiffs(input_folder, out=None):
+    """Merges a folder of single-channel MIBItiff files into a single MIBItiff.
+
+    Args:
+        input_folder: Path to a folder containing MIBItiff files. While these
+            files may be single-channel, they are assumed to have accurate and
+            consistent MIBI metadata.
+        out: Optionally, a path to a location for saving the combined TIFF. If
+           not specified, defaults to 'combined.tiff' inside the input folder.
+    """
+    pattern = re.compile(r'.+\.tiff?$')
+    paths = [
+        os.path.join(input_folder, f) for f in os.listdir(input_folder)
+        if re.match(pattern, f.lower())]
+    merged = tiff.read(paths[0])
+    for path in paths[1:]:
+        image = tiff.read(path)
+        merged.append(image)
+
+    if out is None:
+        out = os.path.join(input_folder, 'combined.tiff')
+    tiff.write(out, merged, multichannel=True)
+
+
 def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
                      run_label=None, instrument=None, tissue=None,
                      aperture=None, out=None):
-    """Combines single-channel TIFFs into a MibiTiff.
+    """Combines single-channel TIFFs into a MIBItiff.
+
+    The input TIFFs are not assumed to have any MIBI metadata. If they do, it
+    is suggested to use the simpler :meth:`~merge_mibitiffs` instead.
 
     Args:
         input_folder: Path to a folder containing single-channel TIFFs.
@@ -113,8 +140,12 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
 
 if __name__ == '__main__':
 
-    description = ('Generates a single multichannel TIFF file from a folder '
-                   'containing individual channel TIFF images.')
+    description = ('Generates a single multiplexed MIBItiff from a folder '
+                   'containing individual single-channel TIFFs without MIBI '
+                   'metadata. Note that if the single-channel TIFFs already '
+                   'have the MIBItiff metadata, then a much simpler way to '
+                   'merge them is to use combine_tiffs.merge_mibitiffs '
+                   'instead.')
 
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
