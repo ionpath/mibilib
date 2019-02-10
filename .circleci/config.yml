@@ -42,9 +42,9 @@ jobs:
       - store_artifacts:
           path: htmlcov
       - run:
-          name: Test setup.py with tox when merging to master
+          name: Test setup.py with tox if environment has changed.
           command: |
-            if [ $CIRCLE_BRANCH == "master" ]; then
+            if [ $(git diff master --name-only -- environment.yml)]; then
               tox
             fi
       - deploy:
