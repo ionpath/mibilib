@@ -41,6 +41,12 @@ jobs:
             fi
       - store_artifacts:
           path: htmlcov
+      - run:
+          name: Set setup.py with tox when merging to master
+          command: |
+            if [ $CIRCLE_BRANCH == "master" ]; then
+              tox
+            fi
       - deploy:
           name: Deploy docs
           command: |

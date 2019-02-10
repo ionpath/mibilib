@@ -17,3 +17,5 @@ dependencies:
 - setuptools=40.4.0
 - sphinx=1.6.3=py36_0
 - sphinx-argparse=0.2.2
+- pip:
+    - tox==3.7.0
