@@ -5,11 +5,12 @@ Copyright (C) 2018 Ionpath, Inc.  All rights reserved."""
 import io
 import json
 import os
+import warnings
+
 import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from urllib3.util.retry import Retry
-import warnings
 
 from .mibitracker_exceptions import MibiTrackerError
 
