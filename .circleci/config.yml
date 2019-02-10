@@ -44,8 +44,11 @@ jobs:
       - run:
           name: Test setup.py with tox if environment has changed.
           command: |
-            if [ $(git diff master --name-only -- environment.yml)]; then
+            if [ $(git diff master --name-only -- environment.yml) ]; then
+              echo "Running tox to test setup.py"
               tox
+            else
+              echo "Environment did not change; skipping tox."
             fi
       - deploy:
           name: Deploy docs
