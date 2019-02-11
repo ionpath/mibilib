@@ -1,4 +1,4 @@
-"""Tests for mibidata.runs.
+"""Tests for mibidata.runs
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved.
 """
@@ -36,6 +36,7 @@ XML = (
 
 
 class TestRuns(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         # Write mass mml and run xml files to a temporary directory.
