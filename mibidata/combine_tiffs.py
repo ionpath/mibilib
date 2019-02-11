@@ -24,10 +24,10 @@ def _load_single_channel(file_name):
     return array
 
 
-def _match_filename(filenames, target):
+def _match_target_filename(filenames, target):
     """Finds the file whose name matches target, target.tif, or target.tiff"""
-    pattern = re.compile(r'{}(\.tif)?f?$'.format(re.escape(target)))
-    matches = [f for f in filenames if re.match(pattern, f)]
+    pattern = re.compile(r'{}\.tiff?$'.format(re.escape(target).lower()))
+    matches = [f for f in filenames if re.match(pattern, f.lower())]
     try:
         assert len(matches) == 1
     except AssertionError:
@@ -104,7 +104,8 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     image_data = []
     for i in panel_df.index:
         tiff_path = os.path.join(
-            input_folder, _match_filename(tiff_files, panel_df['Target'][i]))
+            input_folder, _match_target_filename(tiff_files,
+                                                 panel_df['Target'][i]))
         data = _load_single_channel(tiff_path)
         image_data.append(data)
 
@@ -150,7 +151,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
         'folder',
-        help='Folder containing single-channel PNG or TIFF files.',
+        help='Folder containing single-channel TIFF files with a .tif or '
+             '.tiff extension.',
     )
     parser.add_argument(
         'run_xml', help='Path to a run XML file.'
