@@ -5,7 +5,7 @@ channels:
 dependencies:
 - coverage=4.2=py36_0
 - jupyter=1.0.0
-- matplotlib=2.0.2=np113py36_0
+- matplotlib=2.1.1
 - mock=2.0.0
 - numpy=1.16.0
 - pandas=0.21.0
