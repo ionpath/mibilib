@@ -316,7 +316,7 @@ response JSON returned when updating the new images.</p>
 
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.upload_mibitiff">
-<code class="descname">upload_mibitiff</code><span class="sig-paren">(</span><em>tiff_file</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_mibitiff" title="Permalink to this definition">¶</a></dt>
+<code class="descname">upload_mibitiff</code><span class="sig-paren">(</span><em>tiff_file</em>, <em>run_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_mibitiff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads a single TIFF to the MibiTracker.</p>
 <p>This uses the ‘run’ and ‘folder’ fields in the MibiTiff’s description to
 associate this with the correct image.</p>
@@ -324,13 +324,21 @@ associate this with the correct image.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tiff_file</strong> – A string path to a TIFF file or an open file object
-containing the TIFF data.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tiff_file</strong> – A string path to a TIFF file or an open file object
+containing the TIFF data.</li>
+<li><strong>run_id</strong> – The ID of the run the image is from. This enables checking
+of the image metadata against expected values and may become
+mandatory in the future.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The response from the MibiTracker after uploading the file and
-queuing it to be processed into viewable data.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MibiTracker after uploading the file and
+queuing it to be processed into viewable data.</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if tiff_file is not a string path or file object.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if tiff_file is not a string path or file object.</p>
+</td>
 </tr>
 </tbody>
 </table>
