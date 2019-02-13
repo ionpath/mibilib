@@ -4,10 +4,34 @@ mibidata package
 Submodules
 ----------
 
+mibidata\.combine\_tiffs module
+-------------------------------
+
+.. automodule:: mibidata.combine_tiffs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 mibidata\.mibi\_image module
 ----------------------------
 
 .. automodule:: mibidata.mibi_image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mibidata\.panels module
+-----------------------
+
+.. automodule:: mibidata.panels
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mibidata\.runs module
+---------------------
+
+.. automodule:: mibidata.runs
     :members:
     :undoc-members:
     :show-inheritance:

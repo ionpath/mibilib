@@ -47,10 +47,72 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-mibidata.combine_tiffs">
+<span id="mibidata-combine-tiffs-module"></span><h2>mibidata.combine_tiffs module<a class="headerlink" href="#module-mibidata.combine_tiffs" title="Permalink to this headline">¶</a></h2>
+<p>Combines a folder of single-channel TIFFs into a multiplexed MIBItiff.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<dl class="function">
+<dt id="mibidata.combine_tiffs.merge_mibitiffs">
+<code class="descclassname">mibidata.combine_tiffs.</code><code class="descname">merge_mibitiffs</code><span class="sig-paren">(</span><em>input_folder</em>, <em>out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.merge_mibitiffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges a folder of single-channel MIBItiff files into a single MIBItiff.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_folder</strong> – Path to a folder containing MIBItiff files. While these
+files may be single-channel, they are assumed to have accurate and
+consistent MIBI metadata.</li>
+<li><strong>out</strong> – Optionally, a path to a location for saving the combined TIFF. If
+not specified, defaults to ‘combined.tiff’ inside the input folder.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.combine_tiffs.create_mibitiffs">
+<code class="descclassname">mibidata.combine_tiffs.</code><code class="descname">create_mibitiffs</code><span class="sig-paren">(</span><em>input_folder</em>, <em>run_path</em>, <em>point</em>, <em>panel_path</em>, <em>slide</em>, <em>size</em>, <em>run_label=None</em>, <em>instrument=None</em>, <em>tissue=None</em>, <em>aperture=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.create_mibitiffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines single-channel TIFFs into a MIBItiff.</p>
+<p>The input TIFFs are not assumed to have any MIBI metadata. If they do, it
+is suggested to use the simpler <a class="reference internal" href="#mibidata.combine_tiffs.merge_mibitiffs" title="mibidata.combine_tiffs.merge_mibitiffs"><code class="xref py py-meth docutils literal"><span class="pre">merge_mibitiffs()</span></code></a> instead.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_folder</strong> – Path to a folder containing single-channel TIFFs.</li>
+<li><strong>run_path</strong> – Path to a run xml.</li>
+<li><strong>point</strong> – Point name of the image, e.g. Point1 or Point2. This should match
+the name of folder generated for the raw data as it is listed in the
+run xml file.</li>
+<li><strong>panel_path</strong> – Path to a panel CSV.</li>
+<li><strong>slide</strong> – The slide ID.</li>
+<li><strong>size</strong> – The size of the FOV in microns, i.e. 500.</li>
+<li><strong>run_label</strong> – Optional custom run label for the combined TIFF. If uploading
+the output to MIBItracker, the run label set here must match the
+label of the MIBItracker run. Defaults to the name of the run xml.</li>
+<li><strong>instrument</strong> – Optionally, the instrument ID.</li>
+<li><strong>tissue</strong> – Optionally, the name of tissue.</li>
+<li><strong>aperture</strong> – Optionally, the name of the aperture or imaging preset.</li>
+<li><strong>out</strong> – Optionally, a path to a location for saving the combined TIFF. If
+not specified, defaults to ‘combined.tiff’ inside the input folder.</li>
+<li><strong>run_label</strong> – Optionally, a custom run label for the <cite>run</cite> property of the
+image.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-mibidata.mibi_image">
 <span id="mibidata-mibi-image-module"></span><h2>mibidata.mibi_image module<a class="headerlink" href="#module-mibidata.mibi_image" title="Permalink to this headline">¶</a></h2>
 <p>Base module for working with MIBI images.</p>
-<p>Copyright (C) 2018 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="class">
 <dt id="mibidata.mibi_image.MibiImage">
 <em class="property">class </em><code class="descclassname">mibidata.mibi_image.</code><code class="descname">MibiImage</code><span class="sig-paren">(</span><em>data</em>, <em>channels</em>, <em>run=None</em>, <em>date=None</em>, <em>coordinates=None</em>, <em>size=None</em>, <em>slide=None</em>, <em>point_name=None</em>, <em>folder=None</em>, <em>dwell=None</em>, <em>scans=None</em>, <em>aperture=None</em>, <em>instrument=None</em>, <em>tissue=None</em>, <em>panel=None</em>, <em>version=None</em>, <em>mass_offset=None</em>, <em>mass_gain=None</em>, <em>time_resolution=None</em>, <em>miscalibrated=None</em>, <em>check_reg=None</em>, <em>datetime_format='%Y-%m-%dT%H:%M:%S'</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage" title="Permalink to this definition">¶</a></dt>
@@ -505,10 +567,56 @@ metadata of the selected channels.</td>
 </dd></dl>
 
 </div>
+<div class="section" id="module-mibidata.panels">
+<span id="mibidata-panels-module"></span><h2>mibidata.panels module<a class="headerlink" href="#module-mibidata.panels" title="Permalink to this headline">¶</a></h2>
+<p>Utility for working with panels saved as CSV files.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<dl class="function">
+<dt id="mibidata.panels.read_csv">
+<code class="descclassname">mibidata.panels.</code><code class="descname">read_csv</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.read_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a panel CSV file into a dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – The path to the CSV file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing columns ‘Mass’ and ‘Target’.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mibidata.runs">
+<span id="mibidata-runs-module"></span><h2>mibidata.runs module<a class="headerlink" href="#module-mibidata.runs" title="Permalink to this headline">¶</a></h2>
+<p>Utilities for working with MIBI run metadata.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<dl class="function">
+<dt id="mibidata.runs.parse_xml">
+<code class="descclassname">mibidata.runs.</code><code class="descname">parse_xml</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.runs.parse_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a run XML and return a list of image metadata dicts, plus a
+dict of the mass calibration and other msdf metadata.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – A path to a run XML file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of image metadata dicts for each FOV.
+calibration: A dict containing mass calibration parameters.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">fovs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-mibidata.tiff">
 <span id="mibidata-tiff-module"></span><h2>mibidata.tiff module<a class="headerlink" href="#module-mibidata.tiff" title="Permalink to this headline">¶</a></h2>
-<p>Read and write to and from IonpathMIBI multipage TIFF files.</p>
-<p>Copyright (C) 2018 Ionpath, Inc.  All rights reserved.</p>
+<p>Read and write to and from IONpath MIBItiff files.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.tiff.write">
 <code class="descclassname">mibidata.tiff.</code><code class="descname">write</code><span class="sig-paren">(</span><em>filename</em>, <em>image</em>, <em>sed=None</em>, <em>optical=None</em>, <em>ranges=None</em>, <em>multichannel=True</em>, <em>write_float=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.write" title="Permalink to this definition">¶</a></dt>
@@ -611,8 +719,8 @@ whose value is a list of (mass, target) tuples.</td>
 </div>
 <div class="section" id="module-mibidata.util">
 <span id="mibidata-util-module"></span><h2>mibidata.util module<a class="headerlink" href="#module-mibidata.util" title="Permalink to this headline">¶</a></h2>
-<p>Common convenience functions used in mibitof library.</p>
-<p>Copyright (C) 2018 Ionpath, Inc.  All rights reserved.</p>
+<p>Common convenience functions used in mibidata module.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.util.encode_strings">
 <code class="descclassname">mibidata.util.</code><code class="descname">encode_strings</code><span class="sig-paren">(</span><em>string_list</em>, <em>encoding='utf-8'</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.encode_strings" title="Permalink to this definition">¶</a></dt>
@@ -717,7 +825,10 @@ all text strings and text strings with numbers are sorted alphabetically.</p>
   <ul>
 <li><a class="reference internal" href="#">mibidata package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-mibidata.combine_tiffs">mibidata.combine_tiffs module</a></li>
 <li><a class="reference internal" href="#module-mibidata.mibi_image">mibidata.mibi_image module</a></li>
+<li><a class="reference internal" href="#module-mibidata.panels">mibidata.panels module</a></li>
+<li><a class="reference internal" href="#module-mibidata.runs">mibidata.runs module</a></li>
 <li><a class="reference internal" href="#module-mibidata.tiff">mibidata.tiff module</a></li>
 <li><a class="reference internal" href="#module-mibidata.util">mibidata.util module</a></li>
 <li><a class="reference internal" href="#module-mibidata">Module contents</a></li>
