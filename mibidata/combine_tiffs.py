@@ -70,7 +70,9 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     Args:
         input_folder: Path to a folder containing single-channel TIFFs.
         run_path: Path to a run xml.
-        point: Point name of the image, e.g. Point1 or Point2.
+        point: Point name of the image, e.g. Point1 or Point2. This should match
+            the name of folder generated for the raw data as it is listed in the
+            run xml file.
         panel_path: Path to a panel CSV.
         slide: The slide ID.
         size: The size of the FOV in microns, i.e. 500.
@@ -94,7 +96,7 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     try:
         fov = fovs[point_number]
     except IndexError:
-        raise IndexError('Point{} not found in run xml.'.format(point_number))
+        raise IndexError('{} not found in run xml.'.format(point))
     if fov['date']:
         run_date = datetime.datetime.strptime(
             fov['date'], '%Y-%m-%dT%H:%M:%S').date()
@@ -158,7 +160,9 @@ if __name__ == '__main__':
         'run_xml', help='Path to a run XML file.'
     )
     parser.add_argument(
-        'point', help='The point number in the run, such as Point1 or Point2.'
+        'point', help='The point number in the run, e.g. Point1 or Point2. '
+                      'This should match the name of folder generated for the '
+                      'raw data as it is listed in the run xml file.'
     )
     parser.add_argument(
         'panel',
