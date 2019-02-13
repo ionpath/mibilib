@@ -5,6 +5,8 @@ Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 import io
 import json
 import os
+import warnings
+
 import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
@@ -321,7 +323,7 @@ class MibiRequests(object):
         response.raise_for_status()
         return response
 
-    def upload_mibitiff(self, tiff_file):
+    def upload_mibitiff(self, tiff_file, run_id=None):
         """Uploads a single TIFF to the MibiTracker.
 
         This uses the 'run' and 'folder' fields in the MibiTiff's description to
@@ -330,6 +332,9 @@ class MibiRequests(object):
         Args:
             tiff_file: A string path to a TIFF file or an open file object
                 containing the TIFF data.
+            run_id: The ID of the run the image is from. This enables checking
+                of the image metadata against expected values and may become
+                mandatory in the future.
 
         Returns:
             The response from the MibiTracker after uploading the file and
@@ -338,6 +343,9 @@ class MibiRequests(object):
         Raises:
             TypeError: Raised if tiff_file is not a string path or file object.
         """
+        if run_id is None:
+            warnings.warn('Specifying the run_id is recommended and may become '
+                          'mandatory in the future.', FutureWarning)
         response = self.get('/upload_mibitiff/sign_tiff_url/').json()
         try:
             with open(tiff_file, 'rb') as fh:
@@ -350,7 +358,8 @@ class MibiRequests(object):
             self._upload_mibitiff(response['url'], tiff_file)
         return self.post(
             '/upload_mibitiff/',
-            data=json.dumps({'location': response['location']}),
+            data=json.dumps(
+                {'location': response['location'], 'run_id': run_id}),
             headers={'content-type': 'application/json'}
         )
 
