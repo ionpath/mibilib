@@ -95,7 +95,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     metadata = {
         'mibi.run': getattr(image, 'run'),
         'mibi.version': getattr(image, 'version'),
-        'mibi.instrument': getattr(image, 'instrument'),
+        'mibi.instrument': getattr(image, 'instrument') or 'MIBI',
         'mibi.slide': getattr(image, 'slide'),
         'mibi.dwell': getattr(image, 'dwell'),
         'mibi.scans': getattr(image, 'scans'),
