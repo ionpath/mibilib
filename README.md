@@ -15,7 +15,7 @@ Even if your system already has a version of Python installed, it is strongly
 recommended to use the `conda` environment manager to install and manage this
 library's dependencies.
 
-### Option A: Clone repository and create environement
+### Option A: Clone repository and create environment
 This option downloads the source code and creates the development environment.
 ```bash
 cd <path/to/where/you/want/to/install/project>
