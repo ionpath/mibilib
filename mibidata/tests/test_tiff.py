@@ -1,4 +1,4 @@
-"""Tests for mibitof.tiff
+"""Tests for mibidata.tiff
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
@@ -204,3 +204,7 @@ class TestWriteReadTiff(unittest.TestCase):
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(image.data, self.image.data.astype(np.float32))
+
+
+if __name__ == '__main__':
+    unittest.main()
