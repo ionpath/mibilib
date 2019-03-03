@@ -1,4 +1,4 @@
-"""Tests for mibitof.mibi_image
+"""Tests for mibidata.mibi_image
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
@@ -7,6 +7,7 @@ import os
 import shutil
 import tempfile
 import unittest
+import warnings
 
 import numpy as np
 from skimage import io as skio, transform
@@ -33,6 +34,12 @@ METADATA = {
 
 
 class TestMibiImage(unittest.TestCase):
+
+    def setUp(self):
+        # We have set anti-aliasing explicitly to False in MibiImage.resize
+        warnings.filterwarnings(
+            'ignore',
+            message='Anti-aliasing will be enabled by default.*')
 
     def test_mibi_image_string_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
