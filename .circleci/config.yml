@@ -33,11 +33,11 @@ jobs:
       - run:
           name: Run pylint on files changed from master
           command: |
-            for i in $(git diff origin/master --name-only | grep \.py | grep -v tests); do
+            for i in $(git diff origin/master --name-only | grep \.py$ | grep -v tests); do
               echo "linting $i";
               ~/miniconda/envs/mibitracker-client/bin/pylint $i;
             done
-            for i in $(git diff origin/master --name-only | grep tests/.*\.py); do
+            for i in $(git diff origin/master --name-only | grep tests/.*\.py$); do
               echo "linting $i";
               ~/miniconda/envs/mibitracker-client/bin/pylint \
                 --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member \
