@@ -33,12 +33,24 @@ jobs:
       - run:
           name: Run pylint on files changed from master
           command: |
-            if  [ $CIRCLE_BRANCH != "master" ]; then
-                ls -r mibitracker/*.py | grep -v "test_.*\.py$" | xargs ~/miniconda/envs/mibitracker-client/bin/pylint
-                ls -r mibidata/*.py | grep -v "test_.*\.py$" | xargs ~/miniconda/envs/mibitracker-client/bin/pylint
-                ls -r mibitracker/tests/test_*.py | xargs ~/miniconda/envs/mibitracker-client/bin/pylint --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument
-                ls -r mibidata/tests/test_*.py | xargs ~/miniconda/envs/mibitracker-client/bin/pylint --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument
-            fi
+            for i in $(git diff origin/master --name-only | grep \.py$ | grep -v tests); do
+              if [[ -f $i ]]; then
+                echo "linting $i";
+                ~/miniconda/envs/mibitracker-client/bin/pylint $i;
+              else
+                echo "skipping $i because it was deleted";
+              fi
+            done
+            for i in $(git diff origin/master --name-only | grep tests/.*\.py$); do
+              if [[ -f $i ]]; then
+                echo "linting $i";
+                ~/miniconda/envs/mibitracker-client/bin/pylint \
+                  --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member \
+                $i;
+              else
+                echo "skipping $i because it was deleted";
+              fi
+            done
       - store_artifacts:
           path: htmlcov
       - run:
