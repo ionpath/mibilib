@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Run pylint on files changed from master
           command: |
-            for i in $(git diff origin/master --name-only | grep \.py$ | grep -v tests); do
+            for i in $(git diff origin/master --name-only | grep \\.py$ | grep -v tests); do
               if [[ -f $i ]]; then
                 echo "linting $i";
                 ~/miniconda/envs/mibitracker-client/bin/pylint $i;
@@ -41,7 +41,7 @@ jobs:
                 echo "skipping $i because it was deleted";
               fi
             done
-            for i in $(git diff origin/master --name-only | grep tests/.*\.py$); do
+            for i in $(git diff origin/master --name-only | grep tests/.*\\.py$); do
               if [[ -f $i ]]; then
                 echo "linting $i";
                 ~/miniconda/envs/mibitracker-client/bin/pylint \
