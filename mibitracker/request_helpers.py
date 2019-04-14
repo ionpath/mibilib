@@ -200,12 +200,14 @@ class MibiRequests(object):
             A tuple of the response JSON returned by old run and from creating
             its copy, respectively.
         """
-        response = self.get('/runs/?label={}'.format(old_label))
+        # We don't expect there to be many runs with the same label, so it is
+        # safe to turn paging off.
+        response = self.get('/runs/?label={}&paging=no'.format(old_label))
         data = response.json()
         try:
             assert len(data) == 1
         except AssertionError:
-            raise MibiTrackerError('Expected 1 run with label {}, but {} were'
+            raise MibiTrackerError('Expected 1 run with label {}, but {} were '
                                    'found'.format(old_label, len(data)))
         data = data[0]
 
@@ -255,14 +257,16 @@ class MibiRequests(object):
             A dictionary with keys of the original image IDs, and values of the
             response JSON returned when updating the new images.
         """
-        old_images = self.get('/images/?run__label={}'.format(old_run_label))
+        old_images = self.get(
+            '/images/?run__label={}&paging=no'.format(old_run_label))
 
         image_map = {}
         for item in old_images.json():
 
             # Get image from copied run
-            response = self.get('/images/?run__label={}&folder={}'.format(
-                new_run_label, item['folder']))
+            response = self.get(
+                '/images/?run__label={}&folder={}&paging=no'.format(
+                    new_run_label, item['folder']))
             assert len(response.json()) == 1
             new_image = response.json()[0]
 
@@ -272,7 +276,7 @@ class MibiRequests(object):
                 'section': item['section'] and item['section']['id'],
                 'tissue': item['tissue'] and item['tissue']['id'],
                 'project': item['section'] and \
-                           item['section']['slide']['project'],
+                           item['section']['slide']['project']['id'],
             }
             # Add optional updates to copy such as a different frame size due to
             # cropping, or fixed mass calibration, etc.
@@ -426,7 +430,7 @@ class MibiRequests(object):
         """
         return self.session.get(
             '{}/images/'.format(self.url),
-            params={'run__label': run_label}).json()
+            params={'run__label': run_label, 'paging': 'no'}).json()
 
     def image_conjugates(self, image_id):
         """Gets a JSON array of panel conjugates from a given image id.
@@ -440,7 +444,8 @@ class MibiRequests(object):
             section assigned, or if its section does not have a panel assigned.
         """
         return self.get(
-            '/images/{}/conjugates/'.format(image_id)).json()
+            '/images/{}/conjugates/'.format(image_id),
+            params={'paging': 'no'}).json()
 
     def image_id(self, run_name, point_name):
         """Gets the primary key of an image given the specified run and point
@@ -463,7 +468,8 @@ class MibiRequests(object):
             '/images/',
             params={
                 'run__label': run_name,
-                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name)}
+                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                'paging': 'no'}
         ).json()
 
         try:
