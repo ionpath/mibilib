@@ -138,10 +138,8 @@ def composite(image, color_map, gamma=1/3):
     """
     data_map = {}
     for key, val in color_map.items():
-        scaled = image[val].astype(np.float)
-        scaled = np.divide(
-            scaled, np.maximum(np.max(scaled), MIN_COUNTS_FOR_SCALING))
-        scaled = np.power(scaled, gamma)
-        data_map[key] = scaled
+        data_map[key] = np.power(
+            image[val] / np.maximum(np.max(image[val]), MIN_COUNTS_FOR_SCALING),
+            gamma)
     screened = _screen(data_map)
     return np.uint8(screened * 255)

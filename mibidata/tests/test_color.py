@@ -62,18 +62,26 @@ class TestColor(unittest.TestCase):
         red = np.random.randint(0, 100, (10, 10), np.uint16)
         cyan = np.arange(100).reshape((10, 10)).astype(np.uint16)
         im = MibiImage(np.stack((red, cyan), axis=2), ['red', 'cyan'])
-        screened = color.composite(im, {'Red': 'red', 'Cyan': 'cyan'}, gamma=1)
+
         expected_red = ((red / np.max(red)) * 255).astype(int)
         expected_green_blue = (cyan / np.max(cyan) * 255).astype(int)
+
+        screen_red_only = color.composite(im, {'Red': 'red'}, gamma=1)
         # Could be off by one after round tripping through this all this
         max_diff_red = np.max(np.abs(
-            (screened[:, :, 0]).astype(int) - expected_red))
+            (screen_red_only[:, :, 0]).astype(int) - expected_red))
+        self.assertTrue(max_diff_red <= 1)
+
+        screen_both = color.composite(
+            im, {'Red': 'red', 'Cyan': 'cyan'}, gamma=1)
+        max_diff_red = np.max(np.abs(
+            (screen_both[:, :, 0]).astype(int) - expected_red))
         self.assertTrue(max_diff_red <= 1)
         max_diff_green = np.max(np.abs(
-            (screened[:, :, 1]).astype(int) - expected_green_blue))
+            (screen_both[:, :, 1]).astype(int) - expected_green_blue))
         self.assertTrue(max_diff_green <= 1)
         max_diff_blue = np.max(np.abs(
-            (screened[:, :, 2]).astype(int) - expected_green_blue))
+            (screen_both[:, :, 2]).astype(int) - expected_green_blue))
         self.assertTrue(max_diff_blue <= 1)
 
 
