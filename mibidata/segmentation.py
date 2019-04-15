@@ -36,7 +36,7 @@ def extract_cell_dataframe(label_image, image=None, mode='total'):
 
     columns = ['label', 'area', 'x_centroid', 'y_centroid']
     if image is not None:
-        columns += list(image.labels)
+        columns += list(image.targets or image.channels)
 
     rows = []
     for segment_label in segment_labels:
