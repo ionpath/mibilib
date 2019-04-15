@@ -10,6 +10,9 @@ COLORS = {
     'Red': 0,
     'Blue': 4 * np.pi / 3,
 }
+# Defines the minimum number of counts to scale images in
+# `composite`. This intended to prevent images with
+# only a few counts from being scaled to [0, 1].
 MIN_COUNTS_FOR_SCALING = 10
 
 
