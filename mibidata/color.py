@@ -140,8 +140,8 @@ def composite(image, color_map, gamma=1/3):
     """
     data_map = {}
     for key, val in color_map.items():
-        data_map[key] = np.power(
+        data_map[key] = np.power(  # pylint: disable=assignment-from-no-return
             image[val] / np.maximum(np.max(image[val]), MIN_COUNTS_FOR_SCALING),
-            gamma)  # pylint: disable=assignment-from-no-return
+            gamma)
     screened = _screen(data_map)
     return np.uint8(screened * 255)
