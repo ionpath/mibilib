@@ -66,14 +66,14 @@ class TestMsdf(unittest.TestCase):
             for i, pixel in enumerate(DATA):
                 sat[i, 0] = infile.tell()
                 sat[i, 1] = len(pixel)
-                for loc in pixel:
-                    count = int(loc > 0)
+                for timestamp in pixel:
+                    count = int(timestamp > 0)
                     infile.write(
-                        struct.pack(pseudodepths.DATA_FORMAT, loc, count))
+                        struct.pack(pseudodepths.DATA_FORMAT, timestamp, count))
             infile.seek(pseudodepths.HEADER_SIZE)
-            for loc, val in sat:
+            for offset, length in sat:
                 infile.write(
-                    struct.pack(pseudodepths.SAT_ENTRY_FORMAT, loc, val))
+                    struct.pack(pseudodepths.SAT_ENTRY_FORMAT, offset, length))
         cls.data_start = end_sat
 
     def setUp(self):
@@ -142,6 +142,8 @@ class TestMsdf(unittest.TestCase):
         self.assertEqual(depth1_data, self._pack_data(DEPTH1))
 
     def test_split_into_three(self):
+        """This should raise because the number of cycles is not divisible by
+        the number of desired pseudo-depths."""
         with self.assertRaises(ValueError):
             pseudodepths.divide(self.msdf, 3, self.tempdir)
 

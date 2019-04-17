@@ -109,7 +109,6 @@ def divide(msdf_file, num_scans, path=None):
                 # splits zero-events (cycle boundaries) into list of n
                 idx = np.split(np.where(pixel[:, 1] == 0)[0], num_scans)
                 # gets index of end of each pseudo-depth
-                print(idx)
                 boundaries = [i[-1] + 1 for i in idx[:-1]]
                 # splits array into list of sub-arrays using boundary indices
                 depths = np.split(pixel, boundaries, axis=0)
