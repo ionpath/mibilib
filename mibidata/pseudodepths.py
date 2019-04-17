@@ -138,6 +138,9 @@ if __name__ == '__main__':
     parser.add_argument('msdf_file', help='Path to single-depth msdf file.')
     parser.add_argument('num_scans', help='Integer number of pseudo-depths '
                                           'to divide this file into.')
-    parser.add_argument('--path', help='Path to output location.')
+    parser.add_argument('--path', help='Path to output location. If not '
+                                       'provided, defaults to a new folder '
+                                       'named "PseudoDepths" at the same '
+                                       'location as the input msdf file.')
     args = parser.parse_args()
     divide(args.msdf_file, int(args.num_scans), args.path)
