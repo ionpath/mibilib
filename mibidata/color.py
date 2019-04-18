@@ -1,4 +1,6 @@
-"""Color transformation and composites."""
+"""Color transformation and composites.
+
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
 

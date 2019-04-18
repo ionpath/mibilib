@@ -1,4 +1,6 @@
-"""Tests for mibidata.color"""
+"""Tests for mibidata.color
+
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import unittest
 
