@@ -45,7 +45,7 @@ jobs:
               if [[ -f $i ]]; then
                 echo "linting $i";
                 ~/miniconda/envs/mibitracker-client/bin/pylint \
-                  --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member \
+                  --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument  \
                 $i;
               else
                 echo "skipping $i because it was deleted";
