@@ -470,7 +470,8 @@ class MibiImage(object):
 
         for i, label in enumerate(self.channels):
             im = converter(data[:, :, i])
-            png_name = label[1] if isinstance(label, tuple) else label
+            png_name = (label[1] if isinstance(label, tuple) else label
+                        ).replace('/', '-')  # / isn't safe for filenames
             with warnings.catch_warnings():
                 warnings.filterwarnings('ignore',
                                         message='.*low contrast image.*')
