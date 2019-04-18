@@ -28,6 +28,14 @@ mibidata\.panels module
     :undoc-members:
     :show-inheritance:
 
+mibidata\.pseudodepths module
+-----------------------------
+
+.. automodule:: mibidata.pseudodepths
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 mibidata\.runs module
 ---------------------
 

@@ -588,6 +588,62 @@ metadata of the selected channels.</td>
 </dd></dl>
 
 </div>
+<div class="section" id="module-mibidata.pseudodepths">
+<span id="mibidata-pseudodepths-module"></span><h2>mibidata.pseudodepths module<a class="headerlink" href="#module-mibidata.pseudodepths" title="Permalink to this headline">¶</a></h2>
+<p>Splits single-depth MIBI scans into pseudo Depth Profiles.</p>
+<dl class="function">
+<dt id="mibidata.pseudodepths.divide">
+<code class="descclassname">mibidata.pseudodepths.</code><code class="descname">divide</code><span class="sig-paren">(</span><em>msdf_file</em>, <em>num_scans</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.pseudodepths.divide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a pseudo depth profile from a single Image.msdf file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>msdf_file</strong> – The string path to a local msdf file.</li>
+<li><strong>num_scans</strong> – The integer number of pseudo-depths into which to divide
+this msdf file. This must be a divisor of the number of ToF
+cycles per pixel.</li>
+<li><strong>path</strong> – The string path to the folder into which to write the output
+msdf files, which will follow the convention Depth0/Image.msdf,
+Depth1/Image.msdf, etc. If Depth&lt;n&gt;/Image.msdf files already
+exist in this location, they will be overwritten. If no path is
+specified, this will default to creating a folder named
+PseudoDepths in the same directory as the input msdf file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>The integer number of ToF cycles per pixel in the</dt>
+<dd><p class="first last">original data.</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>cycles_per_scan: The integer number of ToF cycles per each output</dt>
+<dd>pseudo-depth.</dd>
+</dl>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><ul class="simple">
+<li>cycles_per_pixel</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if the msdf file is not &gt;=6.3.4.0 with ToF cycle
+number encoded, or if the number of scans given is not a divisor
+of the number of cycles per scan.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-mibidata.runs">
 <span id="mibidata-runs-module"></span><h2>mibidata.runs module<a class="headerlink" href="#module-mibidata.runs" title="Permalink to this headline">¶</a></h2>
 <p>Utilities for working with MIBI run metadata.</p>
@@ -828,6 +884,7 @@ all text strings and text strings with numbers are sorted alphabetically.</p>
 <li><a class="reference internal" href="#module-mibidata.combine_tiffs">mibidata.combine_tiffs module</a></li>
 <li><a class="reference internal" href="#module-mibidata.mibi_image">mibidata.mibi_image module</a></li>
 <li><a class="reference internal" href="#module-mibidata.panels">mibidata.panels module</a></li>
+<li><a class="reference internal" href="#module-mibidata.pseudodepths">mibidata.pseudodepths module</a></li>
 <li><a class="reference internal" href="#module-mibidata.runs">mibidata.runs module</a></li>
 <li><a class="reference internal" href="#module-mibidata.tiff">mibidata.tiff module</a></li>
 <li><a class="reference internal" href="#module-mibidata.util">mibidata.util module</a></li>
