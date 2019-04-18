@@ -18,6 +18,7 @@ setup(name='mibitracker-client',
           'pip==18.0',
           'requests==2.20.1',
           'scikit-image==0.14.2',
+          'tqdm==4.31.1',
       ],
       packages=['mibitracker', 'mibidata']
      )
