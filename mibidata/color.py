@@ -14,10 +14,58 @@ COLORS = {
     'Red': 0,
     'Blue': 4 * np.pi / 3,
 }
-# Defines the minimum number of counts to scale images in
-# `composite`. This intended to prevent images with
-# only a few counts from being scaled to [0, 1].
-MIN_COUNTS_FOR_SCALING = 10
+
+
+def _trim(array, lower=0., upper=1.):
+    """Trims an array to a specified range; used for floating point errors."""
+    return np.minimum(np.maximum(array, lower), upper)
+
+
+def rgb2hsl(rgb):
+    """Converts an RGB array to HSL.
+
+    The hue is scaled to [0, 2*pi]; the saturation and lightness to [0, 1].
+
+    Args:
+        rgb: An NxMx3 array of floats in the unit interval.
+
+    Returns:
+        An array the same shape as rgb converted to HSL coordinates.
+
+    Raises:
+        ValueError: Raised if the input array has values outside of the unit
+            interval.
+
+    References:
+        HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.
+            http://en.wikipedia.org/wiki/HSL_and_HSV.
+    """
+    if not (np.all(rgb >= 0.) and np.all(rgb <= 1.)):
+        raise ValueError('Input array must have values in the unit interval.')
+
+    max_channel = np.max(rgb, axis=2)
+    min_channel = np.min(rgb, axis=2)
+    channel_range = max_channel - min_channel
+
+    # Use polar coordinate conversion rather than hexagons.
+    alpha = (2 * rgb[:, :, 0] - rgb[:, :, 1] - rgb[:, :, 2]) / 2
+    beta = np.sqrt(3) / 2 * (rgb[:, :, 1] - rgb[:, :, 2])
+    hue = np.arctan2(beta, alpha)
+    # Shift from [-pi, pi] to [0, 2*pi]
+    hue[hue < 0] += 2 * np.pi
+
+    luminosity = (max_channel + min_channel) / 2
+
+    saturation = np.zeros_like(channel_range)
+    denom = (1 - np.abs(2 * luminosity - 1))
+    # Set the saturation to zero along the grayscale.
+    idx = np.logical_and(channel_range > 0, ~np.isclose(denom, 0)) # pylint: disable=assignment-from-no-return
+    saturation[idx] = channel_range[idx] / (
+        1 - np.abs(2 * luminosity[idx] - 1))
+
+    return np.stack((_trim(hue, upper=2 * np.pi),
+                     _trim(saturation),
+                     _trim(luminosity)), axis=2)
 
 
 def hsl2rgb(hsl):
@@ -84,6 +132,32 @@ def hsl2rgb(hsl):
     return rgb
 
 
+def rgb2cym(rgb):
+    """Converts an RGB array to CYM.
+
+    Args:
+        rgb: An NxMx3 array of floats in the unit interval.
+
+    Returns:
+        An array the same shape as rgb converted to CYM colors.
+    """
+    return invert_luminosity(1 - rgb[:, :, [0, 2, 1]])
+
+
+def invert_luminosity(rgb):
+    """Inverts the luminosity of an RGB image.
+
+    Args:
+        rgb: An NxMx3 array of floats in the unit interval.
+
+    Returns:
+        An array the same shape as rgb that has had its luminosity inverted.
+    """
+    hsl = rgb2hsl(rgb)
+    hsl[:, :, 2] = 1 - hsl[:, :, 2]
+    return hsl2rgb(hsl)
+
+
 def _gray2hsl(array, angle):
     """Converts NxN grayscale to RGB of a single color.
 
@@ -125,17 +199,20 @@ def _screen(color_map):
     return screened
 
 
-def composite(image, color_map, gamma=1/3):
+def composite(image, color_map, gamma=1/3, min_scaling=10):
     """Combines multiple image channels by color into a 3-D array.
 
     Args:
-        image: A MibiImage/
+        image: A MibiImage.
         color_map: A dictionary keyed by color with values of channel names
             corresponding to a subset of those in the MibiImage. The
             allowed colors are 'Cyan', 'Yellow', 'Magenta', 'Green',
             'Orange', 'Violet', 'Red' and 'Blue'.
         gamma: The value with which to scale the image data. Defaults to 1/3.
             If no gamma correction is desired, set to 1.
+        min_scaling: The minimum number of counts used as the divisor for each
+            channel before applying gamma. This intended to prevent images with
+            only a few counts from being scaled incorrectly to [0, 1].
 
     Returns:
         An NxMx3 uint8 array of an RGB image.
@@ -143,7 +220,7 @@ def composite(image, color_map, gamma=1/3):
     data_map = {}
     for key, val in color_map.items():
         data_map[key] = np.power(  # pylint: disable=assignment-from-no-return
-            image[val] / np.maximum(np.max(image[val]), MIN_COUNTS_FOR_SCALING),
+            image[val] / np.maximum(np.max(image[val]), min_scaling),
             gamma)
     screened = _screen(data_map)
     return np.uint8(screened * 255)

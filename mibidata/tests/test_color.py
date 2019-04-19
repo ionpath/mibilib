@@ -43,7 +43,41 @@ HSL = np.array([[
 ]]).reshape(3, 4, 3)
 
 
+CYM = np.array([[
+    [1., 1., 1.],
+    [0.5, 0.5, 0.5],
+    [0., 0., 0.],
+    [0., 1., 1.],
+    [0., 0.75, 0.],
+    [0.5, 0.5, 0.],
+    [1., 0.5, 0.5],
+    [1., 0.5, 1.],
+    [0.25, 0.25, 0.75],
+    [1., 1., 0.],
+    [1., 0., 1.],
+    [0.25, 0.25, 0.25]
+]]).reshape(3, 4, 3)
+
+
 class TestColor(unittest.TestCase):
+
+    def test_trim(self):
+        array = np.random.rand(4, 2, 3)
+        array[3, 1, 1] = -0.01
+        array[1, 0, 1] = 1.01
+        expected = array.copy()
+        expected[3, 1, 1] = 0.
+        expected[1, 0, 1] = 1.
+        npt.assert_array_equal(color._trim(array), expected)
+
+    def test_rgb2hsl_rainbow(self):
+        npt.assert_array_almost_equal(color.rgb2hsl(RGB), HSL)
+
+    def test_rgb2hsl_out_of_range(self):
+        with self.assertRaises(ValueError):
+            color.rgb2hsl(RGB + 0.1)
+        with self.assertRaises(ValueError):
+            color.rgb2hsl(RGB - 0.1)
 
     def test_hsl2rgb_rainbow(self):
         npt.assert_array_almost_equal(color.hsl2rgb(HSL), RGB)
@@ -59,6 +93,16 @@ class TestColor(unittest.TestCase):
             color.hsl2rgb(hsl)
         with self.assertRaises(ValueError):
             color.hsl2rgb(HSL - 0.1)
+
+    def test_invert_luminosity(self):
+        inverted = color.invert_luminosity(RGB)
+        hsl_inverted = color.rgb2hsl(inverted)
+        npt.assert_array_almost_equal(hsl_inverted[:, :, :2], HSL[:, :, :2])
+        npt.assert_array_almost_equal(hsl_inverted[:, :, 2], 1 - HSL[:, :, 2])
+
+    def test_rgb2cym(self):
+        npt.assert_array_almost_equal(color.rgb2cym(RGB), CYM)
+        npt.assert_array_almost_equal(color.rgb2cym(CYM), RGB)
 
     def test_composite_to_red_and_cyan(self):
         red = np.random.randint(0, 100, (10, 10), np.uint16)
