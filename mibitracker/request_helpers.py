@@ -12,6 +12,7 @@ from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from urllib3.util.retry import Retry
 
+from mibidata import tiff
 from .mibitracker_exceptions import MibiTrackerError
 
 # The number of retries will be applied to these code and methods only.
@@ -483,6 +484,21 @@ class MibiRequests(object):
             )
 
         return results[0]['id']
+
+    def get_mibi_image(self, image_id):
+        """Gets image data from MIBItracker and creates a MibiImage instance.
+
+        Args:
+            image_id: The integer id of an image.
+
+        Return:
+            A MibiImage instance of the requested image.
+        """
+        image_info = self.get('images/{}/'.format(image_id)).json()
+        tiff_path = '/'.join((image_info['run']['path'], image_info['folder'],
+                              'summed_image.tiff'))
+        tiff_data = self.download_file(tiff_path)
+        return tiff.read(tiff_data)
 
     def create_imageset(self, image_ids, imageset_name,
                         imageset_description=None):

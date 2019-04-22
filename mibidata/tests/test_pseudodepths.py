@@ -1,4 +1,6 @@
-"""Tests for pseudodepths.py"""
+"""Tests for pseudodepths.py
+
+Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import os
 import struct
