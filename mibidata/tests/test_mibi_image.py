@@ -1,4 +1,4 @@
-"""Tests for mibitof.mibi_image
+"""Tests for mibidata.mibi_image
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
@@ -7,6 +7,7 @@ import os
 import shutil
 import tempfile
 import unittest
+import warnings
 
 import numpy as np
 from skimage import io as skio, transform
@@ -33,6 +34,12 @@ METADATA = {
 
 
 class TestMibiImage(unittest.TestCase):
+
+    def setUp(self):
+        # We have set anti-aliasing explicitly to False in MibiImage.resize
+        warnings.filterwarnings(
+            'ignore',
+            message='Anti-aliasing will be enabled by default.*')
 
     def test_mibi_image_string_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -394,12 +401,12 @@ class TestExportGrayscales(unittest.TestCase):
                 roundtripped, resized.data[:, :, i])
 
     def test_export_with_tuple_channel_names(self):
-        channels = [(1, 'Channel_1'), (2, 'Channel_2')]
+        channels = [(1, 'Channel_1'), (2, 'Channel/2')]
         data = np.random.randint(0, 255, (10, 10, 2)).astype(np.uint16)
         im = mi.MibiImage(data, channels)
         im.export_pngs(self.test_dir)
         images = [skio.imread(f'{os.path.join(self.test_dir,  label)}.png')
-                  for (_, label) in im.channels]
+                  for label in ('Channel_1', 'Channel-2')]
         for i, roundtripped in enumerate(images):
             np.testing.assert_array_equal(
                 roundtripped, im.data[:, :, i])

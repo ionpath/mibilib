@@ -407,9 +407,14 @@ class MibiImage(object):
             dtype = np.float
 
         def _resize():
-            return transform.resize(
-                self.data, (size[0], size[1], shape[2]), order=3, mode='edge',
-                preserve_range=True).astype(dtype)
+            with warnings.catch_warnings():
+                warnings.filterwarnings(
+                    'ignore',
+                    message='Anti-aliasing will be enabled by default.*')
+                return transform.resize(
+                    self.data, (size[0], size[1], shape[2]), order=3,
+                    mode='edge', preserve_range=True,
+                    anti_aliasing=False).astype(dtype)
 
         if copy:
             return MibiImage(_resize(), self.labels, **self.metadata())
@@ -450,7 +455,7 @@ class MibiImage(object):
         dmin = data.min()
         dmax = data.max()
         if (data.dtype in (np.uint8, np.uint16, np.bool) or
-                np.issubdtype(data.dtype, np.int)):
+                np.issubdtype(data.dtype, np.integer)):
             # save as uint8 or uint 16 if already in those ranges
             if dmin >= 0 and dmax < 2 ** 8:
                 converter = lambda array: array.astype(np.uint8)
@@ -462,9 +467,12 @@ class MibiImage(object):
                     'rescale before exporting.')
         else:
             raise TypeError('Unsupported dtype: %s' % data.dtype.type)
+
         for i, label in enumerate(self.channels):
             im = converter(data[:, :, i])
-            png_name = label[1] if isinstance(label, tuple) else label
+            png_name = (label[1] if isinstance(label, tuple) else label
+                       ).replace('/', '-')  # / isn't safe for filenames
             with warnings.catch_warnings():
-                warnings.simplefilter('ignore', UserWarning)
+                warnings.filterwarnings('ignore',
+                                        message='.*low contrast image.*')
                 skio.imsave(f'{os.path.join(path, png_name)}.png', im)

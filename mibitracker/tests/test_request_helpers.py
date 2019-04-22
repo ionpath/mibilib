@@ -21,6 +21,7 @@ from mock import patch
 import requests
 from requests.exceptions import HTTPError
 
+from mibidata import tiff
 from mibitracker import request_helpers
 
 
@@ -216,3 +217,20 @@ class TestMibiRequests(unittest.TestCase):
             data={'image_id': 1},
             files=expected_files,
         )
+
+    @patch.object(tiff, 'read')
+    @patch.object(request_helpers.MibiRequests, 'download_file')
+    @patch('requests.Session.get')
+    def test_get_mibi_image(self, mock_get, mock_download, mock_read_tiff):
+        mock_get.return_value.json.return_value = {
+            'run': {'path': 'path/to/run'},
+            'folder': 'path/to/tiff'
+        }
+        self.mtu.get_mibi_image(1)
+        mock_download.assert_called_once_with(
+            'path/to/run/path/to/tiff/summed_image.tiff'
+        )
+        mock_read_tiff.assert_called_once_with(mock_download.return_value)
+
+if __name__ == '__main__':
+    unittest.main()

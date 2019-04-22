@@ -7,6 +7,7 @@ import os
 import shutil
 import tempfile
 import unittest
+import warnings
 
 import numpy as np
 from skimage import io, img_as_ubyte, transform
@@ -147,7 +148,9 @@ class TestWriteReadTiff(unittest.TestCase):
             tiff.write(self.filename, image)
 
     def test_read_wrong_software_tag(self):
-        io.imsave(self.filename, DATA)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message='.*low contrast image.*')
+            io.imsave(self.filename, DATA)
         with self.assertRaises(ValueError):
             tiff.read(self.filename)
 
