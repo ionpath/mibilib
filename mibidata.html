@@ -47,6 +47,123 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-mibidata.color">
+<span id="mibidata-color-module"></span><h2>mibidata.color module<a class="headerlink" href="#module-mibidata.color" title="Permalink to this headline">¶</a></h2>
+<p>Color transformation and composites.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<dl class="function">
+<dt id="mibidata.color.rgb2hsl">
+<code class="descclassname">mibidata.color.</code><code class="descname">rgb2hsl</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.rgb2hsl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an RGB array to HSL.</p>
+<p>The hue is scaled to [0, 2*pi]; the saturation and lightness to [0, 1].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as rgb converted to HSL coordinates.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if the input array has values outside of the unit
+interval.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.</dt>
+<dd><a class="reference external" href="http://en.wikipedia.org/wiki/HSL_and_HSV">http://en.wikipedia.org/wiki/HSL_and_HSV</a>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.color.hsl2rgb">
+<code class="descclassname">mibidata.color.</code><code class="descname">hsl2rgb</code><span class="sig-paren">(</span><em>hsl</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.hsl2rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an HSL array to RGB.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hsl</strong> – An NxMx3 array of floats representing an HSL image. The H layer
+must have values in the range [0, 2*pi]; the S and L layers must
+have values in the unit interval.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as hsl converted to RGB coordinates.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if the input array has values outside of the
+expected intervals.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.</dt>
+<dd><a class="reference external" href="http://en.wikipedia.org/wiki/HSL_and_HSV">http://en.wikipedia.org/wiki/HSL_and_HSV</a>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.color.rgb2cym">
+<code class="descclassname">mibidata.color.</code><code class="descname">rgb2cym</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.rgb2cym" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an RGB array to CYM.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as rgb converted to CYM colors.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.color.invert_luminosity">
+<code class="descclassname">mibidata.color.</code><code class="descname">invert_luminosity</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.invert_luminosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverts the luminosity of an RGB image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as rgb that has had its luminosity inverted.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.color.composite">
+<code class="descclassname">mibidata.color.</code><code class="descname">composite</code><span class="sig-paren">(</span><em>image</em>, <em>color_map</em>, <em>gamma=0.3333333333333333</em>, <em>min_scaling=10</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.composite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines multiple image channels by color into a 3-D array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> – A MibiImage.</li>
+<li><strong>color_map</strong> – A dictionary keyed by color with values of channel names
+corresponding to a subset of those in the MibiImage. The
+allowed colors are ‘Cyan’, ‘Yellow’, ‘Magenta’, ‘Green’,
+‘Orange’, ‘Violet’, ‘Red’ and ‘Blue’.</li>
+<li><strong>gamma</strong> – The value with which to scale the image data. Defaults to 1/3.
+If no gamma correction is desired, set to 1.</li>
+<li><strong>min_scaling</strong> – The minimum number of counts used as the divisor for each
+channel before applying gamma. This intended to prevent images with
+only a few counts from being scaled incorrectly to [0, 1].</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An NxMx3 uint8 array of an RGB image.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-mibidata.combine_tiffs">
 <span id="mibidata-combine-tiffs-module"></span><h2>mibidata.combine_tiffs module<a class="headerlink" href="#module-mibidata.combine_tiffs" title="Permalink to this headline">¶</a></h2>
 <p>Combines a folder of single-channel TIFFs into a multiplexed MIBItiff.</p>
@@ -591,6 +708,7 @@ metadata of the selected channels.</td>
 <div class="section" id="module-mibidata.pseudodepths">
 <span id="mibidata-pseudodepths-module"></span><h2>mibidata.pseudodepths module<a class="headerlink" href="#module-mibidata.pseudodepths" title="Permalink to this headline">¶</a></h2>
 <p>Splits single-depth MIBI scans into pseudo Depth Profiles.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.pseudodepths.divide">
 <code class="descclassname">mibidata.pseudodepths.</code><code class="descname">divide</code><span class="sig-paren">(</span><em>msdf_file</em>, <em>num_scans</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.pseudodepths.divide" title="Permalink to this definition">¶</a></dt>
@@ -715,14 +833,14 @@ run date, or size are None.</p>
 
 <dl class="function">
 <dt id="mibidata.tiff.read">
-<code class="descclassname">mibidata.tiff.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>sims=True</em>, <em>sed=False</em>, <em>optical=False</em>, <em>label=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mibidata.tiff.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file</em>, <em>sims=True</em>, <em>sed=False</em>, <em>optical=False</em>, <em>label=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads MIBI data from an IonpathMIBI TIFF file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> – The path to the TIFF.</li>
+<li><strong>file</strong> – The string path or an open file object to a MIBItiff file.</li>
 <li><strong>sims</strong> – Boolean for whether to return the SIMS (MIBI) data. Defaults to
 True.</li>
 <li><strong>sed</strong> – Boolean for whether to return the SED data. Defaults to False.</li>
@@ -881,6 +999,7 @@ all text strings and text strings with numbers are sorted alphabetically.</p>
   <ul>
 <li><a class="reference internal" href="#">mibidata package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-mibidata.color">mibidata.color module</a></li>
 <li><a class="reference internal" href="#module-mibidata.combine_tiffs">mibidata.combine_tiffs module</a></li>
 <li><a class="reference internal" href="#module-mibidata.mibi_image">mibidata.mibi_image module</a></li>
 <li><a class="reference internal" href="#module-mibidata.panels">mibidata.panels module</a></li>

@@ -4,6 +4,14 @@ mibidata package
 Submodules
 ----------
 
+mibidata\.color module
+----------------------
+
+.. automodule:: mibidata.color
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 mibidata\.combine\_tiffs module
 -------------------------------
 
