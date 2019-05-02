@@ -501,7 +501,7 @@ class MibiRequests(object):
         tiff_data = self.download_file(tiff_path)
         return tiff.read(tiff_data)
 
-    def get_single_channel(self, image_id, channel_name):
+    def get_channel_data(self, image_id, channel_name):
         """Gets a single channel from MIBItracker as a 2D numpy array.
 
         Args:
