@@ -10,6 +10,7 @@ import warnings
 import requests
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
+from skimage import io as skio
 from urllib3.util.retry import Retry
 
 from mibidata import tiff
@@ -499,6 +500,28 @@ class MibiRequests(object):
                               'summed_image.tiff'))
         tiff_data = self.download_file(tiff_path)
         return tiff.read(tiff_data)
+
+    def get_channel_data(self, image_id, channel_name):
+        """Gets a single channel from MIBItracker as a 2D numpy array.
+
+        Args:
+            image_id: The integer id of an image.
+            channel_name: The name of the channel to download.
+
+        Returns:
+            A MxN numpy array of the channel data.
+        """
+        image_info = self.get('images/{}/'.format(image_id)).json()
+
+        if not channel_name in image_info['overlays']:
+            raise MibiTrackerError(
+                'Specified channel name is not present in image')
+        buf = io.BytesIO()
+        response = requests.get(image_info['overlays'][channel_name])
+        response.raise_for_status()
+        buf.write(response.content)
+        buf.seek(0)
+        return skio.imread(buf)
 
     def create_imageset(self, image_ids, imageset_name,
                         imageset_description=None):
