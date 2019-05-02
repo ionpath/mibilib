@@ -517,7 +517,9 @@ class MibiRequests(object):
             raise MibiTrackerError(
                 'Specified channel name is not present in image')
         buf = io.BytesIO()
-        buf.write(requests.get(image_info['overlays'][channel_name]).content)
+        response = requests.get(image_info['overlays'][channel_name])
+        response.raise_for_status()
+        buf.write(response.content)
         buf.seek(0)
         return skio.imread(buf)
 
