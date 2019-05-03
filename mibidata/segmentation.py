@@ -4,7 +4,7 @@ Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
 import pandas as pd
-from scipy import ndimage as ndi, stats
+from scipy import ndimage as ndi
 
 from mibidata import mibi_image as mi
 

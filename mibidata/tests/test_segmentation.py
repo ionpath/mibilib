@@ -5,7 +5,7 @@ Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 import unittest
 
 import numpy as np
-from numpy.testing import assert_array_equal, assert_array_almost_equal
+from numpy.testing import assert_array_equal
 import pandas as pd
 import pandas.util.testing as pdt
 
