@@ -52,6 +52,14 @@ mibidata\.runs module
     :undoc-members:
     :show-inheritance:
 
+mibidata\.segmentation module
+-----------------------------
+
+.. automodule:: mibidata.segmentation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 mibidata\.tiff module
 ---------------------
 

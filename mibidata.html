@@ -787,6 +787,123 @@ calibration: A dict containing mass calibration parameters.</td>
 </dd></dl>
 
 </div>
+<div class="section" id="module-mibidata.segmentation">
+<span id="mibidata-segmentation-module"></span><h2>mibidata.segmentation module<a class="headerlink" href="#module-mibidata.segmentation" title="Permalink to this headline">¶</a></h2>
+<p>Utilities for working with segmentation data.</p>
+<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<dl class="function">
+<dt id="mibidata.segmentation.extract_cell_dataframe">
+<code class="descclassname">mibidata.segmentation.</code><code class="descname">extract_cell_dataframe</code><span class="sig-paren">(</span><em>label_image</em>, <em>image=None</em>, <em>mode='total'</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.extract_cell_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dataframe of single-cell statistics from a labeled image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</li>
+<li><strong>image</strong> – Optionally, a MibiImage of an NxM field of view. Defaults to
+None; if not None, the sum or score (depending on the mode) of each
+channel within each labeled region is returned as column of the
+dataframe. Otherwise, only the regions’ size and area are returned.</li>
+<li><strong>mode</strong> – One of``’total’`` or <code class="docutils literal"><span class="pre">'quadrant'</span></code>, defaulting to <code class="docutils literal"><span class="pre">'total'</span></code>. If
+<code class="docutils literal"><span class="pre">'total'`,</span> <span class="pre">the</span> <span class="pre">ion</span> <span class="pre">counts</span> <span class="pre">within</span> <span class="pre">each</span> <span class="pre">labeled</span> <span class="pre">region</span> <span class="pre">are</span> <span class="pre">summed.</span> <span class="pre">If</span>
+<span class="pre">``quadrant</span></code>, the geometric mean of each regions’s four quadrants
+is calculated, which favors regions with even spatial distribution.
+This mode is ignored if an image is not specified.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dataframe indexed by image region’s label, and whose columns
+include the area, centroid, and if included the total or scored
+counts of the image’s channels within each region.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.segmentation.replace_labeled_pixels">
+<code class="descclassname">mibidata.segmentation.</code><code class="descname">replace_labeled_pixels</code><span class="sig-paren">(</span><em>label_image</em>, <em>df</em>, <em>columns=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.replace_labeled_pixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces the pixels within each label with a value from a dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</li>
+<li><strong>df</strong> – A dataframe whose index corresponds to the integers in the
+label_array, and whose column values will replace the labels in the
+returned image.</li>
+<li><strong>columns</strong> – An optional sequence of which columns from the dataframe to
+include in the returned image. Defaults to None, which uses all
+columns in the dataframe.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <code class="xref py py-class docutils literal"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance where each channel
+corresponds to a dataframe column, and the data is a copy of the label
+image where each pixel has been replaced with the corresponding value
+from that label’s row in the dataframe.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.segmentation.expand_objects">
+<code class="descclassname">mibidata.segmentation.</code><code class="descname">expand_objects</code><span class="sig-paren">(</span><em>label_image</em>, <em>distance</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.expand_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands labeled objects in an image by a given number of pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</li>
+<li><strong>distance</strong> – The distance (in pixels) to expand each object.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new label array of the expanded objects.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.segmentation.filter_by_size">
+<code class="descclassname">mibidata.segmentation.</code><code class="descname">filter_by_size</code><span class="sig-paren">(</span><em>label_image</em>, <em>min_size</em>, <em>max_size</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.filter_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes segments outside of a specified size range.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</li>
+<li><strong>min_size</strong> – The minimum area in pixels of a segment.</li>
+<li><strong>max_size</strong> – The maximum area in pixels of a segment.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new label image, where segments outside of the size range have been
+set to zero, and a dataframe of its labels, centroids and area.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-mibidata.tiff">
 <span id="mibidata-tiff-module"></span><h2>mibidata.tiff module<a class="headerlink" href="#module-mibidata.tiff" title="Permalink to this headline">¶</a></h2>
 <p>Read and write to and from IONpath MIBItiff files.</p>
@@ -1005,6 +1122,7 @@ all text strings and text strings with numbers are sorted alphabetically.</p>
 <li><a class="reference internal" href="#module-mibidata.panels">mibidata.panels module</a></li>
 <li><a class="reference internal" href="#module-mibidata.pseudodepths">mibidata.pseudodepths module</a></li>
 <li><a class="reference internal" href="#module-mibidata.runs">mibidata.runs module</a></li>
+<li><a class="reference internal" href="#module-mibidata.segmentation">mibidata.segmentation module</a></li>
 <li><a class="reference internal" href="#module-mibidata.tiff">mibidata.tiff module</a></li>
 <li><a class="reference internal" href="#module-mibidata.util">mibidata.util module</a></li>
 <li><a class="reference internal" href="#module-mibidata">Module contents</a></li>
