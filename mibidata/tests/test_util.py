@@ -1,4 +1,4 @@
-"""Tests for mibitof.util
+"""Tests for mibidata.util
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
@@ -57,3 +57,7 @@ class TestUtil(unittest.TestCase):
         formatted_names = [util.format_for_filename(n) for n in input_names]
 
         self.assertListEqual(formatted_names, expected_names)
+
+
+if __name__ == '__main__':
+    unittest.main()
