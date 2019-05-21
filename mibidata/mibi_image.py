@@ -216,7 +216,7 @@ class MibiImage(object):
         return False
 
     def __getitem__(self, channels):
-        """Equivalent to :meth:`~slice_data`."""
+        """Equivalent to :meth:`~slijce_data`."""
         return self.slice_data(channels)
 
     def metadata(self):
@@ -242,11 +242,11 @@ class MibiImage(object):
             pass
         try:
             return self.targets.index(channels)
-        except ValueError:
+        except (ValueError, AttributeError):
             pass
         try:
             return self.masses.index(channels)
-        except ValueError:
+        except (ValueError, AttributeError):
             pass
         try:
             return [self._channels.index(i) for i in channels]
@@ -254,11 +254,11 @@ class MibiImage(object):
             pass
         try:
             return [self.masses.index(i) for i in channels]
-        except ValueError:
+        except (ValueError, AttributeError):
             pass
         try:
             return [self.targets.index(i) for i in channels]
-        except ValueError:
+        except (ValueError, AttributeError):
             error_msg = f'Subset of channels, targets or massses not found ' \
                         f'matching {channels}.'
             if self.targets is None:
