@@ -204,11 +204,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     extratags=page_tags)
 
 
-def read(filename, sims=True, sed=False, optical=False, label=False):
+def read(file, sims=True, sed=False, optical=False, label=False):
     """Reads MIBI data from an IonpathMIBI TIFF file.
 
     Args:
-        filename: The path to the TIFF.
+        file: The string path or an open file object to a MIBItiff file.
         sims: Boolean for whether to return the SIMS (MIBI) data. Defaults to
             True.
         sed: Boolean for whether to return the SED data. Defaults to False.
@@ -237,7 +237,7 @@ def read(filename, sims=True, sed=False, optical=False, label=False):
     metadata = {}
     sims_data = []
     channels = []
-    with TiffFile(filename) as tif:
+    with TiffFile(file) as tif:
         _check_software(tif)
         for page in tif.pages:
             description = _page_description(page)

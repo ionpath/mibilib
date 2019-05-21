@@ -26,7 +26,7 @@ def read_csv(path):
     except ParserError:
         # Determine lines that indicate a table header line
         header_lines = []
-        with open(path, 'rt') as f:
+        with open(path, 'rt', encoding='utf-8') as f:
             line_pos = 0
             for line in f:
                 if 'Mass' in line and 'Target' in line:
