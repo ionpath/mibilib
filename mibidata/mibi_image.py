@@ -102,6 +102,7 @@ class MibiImage(object):
         filename: The name of the Run XML file which corresponds to the run
             name.
     """
+
     # pylint: disable=too-many-arguments
     def __init__(self, data, channels, run=None, date=None,
                  coordinates=None, size=None, slide=None, point_name=None,
@@ -182,7 +183,6 @@ class MibiImage(object):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
         self._channels = tuple(channels)
-        self._index = dict(zip(channels, range(length)))
         if all((isinstance(c, tuple) and len(c) == 2 for c in channels)):
             # Tuples of masses and targets.
             masses, targets = zip(*channels)
@@ -192,8 +192,6 @@ class MibiImage(object):
                 raise ValueError('Targets are not all unique.')
             self.masses = masses
             self.targets = targets
-            self._mass_index = dict(zip(masses, range(length)))
-            self._target_index = dict(zip(targets, range(length)))
         elif all(isinstance(c, str) for c in channels):
             self.masses = self.targets = None
         else:
@@ -239,30 +237,35 @@ class MibiImage(object):
             KeyError: Raised if channels are not all found in image.
         """
         try:
-            return self._index[channels]
-        except (KeyError, TypeError):
+            return self._channels.index(channels)
+        except ValueError:
             pass
         try:
-            return self._target_index[channels]
-        except (KeyError, TypeError, AttributeError):
+            return self.targets.index(channels)
+        except ValueError:
             pass
         try:
-            return self._mass_index[channels]
-        except (KeyError, TypeError, AttributeError):
+            return self.masses.index(channels)
+        except ValueError:
             pass
         try:
-            return [self._index[i] for i in channels]
-        except KeyError:
+            return [self._channels.index(i) for i in channels]
+        except ValueError:
             pass
         try:
-            return [self._mass_index[i] for i in channels]
-        except (KeyError, AttributeError):
+            return [self.masses.index(i) for i in channels]
+        except ValueError:
             pass
         try:
-            return [self._target_index[i] for i in channels]
-        except (KeyError, AttributeError):
-            raise KeyError(f'Subset of channels, targets or massses not found '
-                           f'matching {channels}')
+            return [self.targets.index(i) for i in channels]
+        except ValueError:
+            error_msg = f'Subset of channels, targets or massses not found ' \
+                        f'matching {channels}.'
+            if self.targets is None:
+                error_msg += ' Note: channels were indexed with target names ' \
+                             'only.'
+
+            raise KeyError(error_msg)
 
     def slice_data(self, channels):
         """Selects a subset of data from the MibiImage given selected channels.
