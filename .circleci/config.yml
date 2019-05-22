@@ -5,8 +5,8 @@ jobs:
     docker:
       - image: gcr.io/mibitof-instrument/simpleelastix
         auth:
-          username: _json_key  # default username when using a JSON key file to authenticate
-          password: $GCR_ACCESS 
+          username: _json_key
+          password: $GCR_ACCESS
     working_directory: ~/mibitracker-client
     steps:
       - checkout:
