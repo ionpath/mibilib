@@ -9,7 +9,7 @@ jobs:
       - checkout:
           path: ~/mibitracker-client
       - restore_cache:
-          key: cache1-{{ checksum "environment.yml" }}
+          key: cache2-{{ checksum "environment.yml" }}
       - run:
           name: Install Python deps in a conda env if not cached
           command: |
@@ -22,7 +22,7 @@ jobs:
                 echo "Using cached Miniconda install";
             fi
       - save_cache:
-          key: cache1-{{ checksum "environment.yml" }}
+          key: cache2-{{ checksum "environment.yml" }}
           paths:
             - ~/miniconda/envs/mibitracker-client
       - run:
