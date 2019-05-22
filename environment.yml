@@ -3,22 +3,22 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- coverage=4.5.3
-- jupyter=1.0.0
-- matplotlib=2.2.3
-- mock=2.0.0
-- numpy=1.16.0
-- pandas=0.23.4
 - pip=19.1.1
-- pylint=1.9.2
-- pytest=3.6.4
 - python=3.7.3
-- requests=2.20.1
-- scikit-image=0.14.2
-- scikit-learn=0.20.3
-- setuptools=40.4.0
-- sphinx=1.7.9
-- sphinx-argparse=0.2.2
-- tqdm=4.31.1
 - pip:
+    - coverage==4.5.3
+    - jupyter==1.0.0
+    - matplotlib==2.2.3
+    - mock==2.0.0
+    - numpy==1.16.0
+    - pandas==0.23.4
+    - pylint==1.9.2
+    - pytest==3.6.4
+    - requests==2.20.1
+    - scikit-image==0.14.2
+    - scikit-learn==0.20.3
+    - setuptools==40.4.0
+    - sphinx==1.7.9
+    - sphinx-argparse==0.2.2
+    - tqdm==4.31.1
     - tox==3.7.0
