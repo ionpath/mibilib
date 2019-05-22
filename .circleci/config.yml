@@ -3,7 +3,10 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6
+      - image: gcr.io/mibitof-instrument/simpleelastix
+        auth:
+          username: _json_key  # default username when using a JSON key file to authenticate
+          password: $GCR_ACCESS 
     working_directory: ~/mibitracker-client
     steps:
       - checkout:
@@ -13,30 +16,27 @@ jobs:
       - run:
           name: Install Python deps in a conda env if not cached
           command: |
-            if [[ ! -d ~/miniconda/envs/mibitracker-client ]]; then
-                echo "Installing Miniconda ...";
-                wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O ~/miniconda.sh;
-                bash ~/miniconda.sh -b -f -p ~/miniconda;
-                ~/miniconda/bin/conda env create -f environment.yml;
+            if [[ ! -d /miniconda/envs/mibitracker-client ]]; then                
+                /miniconda/bin/conda env create -f environment.yml;
             else
                 echo "Using cached Miniconda install";
             fi
       - save_cache:
           key: cache1-{{ checksum "environment.yml" }}
           paths:
-            - ~/miniconda/envs/mibitracker-client
+            - /miniconda/envs/mibitracker-client
       - run:
           name: Run tests
           command: |
-            ~/miniconda/envs/mibitracker-client/bin/coverage run -m py.test mibitracker mibidata
-            ~/miniconda/envs/mibitracker-client/bin/coverage html -i --omit=*/tests/*
+            /miniconda/envs/mibitracker-client/bin/coverage run -m py.test mibitracker mibidata
+            /miniconda/envs/mibitracker-client/bin/coverage html -i --omit=*/tests/*
       - run:
           name: Run pylint on files changed from master
           command: |
             for i in $(git diff origin/master --name-only | grep \\.py$ | grep -v tests); do
               if [[ -f $i ]]; then
                 echo "linting $i";
-                ~/miniconda/envs/mibitracker-client/bin/pylint $i;
+                /miniconda/envs/mibitracker-client/bin/pylint $i;
               else
                 echo "skipping $i because it was deleted";
               fi
@@ -44,7 +44,7 @@ jobs:
             for i in $(git diff origin/master --name-only | grep tests/.*\\.py$); do
               if [[ -f $i ]]; then
                 echo "linting $i";
-                ~/miniconda/envs/mibitracker-client/bin/pylint \
+                /miniconda/envs/mibitracker-client/bin/pylint \
                   --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument  \
                 $i;
               else
@@ -74,8 +74,8 @@ jobs:
               git checkout gh-pages || git checkout --orphan gh-pages
               git rm -rf .
               cd ..
-              ~/miniconda/envs/mibitracker-client/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
-              ~/miniconda/envs/mibitracker-client/bin/sphinx-build -b html docs/source out
+              /miniconda/envs/mibitracker-client/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
+              /miniconda/envs/mibitracker-client/bin/sphinx-build -b html docs/source out
               mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
               cd out
               touch .nojekyll
