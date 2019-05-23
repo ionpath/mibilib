@@ -9,8 +9,8 @@ https://ionpath.github.io/mibitracker-client/
 
 ## Setup
 
-### Install Python 3.6
-Install the Python 3.6 version of [Miniconda](https://conda.io/miniconda.html).
+### Install Python 3.7
+Install the Python 3.7 version of [Miniconda](https://conda.io/miniconda.html).
 Even if your system already has a version of Python installed, it is strongly
 recommended to use the `conda` environment manager to install and manage this
 library's dependencies.
@@ -54,6 +54,8 @@ More examples can be found in the following notebooks:
  - [MIBItracker_API_Tutorial](MIBItracker_API_Tutorial.ipynb)
 
  - [MibiImage_Tutorial](MibiImage_Tutorial.ipynb)
+
+ - [SingleCellSpatialExamples](SingleCellSpatialExamples.ipynb)
 
 Full documentation for this library can be found at
 https://ionpath.github.io/mibitracker-client/.
