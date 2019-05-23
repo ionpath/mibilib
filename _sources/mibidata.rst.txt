@@ -4,72 +4,72 @@ mibidata package
 Submodules
 ----------
 
-mibidata\.color module
-----------------------
+mibidata.color module
+---------------------
 
 .. automodule:: mibidata.color
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.combine\_tiffs module
--------------------------------
+mibidata.combine\_tiffs module
+------------------------------
 
 .. automodule:: mibidata.combine_tiffs
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.mibi\_image module
-----------------------------
+mibidata.mibi\_image module
+---------------------------
 
 .. automodule:: mibidata.mibi_image
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.panels module
------------------------
+mibidata.panels module
+----------------------
 
 .. automodule:: mibidata.panels
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.pseudodepths module
------------------------------
+mibidata.pseudodepths module
+----------------------------
 
 .. automodule:: mibidata.pseudodepths
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.runs module
----------------------
+mibidata.runs module
+--------------------
 
 .. automodule:: mibidata.runs
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.segmentation module
------------------------------
+mibidata.segmentation module
+----------------------------
 
 .. automodule:: mibidata.segmentation
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.tiff module
----------------------
+mibidata.tiff module
+--------------------
 
 .. automodule:: mibidata.tiff
     :members:
     :undoc-members:
     :show-inheritance:
 
-mibidata\.util module
----------------------
+mibidata.util module
+--------------------
 
 .. automodule:: mibidata.util
     :members:

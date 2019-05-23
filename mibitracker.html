@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>mibitracker package &#8212; IONpath MIBItracker Client 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.0.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -31,8 +23,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -54,7 +45,7 @@
 <dl class="exception">
 <dt id="mibitracker.mibitracker_exceptions.MibiTrackerError">
 <em class="property">exception </em><code class="descclassname">mibitracker.mibitracker_exceptions.</code><code class="descname">MibiTrackerError</code><a class="headerlink" href="#mibitracker.mibitracker_exceptions.MibiTrackerError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Raise for exceptions where the response from the MibiTracker API is
 invalid or unexpected.</p>
 </dd></dl>
@@ -67,13 +58,13 @@ invalid or unexpected.</p>
 <dl class="class">
 <dt id="mibitracker.request_helpers.MibiRequests">
 <em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email</em>, <em>password</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Helper class for making requests to the MibiTracker.</p>
-<p>This is an opinionated way of using <code class="docutils literal"><span class="pre">requests.Session</span></code> with the following
+<p>This is an opinionated way of using <code class="docutils literal notranslate"><span class="pre">requests.Session</span></code> with the following
 features:</p>
 <ul class="simple">
 <li>In the case of specified HTTP errors, requests are retried.</li>
-<li>All responses call <code class="docutils literal"><span class="pre">raise_for_status()</span></code>.</li>
+<li>All responses call <code class="docutils literal notranslate"><span class="pre">raise_for_status()</span></code>.</li>
 <li><dl class="first docutils">
 <dt>An instance requests an authorization token upon initialization, and</dt>
 <dd>includes it in a default header for all future requests. No token
@@ -88,15 +79,15 @@ instance needs to be initialized.</dd>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>url</strong> – The string url to the backend of a MibiTracker instance, e.g.
-<code class="docutils literal"><span class="pre">'https://backend-dot-mibitracker-demo.appspot.com'</span></code>.</li>
+<code class="docutils literal notranslate"><span class="pre">'https://backend-dot-mibitracker-demo.appspot.com'</span></code>.</li>
 <li><strong>email</strong> – The string email address of your MibiTracker account.</li>
 <li><strong>password</strong> – The string password of your MibiTracker account.</li>
 <li><strong>retries</strong> – The max number of retries for HTTP status errors. Defaults
-to <code class="docutils literal"><span class="pre">MAX_RETRIES</span></code> which is set to 3.</li>
+to <code class="docutils literal notranslate"><span class="pre">MAX_RETRIES</span></code> which is set to 3.</li>
 <li><strong>retry_methods</strong> – The HTTP methods to retry. Defaults to
-<code class="docutils literal"><span class="pre">RETRY_METHOD_WHITELIST</span></code> which is the defaults to <code class="docutils literal"><span class="pre">urllib3</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">RETRY_METHOD_WHITELIST</span></code> which is the defaults to <code class="docutils literal notranslate"><span class="pre">urllib3</span></code>’s
 whitelist with the addition of POST.</li>
-<li><strong>retry_codes</strong> – The HTTP status codes to retry. Defaults to <code class="docutils literal"><span class="pre">(502,</span> <span class="pre">503)</span></code>,
+<li><strong>retry_codes</strong> – The HTTP status codes to retry. Defaults to <code class="docutils literal notranslate"><span class="pre">(502,</span> <span class="pre">503)</span></code>,
 which are associated with transient errors seen on app engine.</li>
 </ul>
 </td>
@@ -112,7 +103,7 @@ which are associated with transient errors seen on app engine.</li>
 <dl class="attribute">
 <dt id="mibitracker.request_helpers.MibiRequests.session">
 <code class="descname">session</code><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.session" title="Permalink to this definition">¶</a></dt>
-<dd><p>A <code class="docutils literal"><span class="pre">StatusCheckedSession</span></code> that includes an authorization
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">StatusCheckedSession</span></code> that includes an authorization
 header and automatically raises for HTTP status errors.</p>
 </dd></dl>
 
@@ -120,7 +111,7 @@ header and automatically raises for HTTP status errors.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">HTTPError</span></code> – Raised by <code class="docutils literal"><span class="pre">requests.raise_for_status()</span></code>, i.e. if a
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">HTTPError</span></code> – Raised by <code class="docutils literal notranslate"><span class="pre">requests.raise_for_status()</span></code>, i.e. if a
 response’s status code is &gt;= 400.</td>
 </tr>
 </tbody>
@@ -134,14 +125,14 @@ response’s status code is &gt;= 400.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal"><span class="pre">'/images/'</span></code>
-or <code class="docutils literal"><span class="pre">'/tissues/?organ=tonsil'</span></code>.</li>
-<li><strong>*args</strong> – Passed to <code class="docutils literal"><span class="pre">requests.Session.get</span></code>.</li>
-<li><strong>**kwargs</strong> – Passes to <code class="docutils literal"><span class="pre">requests.Session.get</span></code>.</li>
+<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/images/'</span></code>
+or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ=tonsil'</span></code>.</li>
+<li><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.get</span></code>.</li>
+<li><strong>**kwargs</strong> – Passes to <code class="docutils literal notranslate"><span class="pre">requests.Session.get</span></code>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal"><span class="pre">requests.Session.get</span></code>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.get</span></code>.</p>
 </td>
 </tr>
 </tbody>
@@ -157,13 +148,13 @@ or <code class="docutils literal"><span class="pre">'/tissues/?organ=tonsil'</sp
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal"><span class="pre">'/slides/1/'</span></code>.</li>
-<li><strong>*args</strong> – Passed to <code class="docutils literal"><span class="pre">requests.Session.post</span></code>.</li>
-<li><strong>**kwargs</strong> – Passes to <code class="docutils literal"><span class="pre">requests.Session.post</span></code>.</li>
+<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/slides/1/'</span></code>.</li>
+<li><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code>.</li>
+<li><strong>**kwargs</strong> – Passes to <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal"><span class="pre">requests.Session.post</span></code>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code>.</p>
 </td>
 </tr>
 </tbody>
@@ -179,13 +170,13 @@ or <code class="docutils literal"><span class="pre">'/tissues/?organ=tonsil'</sp
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal"><span class="pre">'/images/1/'</span></code>.</li>
-<li><strong>*args</strong> – Passed to <code class="docutils literal"><span class="pre">requests.Session.put</span></code>.</li>
+<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/images/1/'</span></code>.</li>
+<li><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.put</span></code>.</li>
 <li><strong>**kwargs</strong> – Passes to <a href="#id1"><span class="problematic" id="id2">``</span></a>requests.Session.put`.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal"><span class="pre">requests.Session.put</span></code>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.put</span></code>.</p>
 </td>
 </tr>
 </tbody>
@@ -201,13 +192,13 @@ or <code class="docutils literal"><span class="pre">'/tissues/?organ=tonsil'</sp
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal"><span class="pre">'/images/1/'</span></code>.</li>
-<li><strong>*args</strong> – Passed to <code class="docutils literal"><span class="pre">requests.Session.delete</span></code>.</li>
-<li><strong>**kwargs</strong> – Passes to <code class="docutils literal"><span class="pre">requests.Session.delete</span></code>.</li>
+<li><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/images/1/'</span></code>.</li>
+<li><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.delete</span></code>.</li>
+<li><strong>**kwargs</strong> – Passes to <code class="docutils literal notranslate"><span class="pre">requests.Session.delete</span></code>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal"><span class="pre">requests.Session.delete</span></code>.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.delete</span></code>.</p>
 </td>
 </tr>
 </tbody>
@@ -251,9 +242,9 @@ constructed from the run and image folders.</td>
 </table>
 <dl class="docutils">
 <dt>Returns: A list of JSON data for each run that matches the search.</dt>
-<dd>If only <code class="docutils literal"><span class="pre">run_name</span></code> is specified, this list could be of any
+<dd>If only <code class="docutils literal notranslate"><span class="pre">run_name</span></code> is specified, this list could be of any
 length as a run’s name is not necessarily unique. If
-<code class="docutils literal"><span class="pre">run_label</span></code> is also specified, this is guaranteed to be
+<code class="docutils literal notranslate"><span class="pre">run_label</span></code> is also specified, this is guaranteed to be
 unique and the returned list could either be of length
 zero or one.</dd>
 </dl>
@@ -337,7 +328,7 @@ mandatory in the future.</li>
 queuing it to be processed into viewable data.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if tiff_file is not a string path or file object.</p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – Raised if tiff_file is not a string path or file object.</p>
 </td>
 </tr>
 </tbody>
@@ -367,7 +358,7 @@ an extension to indicate format, such as “CD45.tiff” or
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MibiTracker after uploading the file.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> – Raised if image_file is not a string path or file object.</p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – Raised if image_file is not a string path or file object.</p>
 </td>
 </tr>
 </tbody>
@@ -429,7 +420,7 @@ section assigned, or if its section does not have a panel assigned.</td>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An int id corresponding to the primary key of the image.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – Raised if no images match the specified run and point
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if no images match the specified run and point
 names or if more than one image matches the specified run and
 point names</p>
 </td>
@@ -501,27 +492,96 @@ imageset. Defaults to None.</li>
 <dl class="class">
 <dt id="mibitracker.request_helpers.StatusCheckedSession">
 <em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">StatusCheckedSession</code><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">requests.sessions.Session</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">requests.sessions.Session</span></code></p>
 <p>Raises for HTTP errors and adds any response JSON to the message.</p>
 <dl class="method">
 <dt id="mibitracker.request_helpers.StatusCheckedSession.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sends a GET request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</li>
+<li><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">requests.Response</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="mibitracker.request_helpers.StatusCheckedSession.post">
 <code class="descname">post</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.post" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sends a POST request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</li>
+<li><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</li>
+<li><strong>json</strong> – (optional) json to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</li>
+<li><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">requests.Response</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="mibitracker.request_helpers.StatusCheckedSession.put">
 <code class="descname">put</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.put" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sends a PUT request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</li>
+<li><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</li>
+<li><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">requests.Response</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="mibitracker.request_helpers.StatusCheckedSession.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.delete" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sends a DELETE request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</li>
+<li><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">requests.Response</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -539,16 +599,17 @@ imageset. Defaults to None.</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">mibitracker package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-mibitracker.mibitracker_exceptions">mibitracker.mibitracker_exceptions module</a></li>
-<li><a class="reference internal" href="#module-mibitracker.request_helpers">mibitracker.request_helpers module</a></li>
-<li><a class="reference internal" href="#module-mibitracker">Module contents</a></li>
-</ul>
-</li>
-</ul>
+<h1 class="logo"><a href="index.html">IONpath MIBItracker Client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -556,23 +617,26 @@ imageset. Defaults to None.</li>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/mibitracker.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -581,7 +645,7 @@ imageset. Defaults to None.</li>
       &copy;2018, IONpath Inc..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
