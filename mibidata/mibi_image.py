@@ -19,7 +19,7 @@ _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
                'filename')
 
 
-class MibiImage(object):
+class MibiImage():
     """A multiplexed image with labeled channels and metadata.
 
     Args:
