@@ -3,26 +3,26 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.7
     working_directory: ~/mibitracker-client
     steps:
       - checkout:
           path: ~/mibitracker-client
       - restore_cache:
-          key: cache1-{{ checksum "environment.yml" }}
+          key: cache2-{{ checksum "environment.yml" }}
       - run:
           name: Install Python deps in a conda env if not cached
           command: |
             if [[ ! -d ~/miniconda/envs/mibitracker-client ]]; then
                 echo "Installing Miniconda ...";
-                wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O ~/miniconda.sh;
+                wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh;
                 bash ~/miniconda.sh -b -f -p ~/miniconda;
                 ~/miniconda/bin/conda env create -f environment.yml;
             else
                 echo "Using cached Miniconda install";
             fi
       - save_cache:
-          key: cache1-{{ checksum "environment.yml" }}
+          key: cache2-{{ checksum "environment.yml" }}
           paths:
             - ~/miniconda/envs/mibitracker-client
       - run:
