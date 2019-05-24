@@ -11,7 +11,7 @@ setup(name='mibitracker-client',
       url='https://github.com/ionpath/mibitracker-client',
       description='Python utilities for IONpath MIBItracker and MIBItiff data',
       license='GNU General Public License v3.0',
-      python_requires='==3.7.*',
+      python_requires='~=3.6',
       install_requires=[
           'matplotlib==2.2.3',
           'numpy==1.16.0',
