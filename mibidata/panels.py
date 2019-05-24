@@ -18,7 +18,7 @@ def read_csv(path):
     """
     try:
         # First try if the CSV is simply Mass,Target,
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, encoding='utf-8')
         # CSV may parse successfully but not have proper columns
         if not {'Mass', 'Target'}.issubset(set(df.columns)):
             raise ParserError
@@ -47,7 +47,8 @@ def read_csv(path):
 
             batch = pd.read_csv(path, skiprows=start,
                                 skipfooter=(last_line - end),
-                                engine='python')[['Mass', 'Target']]
+                                engine='python',
+                                encoding='utf-8')[['Mass', 'Target']]
 
             # Remove empty rows if they exist
             df.append(batch.dropna())
