@@ -265,7 +265,7 @@ class MibiImage():
             else:
                 error_msg = f'Subset of channels, targets or massses not ' \
                     f'found matching {channels}/'
-                
+
             raise KeyError(error_msg)
 
     def slice_data(self, channels):
