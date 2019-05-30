@@ -160,7 +160,7 @@ def filter_by_size(label_image, min_size, max_size):
 
 def get_adjacency_matrix(label_image):
     """Calculates adjacency matrix.
-    
+
     Args:
         label_image: An NxM array where each pixel's nonnegative integer value
             corresponds to the label of an image region, such as a cell or
@@ -180,13 +180,9 @@ def get_adjacency_matrix(label_image):
     # To create the stack we first need to pad label_image with zeros
     pad_image = np.pad(label_image, 1, 'constant').astype(int)
     label_stack = np.array([
-        # pad_image[:-2, :-2],
         pad_image[:-2, 1:-1],
-        # pad_image[:-2, 2:],
         pad_image[1:-1, :-2], pad_image[1:-1, 1:-1], pad_image[1:-1, 2:],
-        # pad_image[2:, :-2],
         pad_image[2:, 1:-1],
-        # pad_image[2:, 2:],
     ])
     # next we sort labels along the stack
     label_stack = np.sort(label_stack, 0)

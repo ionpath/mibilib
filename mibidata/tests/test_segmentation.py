@@ -185,7 +185,7 @@ class TestSegmentation(unittest.TestCase):
         expected = np.array([
             [0, 0, 0, 0],
             [4/5, 1, 1/5, 2/5],
-            [2/2, 1/2, 1, 0],
+            [2/2, 1/2, 1, 2/2],
             [4/6, 2/6, 2/6, 1]])
 
         assert_array_equal(segmentation.get_adjacency_matrix(cell_labels),
