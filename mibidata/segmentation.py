@@ -197,13 +197,13 @@ def get_adjacency_matrix(label_image):
     # Finally we create the adjacency_matrix
     number_of_labels = label_image.max()
     adjacency_matrix = np.zeros([number_of_labels + 1] * 2)
-    for label_i in range(1, number_of_labels+1):
+    for label_i in range(1, number_of_labels + 1):
         boundary = labeled_boundaries == label_i
         boundary_labels = label_stack[:, boundary]
         label_j, label_count = np.unique(
             boundary_labels[boundary_labels != -1],
             return_counts=True)
-        print(label_i,label_j, label_count, boundary.sum())
+        print(label_i, label_j, label_count, boundary.sum())
         adjacency_matrix[label_i, label_j] = label_count / boundary.sum()
 
     return adjacency_matrix
