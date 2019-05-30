@@ -165,13 +165,13 @@ def get_adjacency_matrix(label_image):
         label_image: An NxM array where each pixel's nonnegative integer value
             corresponds to the label of an image region, such as a cell or
             other segment.
-            
+
     Returns:
         adjacency_matrix: NxN array of floats (N is the number of labels)
-            Each i, j element of the adjacency_matrix corresponds to the 
-            fraction of the i region boundary length that is shared with j 
-            region. 
-    
+            Each i, j element of the adjacency_matrix corresponds to the
+            fraction of the i region boundary length that is shared with j
+            region.
+
     """
 
     # To find the adjacent regions we stack nearest neighbors of label_image
