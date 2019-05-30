@@ -156,3 +156,58 @@ def filter_by_size(label_image, min_size, max_size):
     new_df = pd.DataFrame(df.loc[segment_labels, :]).set_index(
         pd.Index(new_labels, name='label'))
     return np.squeeze(new_image.data), new_df
+
+
+def get_adjacency_matrix(label_image):
+    """Calculates adjacency matrix.
+    
+    Args:
+        label_image: An NxM array where each pixel's nonnegative integer value
+            corresponds to the label of an image region, such as a cell or
+            other segment.
+            
+    Returns:
+        adjacency_matrix: NxN array of floats (N is the number of labels)
+            Each i, j element of the adjacency_matrix corresponds to the 
+            fraction of the i region boundary length that is shared with j 
+            region. 
+    
+    """
+
+    # To find the adjacent regions we stack nearest neighbors of label_image
+    # and look for pixles with more than 1 label on the stack
+
+    # To create the stack we first need to pad label_image with zeros
+    pad_image = np.pad(label_image, 1, 'constant').astype(int)
+    label_stack = np.array([
+        # pad_image[:-2, :-2],
+        pad_image[:-2, 1:-1],
+        # pad_image[:-2, 2:],
+        pad_image[1:-1, :-2], pad_image[1:-1, 1:-1], pad_image[1:-1, 2:],
+        # pad_image[2:, :-2],
+        pad_image[2:, 1:-1],
+        # pad_image[2:, 2:],
+    ])
+    # next we sort labels along the stack
+    label_stack = np.sort(label_stack, 0)
+    # we find duplicate labels
+    duplicates = label_stack[1:, :, :] == label_stack[:-1, :, :]
+    # and set duplicates values to -1
+    label_stack[1:, :, :][duplicates] = -1
+
+    # We can now create an image of labeled region boundaries
+    labeled_boundaries = ((label_stack > -1).sum(0) > 1) * label_image
+
+    # Finally we create the adjacency_matrix
+    number_of_labels = label_image.max()
+    adjacency_matrix = np.zeros([number_of_labels + 1] * 2)
+    for label_i in range(1, number_of_labels+1):
+        boundary = labeled_boundaries == label_i
+        boundary_labels = label_stack[:, boundary]
+        label_j, label_count = np.unique(
+            boundary_labels[boundary_labels != -1],
+            return_counts=True)
+        print(label_i,label_j, label_count, boundary.sum())
+        adjacency_matrix[label_i, label_j] = label_count / boundary.sum()
+
+    return adjacency_matrix
