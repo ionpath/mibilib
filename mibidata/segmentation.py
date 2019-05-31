@@ -175,7 +175,7 @@ def get_adjacency_matrix(label_image):
     """
 
     # To find the adjacent regions we stack 4-connectivity nearest neighbors
-    # of label_imagedone and look for pixels with more than 1 label on the stack
+    # of label_image and look for pixels with more than 1 label on the stack
 
     # To create the stack we first need to pad label_image with zeros
     pad_image = np.pad(label_image, 1, 'constant').astype(int)
