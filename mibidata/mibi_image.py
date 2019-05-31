@@ -264,7 +264,7 @@ class MibiImage():
                     f'masses were given), available targets are {channels}'
             else:
                 error_msg = f'Subset of channels, targets or massses not ' \
-                    f'found matching {channels}/'
+                    f'found matching {channels}'
 
             raise KeyError(error_msg)
 
