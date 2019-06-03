@@ -45,7 +45,6 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
         np.testing.assert_array_equal(image.data, TEST_DATA)
         self.assertEqual(image.channels, STRING_LABELS)
-        self.assertEqual(image._index, {'1': 0, '2': 1, '3': 2})
         self.assertIsNone(image.masses)
         self.assertIsNone(image.targets)
 
@@ -55,12 +54,6 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image.channels, TUPLE_LABELS)
         self.assertEqual(image.masses, MASS_LABELS)
         self.assertEqual(image.targets, TARGET_LABELS)
-        self.assertEqual(image._index,
-                         {t: i for i, t in enumerate(TUPLE_LABELS)})
-        self.assertEqual(image._mass_index,
-                         {t: i for i, t in enumerate(MASS_LABELS)})
-        self.assertEqual(image._target_index,
-                         {t: i for i, t in enumerate(TARGET_LABELS)})
 
     def test_data_channel_length_mismatch(self):
         with self.assertRaises(ValueError):
