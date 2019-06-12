@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 from scipy import ndimage as ndi
 
-from mibidata import mibi_image as mi
+from mibidata import mibi_image as mi, util
 
 
-def extract_cell_dataframe(label_image, image=None, mode='total'):
+def extract_cell_dataframe(label_image, image=None, mode='total', n_sec=8):
     """Creates a dataframe of single-cell statistics from a labeled image.
 
     Args:
@@ -20,11 +20,18 @@ def extract_cell_dataframe(label_image, image=None, mode='total'):
             None; if not None, the sum or score (depending on the mode) of each
             channel within each labeled region is returned as column of the
             dataframe. Otherwise, only the regions' size and area are returned.
-        mode: One of``'total'`` or ``'quadrant'``, defaulting to ``'total'``. If
-            ``'total'`, the ion counts within each labeled region are summed. If
-            ``quadrant``, the geometric mean of each regions's four quadrants
-            is calculated, which favors regions with even spatial distribution.
-            This mode is ignored if an image is not specified.
+        mode: One of``'total'``, ``'quadrant'`` or ``'circular_sectors'``,
+            defaulting to ``'total'``.
+            If ``'total'`, the ion counts within each labeled region are summed.
+            If ``'quadrant'``, the geometric mean of each regions's four
+            quadrants is calculated, which favors regions with even spatial
+            distribution.
+            If ``'circular_sectors'``, the geometric mean of each regions's
+            ``n_sec`` circular sectors is calculated. This is a generalization
+            of the ``quadrant`` mode.
+            The mode is ignored if an image is not specified.
+        n_sec: number of circular sectors to use in the ``circular_sectors``
+            mode. Optional, default is 8.
 
     Returns:
         A dataframe indexed by image region's label, and whose columns
@@ -50,8 +57,11 @@ def extract_cell_dataframe(label_image, image=None, mode='total'):
                 vals = image.data[nonzeros[0], nonzeros[1], :].sum(axis=0)
             elif mode == 'quadrant':
                 vals = _quadrant_mean(nonzeros, image)
+            elif mode == 'circular_sectors':
+                vals = _circular_sectors_mean(nonzeros, image, n_sec)
             else:
-                raise ValueError('"mode" must be either "total" or "quadrant"')
+                raise ValueError('"mode" must be either "total", "quadrant" or \
+                "circular_sectors"')
             row.extend(vals)
         rows.append(row)
     return pd.DataFrame(rows, columns=columns).set_index('label')
@@ -78,6 +88,47 @@ def _quadrant_mean(inds, image):
     lower_right = vals[(inds[0] >= y_center) & (inds[1] > x_center)].sum(axis=0)
     quads = np.stack((upper_left, upper_right, lower_left, lower_right), axis=1)
     return np.power(np.product(quads, axis=1), 1 / 4)
+
+
+def _circular_sectors_mean(inds, image, n_sec=8):
+    """Divide a region in circular sectors and get the geometric mean across the
+    sectors.
+
+    Args:
+        inds: A tuple of 2 arrays of the y- and x- indices of the pixels in a
+            segmented region of an image.
+        image: A MibiImage in which the corresponding pixel indices are located.
+        n_sec: number of circular sectors to use. Optional, default is 8.
+
+    Returns:
+        An array whose length is equal to the number of channels in the image.
+        Each value in the array is the geometric mean of the image's integrated
+        channel intensities over the regions's n_sec circular sectors.
+    """
+    # calculate the geometric center of the cells and get the counts
+    y_center, x_center = np.mean(inds, axis=1)
+    vals = image.data[inds]  # has shape (num_pixels_in_cell, num_channels)
+
+    # convert to polar coordinates: y, x -> phi, r
+    inds_pol = np.zeros_like(inds)
+    inds_pol[1], inds_pol[0] = util.car2pol(inds[1], inds[0],
+                                            x_center, y_center)
+    # sanity check of polar coordinate values
+    assert(inds_pol[1] >= 0).all()
+    assert(inds_pol[0] >= 0).all()
+    assert(inds_pol[0] < 360).all()
+
+    # create circular sectors
+    sectors = []
+    ang_step = 360./n_sec
+    for i in range(n_sec):
+        new_sector = vals[(inds_pol[0] >= i*ang_step)
+                          & (inds_pol[0] < (i + 1)*ang_step)].sum(axis=0)
+        sectors.append(new_sector)
+    secs = np.stack(sectors, axis=1)
+
+    # calculate the geometric mean among the sectors
+    return np.power(np.product(secs, axis=1), 1 / n_sec)
 
 
 def replace_labeled_pixels(label_image, df, columns=None):

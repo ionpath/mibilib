@@ -17,6 +17,7 @@ class TestSegmentation(unittest.TestCase):
     def setUp(self):
         np.random.seed(seed=20160906)
 
+
     def test_quadrant_mean(self):
         data = np.stack((
             np.array([
@@ -27,7 +28,7 @@ class TestSegmentation(unittest.TestCase):
                 [0, 0, 1],
                 [0, 0, 0],
                 [0, 0, 2]]),
-        ), axis=2)
+            ), axis=2)
         # assume labels are for cell ID 1, such as with label image:
         # np.array([
         #     [0, 1, 1],
@@ -42,6 +43,66 @@ class TestSegmentation(unittest.TestCase):
             segmentation._quadrant_mean(inds, mi.MibiImage(data, ['1', '2'])),
             expected
         )
+
+
+    def test_circular_sectors(self):
+        # create data for image 2 channels
+        channels = ['ch0', 'ch1']
+        data = np.stack((
+            # channel 0
+            np.arange(36).reshape(6, 6),
+            # this is the matrix:
+            #array([[ 0,  1,  2,  3,  4,  5],
+            #       [ 6,  7,  8,  9, 10, 11],
+            #       [12, 13, 14, 15, 16, 17],
+            #       [18, 19, 20, 21, 22, 23],
+            #       [24, 25, 26, 27, 28, 29],
+            #       [30, 31, 32, 33, 34, 35]])
+            # channel 1
+            np.array([
+                [0, 0, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0],
+                [0, 0, 0, 0, 0, 1],
+                [0, 1, 0, 0, 0, 0],
+                [0, 0, 3, 0, 0, 2]]),
+            ), axis=2)
+        # assume labels are for cell ID 1, such as with label image:
+        # np.array([
+        #     [1, 1, 1, 1, 1, 0],
+        #     [1, 1, 1, 1, 1, 0],
+        #     [1, 1, 1, 1, 1, 0],
+        #     [1, 1, 1, 1, 1, 0],
+        #     [1, 1, 1, 1, 1, 0],
+        #     [0, 0, 0, 0, 0, 0]
+        # ])
+        # indices of the pixels of the cell
+        x = np.arange(5)
+        y = x
+        x_inds, y_inds = np.meshgrid(x, y, indexing='ij')
+        inds = (y_inds.flatten(), x_inds.flatten())
+        # sum within sectors and calculate geometric mean for each channel
+        secs = []
+        for i in range(len(channels)):
+            sec1 = data[2][2][i] + data[2][3][i] + data[2][4][i] + data[3][4][i]
+            sec2 = data[3][3][i] + data[4][3][i] + data[4][4][i]
+            sec3 = data[3][2][i] + data[4][2][i] + data[4][1][i]
+            sec4 = data[3][1][i] + data[4][0][i] + data[3][0][i]
+            sec5 = data[2][1][i] + data[2][0][i] + data[1][0][i]
+            sec6 = data[1][1][i] + data[0][0][i] + data[0][1][i]
+            sec7 = data[1][2][i] + data[0][2][i] + data[0][3][i]
+            sec8 = data[1][3][i] + data[0][4][i] + data[1][4][i]
+            secs_geom_mean = np.power(sec1 * sec2 * sec3 * sec4 * \
+                                sec5 * sec6 * sec7 * sec8, 1/8)
+            secs.append(secs_geom_mean)
+        expected = np.array(secs)
+        # test the function
+        image = mi.MibiImage(data, channels)
+        circ_secs = segmentation._circular_sectors_mean(inds,
+                                                        image,
+                                                        n_sec=8)
+        assert_array_equal(circ_secs, expected)
+
 
     def test_extract_cell_dataframe(self):
         data = np.stack((
@@ -96,6 +157,22 @@ class TestSegmentation(unittest.TestCase):
             segmentation.extract_cell_dataframe(
                 cell_labels, image, mode='quadrant'),
             pd.concat((expected_from_labels, expected_from_quadrants), axis=1))
+        # Check mode 'circular_sectors'
+        secs = []
+        for label in labels:
+            inds = np.nonzero(cell_labels == label)
+            n_secs = 8
+            secs.append(segmentation._circular_sectors_mean(inds, image,
+                                                            n_secs))
+        expected_from_circular_sectors = pd.DataFrame(
+            np.array(secs),
+            columns=['1', '2'], index=pd.Index(labels, name='label'))
+        pdt.assert_frame_equal(
+            segmentation.extract_cell_dataframe(
+                cell_labels, image, mode='circular_sectors', n_sec=n_secs),
+            pd.concat((expected_from_labels, expected_from_circular_sectors),
+                      axis=1))
+
 
     def test_replace_labeled_pixels(self):
         cell_labels = np.array([
@@ -130,6 +207,7 @@ class TestSegmentation(unittest.TestCase):
                                                 columns=['dsDNA']),
             mi.MibiImage(expected_data[:, :, [0]], ['dsDNA']))
 
+
     def test_filter_by_size(self):
         cell_labels = np.array([
             [0, 1, 1, 2],
@@ -148,6 +226,7 @@ class TestSegmentation(unittest.TestCase):
             cell_labels, 3, 5)
         assert_array_equal(filtered_image, expected)
         pdt.assert_frame_equal(filtered_df, df)
+
 
     def test_expand_objects(self):
         labels = np.array([

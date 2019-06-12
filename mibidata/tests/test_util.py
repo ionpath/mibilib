@@ -3,6 +3,9 @@
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import unittest
+import numpy as np
+from numpy.testing import assert_array_equal
+
 from mibidata import util
 
 
@@ -14,6 +17,7 @@ class TestUtil(unittest.TestCase):
         expected_names = ['Image0.h5', 'Image0.msdf', 'Image2.h5', 'Image10.h5']
         self.assertEqual(names, expected_names)
 
+
     def test_encode_list(self):
 
         strings = ['Five', 'birds', 'one', 'stone']
@@ -23,6 +27,7 @@ class TestUtil(unittest.TestCase):
         encoded = util.encode_strings(strings)
         self.assertListEqual(encoded, bytes_objects)
 
+
     def test_decode_list(self):
 
         strings = ['Five', 'birds', 'one', 'stone']
@@ -31,6 +36,7 @@ class TestUtil(unittest.TestCase):
 
         decoded = util.decode_strings(bytes_objects)
         self.assertListEqual(decoded, strings)
+
 
     def test_sort_channel_names(self):
         expected_list = ["30CD", "35 CD", "CD20", "CD45", "dsDNA", "FOXP3",
@@ -57,6 +63,22 @@ class TestUtil(unittest.TestCase):
         formatted_names = [util.format_for_filename(n) for n in input_names]
 
         self.assertListEqual(formatted_names, expected_names)
+
+
+    def test_car2pol(self):
+
+        x_c, y_c = 0, 0
+
+        x = np.array([1, 0, -1, 0])
+        y = np.array([0, 1, 0, -1])
+
+        expected_r = np.array([1., 1., 1., 1.])
+        expected_phi = np.array([0., 90., 180., 270.])
+
+        r, phi = util.car2pol(x, y, x_c, y_c)
+
+        assert_array_equal(r, expected_r)
+        assert_array_equal(phi, expected_phi)
 
 
 if __name__ == '__main__':
