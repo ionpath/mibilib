@@ -894,6 +894,32 @@ set to zero, and a dataframe of its labels, centroids and area.</p>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="mibidata.segmentation.get_adjacency_matrix">
+<code class="descclassname">mibidata.segmentation.</code><code class="descname">get_adjacency_matrix</code><span class="sig-paren">(</span><em>label_image</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.get_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates adjacency matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>NxN array of floats (N is the number of labels)</dt>
+<dd>Each i, j element of the adjacency_matrix corresponds to the
+fraction of the i region boundary length that is shared with j
+region.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">adjacency_matrix</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-mibidata.tiff">
 <span id="mibidata-tiff-module"></span><h2>mibidata.tiff module<a class="headerlink" href="#module-mibidata.tiff" title="Permalink to this headline">¶</a></h2>
