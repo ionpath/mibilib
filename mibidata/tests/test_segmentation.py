@@ -175,6 +175,23 @@ class TestSegmentation(unittest.TestCase):
         assert_array_equal(segmentation.expand_objects(labels, 1), expected_1)
         assert_array_equal(segmentation.expand_objects(labels, 2), expected_2)
 
+    def test_adjacency_matrix(self):
+        cell_labels = np.array([
+            [0, 1, 2, 2, 0],
+            [1, 1, 3, 3, 3],
+            [1, 1, 3, 3, 3],
+            [0, 0, 3, 3, 3]
+        ])
+        expected = np.array([
+            [0, 0, 0, 0],
+            [4/5, 1, 1/5, 2/5],
+            [2/2, 1/2, 1, 2/2],
+            [5/8, 2/8, 2/8, 1]])
+
+        assert_array_equal(segmentation.get_adjacency_matrix(cell_labels),
+                           expected)
+
+
 
 if __name__ == '__main__':
     unittest.main()
