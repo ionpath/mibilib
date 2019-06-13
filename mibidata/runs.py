@@ -42,8 +42,9 @@ def parse_xml(path):
             match = re.match(FOV_PATTERN, item.tag)
             if item.tag.startswith('RowNumber'):
                 row_num = item.tag
-                coordinates = (float(item.attrib.get('XAttrib')) * _MICRON_FACTOR,
-                               float(item.attrib.get('YAttrib')) * _MICRON_FACTOR)
+                coordinates = (
+                    float(item.attrib.get('XAttrib')) * _MICRON_FACTOR,
+                    float(item.attrib.get('YAttrib')) * _MICRON_FACTOR)
                 continue
             elif match:
                 parent = '{}{}'.format(match.group(1), counter[match.group(1)])
