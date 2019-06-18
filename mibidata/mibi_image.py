@@ -261,7 +261,8 @@ class MibiImage():
         except (ValueError, AttributeError):
             if self.targets is None:
                 error_msg = f'Channels were indexed with targets only (no ' \
-                    f'masses were given), available targets are {self._channels}'
+                    f'masses were given), available targets are ' \
+                    f'{self._channels}'
             else:
                 error_msg = f'Subset of channels, targets or massses not ' \
                     f'found matching {self._channels}'
