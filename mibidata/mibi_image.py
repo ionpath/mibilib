@@ -33,7 +33,7 @@ class MibiImage():
             If a string, it will be parsed according to the
             `datetime_format``.
         coordinates: A tuple of (x, y) stage coordinates at which the image
-            was acquired.
+            was acquired; stage coordinates should be in microns.
         size: A float size of the image width/height in  :math:`\\mu m`.
         slide: A string or integer slide ID.
         point_name: A string name for the point as assigned during the run.
@@ -77,8 +77,8 @@ class MibiImage():
             given as (mass, target) tuples; otherwise None.
         run: A string name of the run during which this image was acquired.
         date: A datetime object of the run date.
-        coordinates: A tuple of (x, y) stage coordinates at which the image
-            was acquired.
+        coordinates: A tuple of (x, y) stage coordinates in microns at which
+            the image was acquired.
         size: A float size of the image width/height in :math:`\\mu m`.
         slide: A string or integer slide ID.
         point_name: A string name for the point as assigned during the run.
@@ -261,10 +261,10 @@ class MibiImage():
         except (ValueError, AttributeError):
             if self.targets is None:
                 error_msg = f'Channels were indexed with targets only (no ' \
-                    f'masses were given), available targets are {channels}'
+                    f'masses were given), available targets are {self._channels}'
             else:
                 error_msg = f'Subset of channels, targets or massses not ' \
-                    f'found matching {channels}'
+                    f'found matching {self._channels}'
 
             raise KeyError(error_msg)
 

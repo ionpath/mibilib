@@ -11,8 +11,7 @@ import numpy as np
 MASS_CALIBRATION_PARAMETERS = ('TimeResolution', 'MassGain', 'MassOffset',
                                'XSize', 'YSize')
 FOV_PATTERN = re.compile('^(Depth_Profile|Chemical_Image)$')
-# Conversion factor from motor unit to microns
-_MICRON_FACTOR = 0.1
+_MOTOR_STEP = 0.1  # motor step in microns
 
 def parse_xml(path):
     """Read a run XML and return a list of image metadata dicts, plus a
@@ -43,8 +42,8 @@ def parse_xml(path):
             if item.tag.startswith('RowNumber'):
                 row_num = item.tag
                 coordinates = (
-                    float(item.attrib.get('XAttrib')) * _MICRON_FACTOR,
-                    float(item.attrib.get('YAttrib')) * _MICRON_FACTOR)
+                    float(item.attrib.get('XAttrib')) * _MOTOR_STEP,
+                    float(item.attrib.get('YAttrib')) * _MOTOR_STEP)
                 continue
             elif match:
                 parent = '{}{}'.format(match.group(1), counter[match.group(1)])
