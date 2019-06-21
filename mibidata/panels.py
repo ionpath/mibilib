@@ -78,4 +78,4 @@ def merge_masses(df):
             conjugates[mass] = f'{conjugates[mass]}, {target}'
         else:
             conjugates[mass] = target
-        return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
+    return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
