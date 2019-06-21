@@ -22,7 +22,7 @@ def read_csv(path):
         # CSV may parse successfully but not have proper columns
         if not {'Mass', 'Target'}.issubset(set(df.columns)):
             raise ParserError
-        return _merge_masses(df)
+        return merge_masses(df)
     except ParserError:
         # Determine lines that indicate a table header line
         header_lines = []
@@ -56,10 +56,10 @@ def read_csv(path):
         # Combine and convert 'Mass' column to int
         combined = pd.concat(df, ignore_index=True)
         combined['Mass'] = combined['Mass'].astype(np.int64)
-        return _merge_masses(combined)
+        return merge_masses(combined)
 
 
-def _merge_masses(df):
+def merge_masses(df):
     conjugates = {}
     for conj in df.to_dict(orient='records'):
         mass = conj['Mass']
