@@ -21,7 +21,7 @@ _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
 # Datetime format saved by TiffFile
 _DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
 # Conversion factor from motor unit to cm
-_MICRONS_IN_CM = 10000
+_MICRONS_PER_CM = 10000
 # Max denominator for rational arguments in tifffile.py
 _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
@@ -30,14 +30,14 @@ ENCODING = 'utf-8'
 
 def _micron_to_cm(arg):
     """Converts microns (1cm = 1e4 microns) to a fraction tuple in cm."""
-    frac = Fraction(float(arg)/_MICRONS_IN_CM).limit_denominator(
+    frac = Fraction(float(arg) / _MICRONS_PER_CM).limit_denominator(
         _MAX_DENOMINATOR)
     return frac.numerator, frac.denominator
 
 
 def _cm_to_micron(arg):
     """Converts cm fraction to microns (1cm = 1e4 microns)."""
-    return float(arg[0]) / float(arg[1]) * _MICRONS_IN_CM
+    return float(arg[0]) / float(arg[1]) * _MICRONS_PER_CM
 
 
 # pylint: disable=too-many-branches,too-many-statements
