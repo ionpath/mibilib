@@ -74,8 +74,8 @@ def merge_masses(df):
     for conj in df.to_dict(orient='records'):
         mass = conj['Mass']
         target = conj['Target']
-    if conjugates.get(mass):
-        conjugates[mass] = f'{conjugates[mass]}, {target}'
-    else:
-        conjugates[mass] = target
-    return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
+        if conjugates.get(mass):
+            conjugates[mass] = f'{conjugates[mass]}, {target}'
+        else:
+            conjugates[mass] = target
+        return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
