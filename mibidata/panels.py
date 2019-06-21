@@ -60,12 +60,22 @@ def read_csv(path):
 
 
 def merge_masses(df):
+    """Merges 'Target' cells of a dataframe with the same 'Mass' value.
+
+    Args:
+        dataframe: A dataframe of the CSV file containing columns 'Mass' and
+        'Target'.
+
+    Returns:
+        A dataframe containing columns 'Mass' and 'Target' with merged targets
+        of the same mass.
+    """
     conjugates = {}
     for conj in df.to_dict(orient='records'):
         mass = conj['Mass']
         target = conj['Target']
-        if conjugates.get(mass):
-            conjugates[mass] = f'{conjugates[mass]}, {target}'
-        else:
-            conjugates[mass] = target
+    if conjugates.get(mass):
+        conjugates[mass] = f'{conjugates[mass]}, {target}'
+    else:
+        conjugates[mass] = target
     return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
