@@ -20,7 +20,7 @@ _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
 # Datetime format saved by TiffFile
 _DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
-# Conversion factor from motor unit to cm
+# Conversion factor from micron to cm
 _MICRONS_PER_CM = 10000
 # Max denominator for rational arguments in tifffile.py
 _MAX_DENOMINATOR = 1000000
