@@ -475,13 +475,16 @@ class MibiRequests(object):
         ).json()
 
         try:
-            assert len(results) == 1
+            len_results = len(results)
         except TypeError:
             raise MibiTrackerError(
-                'No images found matching the specified run and point names')
-        except AssertionError:
+                f'No images found matching run {run_name} {point_name}.')
+        if len_results == 0:
             raise MibiTrackerError(
-                'Multiple images match the specified run and point names.'
+                f'No images found matching run {run_name} {point_name}.')
+        if len_results > 1:
+            raise MibiTrackerError(
+                f'Multiple images match run {run_name} {point_name}.'
             )
 
         return results[0]['id']
