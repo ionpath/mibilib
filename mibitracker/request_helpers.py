@@ -474,11 +474,7 @@ class MibiRequests():
                 'paging': 'no'}
         ).json()
 
-        try:
-            len_results = len(results)
-        except TypeError:
-            raise MibiTrackerError(
-                f'No images found matching run {run_name} {point_name}.')
+        len_results = len(results)
         if len_results == 0:
             raise MibiTrackerError(
                 f'No images found matching run {run_name} {point_name}.')
