@@ -695,6 +695,27 @@ parameter to <a class="reference internal" href="#mibidata.mibi_image.MibiImage.
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="mibidata.panels.merge_masses">
+<code class="descclassname">mibidata.panels.</code><code class="descname">merge_masses</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.merge_masses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges ‘Target’ cells of a DataFrame with the same ‘Mass’ value.</p>
+<p>This function merges multiple targets that are conjugated to the same mass
+tag such that the returned DataFrame contains only unique masses. Target
+names are combined using the conventions of :func:’util.natural_sort()’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> – A DataFrame of the panel containing columns ‘Mass’ and
+‘Target’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A DataFrame containing columns ‘Mass’ and ‘Target’ with merged targets
+of the same mass.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-mibidata.pseudodepths">
 <span id="mibidata-pseudodepths-module"></span><h2>mibidata.pseudodepths module<a class="headerlink" href="#module-mibidata.pseudodepths" title="Permalink to this headline">¶</a></h2>
