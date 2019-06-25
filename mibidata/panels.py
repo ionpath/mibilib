@@ -63,7 +63,7 @@ def merge_masses(df):
     """Merges 'Target' cells of a dataframe with the same 'Mass' value.
 
     Args:
-        df: A dataframe of the panel containing columns 'Mass' and
+        df: A DataFrame of the panel containing columns 'Mass' and
         'Target'.
 
     Returns:
