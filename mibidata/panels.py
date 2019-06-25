@@ -62,7 +62,7 @@ def read_csv(path):
 
 def _merge_masses(df):
     conjugates = {}
-    targ_list = []
+    target_list = []
     for conj in df.to_dict(orient='records'):
         mass = conj['Mass']
         target = conj['Target']
@@ -71,7 +71,7 @@ def _merge_masses(df):
         else:
             conjugates[mass] = [target]
     for mass in conjugates:
-        targ_list = conjugates[mass]
-        util.natural_sort(targ_list)
-        conjugates[mass] = ', '.join(targ_list)
+        target_list = conjugates[mass]
+        util.natural_sort(target_list)
+        conjugates[mass] = ', '.join(target_list)
     return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
