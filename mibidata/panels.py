@@ -65,7 +65,7 @@ def merge_masses(df):
 
     This function merges multiple targets that are conjugated to the same mass
     tag such that the returned DataFrame contains only unique masses. Target
-    names are combined using the conventions of :func:util.natural_sort().
+    names are combined using the conventions of :func:'util.natural_sort()'.
 
     Args:
         df: A DataFrame of the panel containing columns 'Mass' and
