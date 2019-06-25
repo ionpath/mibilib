@@ -67,7 +67,7 @@ def merge_masses(df):
         'Target'.
 
     Returns:
-        A dataframe containing columns 'Mass' and 'Target' with merged targets
+        A DataFrame containing columns 'Mass' and 'Target' with merged targets
         of the same mass.
     """
     conjugates = {}
