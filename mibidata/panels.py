@@ -61,11 +61,15 @@ def read_csv(path):
 
 
 def merge_masses(df):
-    """Merges 'Target' cells of a dataframe with the same 'Mass' value.
+    """Merges 'Target' cells of a DataFrame with the same 'Mass' value.
+
+    This function merges multiple targets that are conjugated to the same mass
+    tag such that the returned DataFrame contains only unique masses. Target
+    names are combined using the conventions of :func:'util.natural_sort()'.
 
     Args:
         df: A DataFrame of the panel containing columns 'Mass' and
-        'Target'.
+            'Target'.
 
     Returns:
         A DataFrame containing columns 'Mass' and 'Target' with merged targets
