@@ -5,6 +5,7 @@ Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 import numpy as np
 import pandas as pd
 from pandas.errors import ParserError
+from mibidata import util
 
 
 def read_csv(path):
@@ -71,11 +72,16 @@ def merge_masses(df):
         of the same mass.
     """
     conjugates = {}
+    target_list = []
     for conj in df.to_dict(orient='records'):
         mass = conj['Mass']
         target = conj['Target']
         if conjugates.get(mass):
-            conjugates[mass] = f'{conjugates[mass]}, {target}'
+            conjugates[mass].append(target)
         else:
-            conjugates[mass] = target
+            conjugates[mass] = [target]
+    for mass in conjugates:
+        target_list = conjugates[mass]
+        util.natural_sort(target_list)
+        conjugates[mass] = ', '.join(target_list)
     return pd.DataFrame(list(conjugates.items()), columns=['Mass', 'Target'])
