@@ -131,7 +131,7 @@ class TestPanel(unittest.TestCase):
             {'Mass': [10, 20, 30, 40],
              'Target': ['Target1', 'Target2', 'Target3', 'Target4']},
             columns=['Mass', 'Target'])
-        unique_merge_df = panels._merge_masses(df_input)
+        unique_merge_df = panels.merge_masses(df_input)
 
         expected_df = df_input
         pd.testing.assert_frame_equal(unique_merge_df, expected_df)
@@ -142,7 +142,7 @@ class TestPanel(unittest.TestCase):
              'Target': ['Target1', 'Target2', 'Target3', 'Target4',
                         'Target5', 'Target6', 'Target7']},
             columns=['Mass', 'Target'])
-        forward_merge_df = panels._merge_masses(df_input)
+        forward_merge_df = panels.merge_masses(df_input)
 
         pd.testing.assert_frame_equal(forward_merge_df, self.expected_merge_df)
 
@@ -152,7 +152,7 @@ class TestPanel(unittest.TestCase):
              'Target': ['Target6', 'Target2', 'Target5', 'Target1',
                         'Target4', 'Target7', 'Target3']},
             columns=['Mass', 'Target'])
-        scramble_merge_df = panels._merge_masses(df_input)
+        scramble_merge_df = panels.merge_masses(df_input)
 
         pd.testing.assert_frame_equal(scramble_merge_df, self.expected_merge_df)
 
