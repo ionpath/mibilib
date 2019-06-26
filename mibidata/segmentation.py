@@ -3,6 +3,7 @@
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
+from numpy.testing import assert_array_equal
 import pandas as pd
 from scipy import ndimage as ndi
 
@@ -85,8 +86,12 @@ def _quadrant_mean(inds, image):
     upper_left = vals[(inds[0] <= y_center) & (inds[1] < x_center)].sum(axis=0)
     upper_right = vals[(inds[0] < y_center) & (inds[1] >= x_center)].sum(axis=0)
     lower_left = vals[(inds[0] > y_center) & (inds[1] <= x_center)].sum(axis=0)
-    lower_right = vals[(inds[0] >= y_center) & (inds[1] > x_center)].sum(axis=0)
+    lower_right = vals[((inds[0] >= y_center) & (inds[1] > x_center))
+                       | ((inds[0] == y_center) & (inds[1] == x_center))] \
+                       .sum(axis=0)
     quads = np.stack((upper_left, upper_right, lower_left, lower_right), axis=1)
+    # sanity check: test that all pixels in the cell are used
+    assert_array_equal(vals.sum(axis=0), quads.sum(axis=1))
     return np.power(np.product(quads, axis=1), 1 / 4)
 
 
@@ -113,7 +118,7 @@ def _circular_sectors_mean(inds, image, n_sec=8):
     inds_pol = np.zeros_like(inds)
     inds_pol[1], inds_pol[0] = util.car2pol(inds[1], inds[0],
                                             x_center, y_center)
-    # sanity check of polar coordinate values
+    # sanity check: polar coordinate values
     assert(inds_pol[1] >= 0).all()
     assert(inds_pol[0] >= 0).all()
     assert(inds_pol[0] < 360).all()
@@ -126,6 +131,9 @@ def _circular_sectors_mean(inds, image, n_sec=8):
                           & (inds_pol[0] < (i + 1)*ang_step)].sum(axis=0)
         sectors.append(new_sector)
     secs = np.stack(sectors, axis=1)
+
+    # sanity check: test that all pixels in the cell are used
+    assert_array_equal(vals.sum(axis=0), secs.sum(axis=1))
 
     # calculate the geometric mean among the sectors
     return np.power(np.product(secs, axis=1), 1 / n_sec)
