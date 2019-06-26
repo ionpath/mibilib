@@ -103,6 +103,14 @@ class TestSegmentation(unittest.TestCase):
                                                         n_sec=8)
         assert_array_equal(circ_secs, expected)
 
+        # compare to quadrants method
+        circ_secs_4 = segmentation._circular_sectors_mean(inds,
+                                                          image,
+                                                          n_sec=4)
+        quads = segmentation._quadrant_mean(inds,
+                                            image)
+        assert_array_equal(circ_secs_4, quads)
+
 
     def test_extract_cell_dataframe(self):
         data = np.stack((
