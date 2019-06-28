@@ -25,14 +25,19 @@ cd mibitracker-client
 
 ```bash
 conda env create -f environment.yml
-source activate mibitracker-client  # On Windows, omit the 'source' part
+conda activate mibitracker-client
 ```
 
 ### Option B: Install with pip
 This option is useful if you want this library to be installed as part of an
-existing environment or as a dependency inside a requirements.txt file.
+existing environment or as a dependency inside a requirements.txt file. You may
+install a particular release using its tag (recommended)
 ```
-pip install git+git://github.com/ionpath/mibitracker-client@master
+pip install git+git://github.com/ionpath/mibitracker-client@mv0.9.9
+```
+or a branch (that may be under development with frequent changes)
+```
+pip install git+git://github.com/ionpath/master
 ```
 
 ## Usage
