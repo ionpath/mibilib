@@ -25,7 +25,7 @@ RETRY_METHOD_WHITELIST = (
     'HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'POST')
 
 
-class MibiRequests(object):
+class MibiRequests():
     """Helper class for making requests to the MibiTracker.
 
     This is an opinionated way of using ``requests.Session`` with the following

@@ -39,11 +39,13 @@ class TestSegmentation(unittest.TestCase):
         quads_channel_0 = np.power(2 * 4 * (1 + 1) * 3, 1 / 4) # pylint: disable=assignment-from-no-return
         quads_channel_1 = np.power(0 * 1 * (0 + 0) * 0, 1 / 4) # pylint: disable=assignment-from-no-return
         expected = np.array((quads_channel_0, quads_channel_1))
+        image = mi.MibiImage(data, ['1', '2'])
         assert_array_equal(
-            segmentation._quadrant_mean(inds, mi.MibiImage(data, ['1', '2'])),
+            segmentation._circular_sectors_mean(inds,
+                                                image,
+                                                num_sectors=4),
             expected
         )
-
 
     def test_circular_sectors(self):
         # create data for image 2 channels
@@ -100,16 +102,8 @@ class TestSegmentation(unittest.TestCase):
         image = mi.MibiImage(data, channels)
         circ_secs = segmentation._circular_sectors_mean(inds,
                                                         image,
-                                                        n_sec=8)
+                                                        num_sectors=8)
         assert_array_equal(circ_secs, expected)
-
-        # compare to quadrants method
-        circ_secs_4 = segmentation._circular_sectors_mean(inds,
-                                                          image,
-                                                          n_sec=4)
-        quads = segmentation._quadrant_mean(inds,
-                                            image)
-        assert_array_equal(circ_secs_4, quads)
 
 
     def test_extract_cell_dataframe(self):
@@ -157,7 +151,9 @@ class TestSegmentation(unittest.TestCase):
         quads = []
         for label in labels:
             inds = np.nonzero(cell_labels == label)
-            quads.append(segmentation._quadrant_mean(inds, image))
+            quads.append(segmentation._circular_sectors_mean(inds,
+                                                             image,
+                                                             num_sectors=4))
         expected_from_quadrants = pd.DataFrame(
             np.array(quads),
             columns=['1', '2'], index=pd.Index(labels, name='label'))
@@ -169,15 +165,16 @@ class TestSegmentation(unittest.TestCase):
         secs = []
         for label in labels:
             inds = np.nonzero(cell_labels == label)
-            n_secs = 8
+            num_sectors = 8
             secs.append(segmentation._circular_sectors_mean(inds, image,
-                                                            n_secs))
+                                                            num_sectors))
         expected_from_circular_sectors = pd.DataFrame(
             np.array(secs),
             columns=['1', '2'], index=pd.Index(labels, name='label'))
         pdt.assert_frame_equal(
             segmentation.extract_cell_dataframe(
-                cell_labels, image, mode='circular_sectors', n_sec=n_secs),
+                cell_labels, image, mode='circular_sectors',
+                num_sectors=num_sectors),
             pd.concat((expected_from_labels, expected_from_circular_sectors),
                       axis=1))
 
