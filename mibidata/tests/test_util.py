@@ -73,12 +73,16 @@ class TestUtil(unittest.TestCase):
         y = np.array([0, 1, 0, -1])
 
         expected_r = np.array([1., 1., 1., 1.])
-        expected_phi = np.array([0., 90., 180., 270.])
+        expected_phi = np.arange(4)*np.pi/2.
+        expected_phi_deg = np.arange(4)*90.
 
         r, phi = util.car2pol(x, y, x_c, y_c)
 
         assert_array_equal(r, expected_r)
         assert_array_equal(phi, expected_phi)
+
+        phi_deg = util.car2pol(x, y, x_c, y_c, degrees=True)[1]
+        assert_array_equal(phi_deg, expected_phi_deg)
 
 
 if __name__ == '__main__':

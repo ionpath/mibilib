@@ -113,21 +113,26 @@ def format_for_filename(label):
     return label
 
 
-def car2pol(x, y, x_c=0, y_c=0):
+def car2pol(x, y, x_c=0, y_c=0, degrees=False):
     """Convert cartesian to polar coordinates w.r.t. a central point.
-    Angle phi is returned in deg in the range [0, 360) deg.
+    Angle phi is returned in the range [0, 2 pi) rad. A flag can be activated
+    to return phi angles in degrees.
 
     Args:
         x, y: arrays of coordinates to transform.
         x_c, y_c: numbers representing the coordinates of the center
-            (origin of polar coordinates).
+            (origin of polar coordinates). Optional; default is (0, 0).
+        degrees: flag to return phi angles in degrees instead of radians.
+            Optional; default is False (i.e. radians).
 
     Returns:
         r, phi: arrays of transformed coordinates.
     """
     r = np.sqrt((x - x_c)**2 + (y - y_c)**2)
-    phi = np.arctan2(y - y_c, x - x_c)*180./np.pi
-    # convert: (-180, 180] --> [0, 360)
-    phi[phi[:] < 0] += 360.
+    phi = np.arctan2(y - y_c, x - x_c)
+    # convert: (-pi, pi] --> [0, 2 pi)
+    phi[phi[:] < 0] += 2.*np.pi
+    if degrees:
+        phi *= 180./np.pi
 
     return r, phi
