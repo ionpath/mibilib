@@ -20,23 +20,24 @@ _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
 # Datetime format saved by TiffFile
 _DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
-# Conversion factor from motor unit to cm
-_CM_FACTOR = 100000
+# Conversion factor from micron to cm
+_MICRONS_PER_CM = 10000
 # Max denominator for rational arguments in tifffile.py
 _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
 ENCODING = 'utf-8'
 
 
-def _motor_to_cm(arg):
-    """Converts motor unit (1cm = 1e5 motor units) to a fraction tuple in cm."""
-    frac = Fraction(arg, _CM_FACTOR).limit_denominator(_MAX_DENOMINATOR)
+def _micron_to_cm(arg):
+    """Converts microns (1cm = 1e4 microns) to a fraction tuple in cm."""
+    frac = Fraction(float(arg) / _MICRONS_PER_CM).limit_denominator(
+        _MAX_DENOMINATOR)
     return frac.numerator, frac.denominator
 
 
-def _cm_to_motor(arg):
-    """Converts cm fraction to a motor unit (1cm = 1e5 motor units)."""
-    return int(np.round(float(arg[0]) / float(arg[1]) * _CM_FACTOR))
+def _cm_to_micron(arg):
+    """Converts cm fraction to microns (1cm = 1e4 microns)."""
+    return float(arg[0]) / float(arg[1]) * _MICRONS_PER_CM
 
 
 # pylint: disable=too-many-branches,too-many-statements
@@ -85,8 +86,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         ranges = [(0, m) for m in image.data.max(axis=(0, 1))]
 
     coordinates = [
-        (286, '2i', 1, _motor_to_cm(image.coordinates[0])),  # x-position
-        (287, '2i', 1, _motor_to_cm(image.coordinates[1])),  # y-position
+        (286, '2i', 1, _micron_to_cm(image.coordinates[0])),  # x-position
+        (287, '2i', 1, _micron_to_cm(image.coordinates[1])),  # y-position
     ]
     resolution = (image.data.shape[0] * 1e4 / float(image.size),
                   image.data.shape[1] * 1e4 / float(image.size),
@@ -289,8 +290,8 @@ def _page_metadata(page, description):
     return {
         'run': description.get('mibi.run'),
         'coordinates': (
-            _cm_to_motor(page.tags['x_position'].value),
-            _cm_to_motor(page.tags['y_position'].value)),
+            _cm_to_micron(page.tags['x_position'].value),
+            _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
         'size': size,
         'slide': description.get('mibi.slide'),

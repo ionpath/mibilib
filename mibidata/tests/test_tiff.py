@@ -39,10 +39,10 @@ METADATA = {
 class TestTiffHelpers(unittest.TestCase):
 
     def test_motor_to_cm(self):
-        self.assertEqual(tiff._motor_to_cm(100000), (1, 1))
+        self.assertEqual(tiff._micron_to_cm(10000), (1, 1))
 
     def test_cm_to_motor(self):
-        self.assertEqual(tiff._cm_to_motor((1, 1)), 100000)
+        self.assertEqual(tiff._cm_to_micron((1, 1)), 10000)
 
 
 class TestWriteReadTiff(unittest.TestCase):
