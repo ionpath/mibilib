@@ -25,7 +25,7 @@ RETRY_METHOD_WHITELIST = (
     'HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'POST')
 
 
-class MibiRequests(object):
+class MibiRequests():
     """Helper class for making requests to the MibiTracker.
 
     This is an opinionated way of using ``requests.Session`` with the following
@@ -474,14 +474,13 @@ class MibiRequests(object):
                 'paging': 'no'}
         ).json()
 
-        try:
-            assert len(results) == 1
-        except TypeError:
+        len_results = len(results)
+        if len_results == 0:
             raise MibiTrackerError(
-                'No images found matching the specified run and point names')
-        except AssertionError:
+                f'No images found matching run {run_name} {point_name}.')
+        if len_results > 1:
             raise MibiTrackerError(
-                'Multiple images match the specified run and point names.'
+                f'Multiple images match run {run_name} {point_name}.'
             )
 
         return results[0]['id']
