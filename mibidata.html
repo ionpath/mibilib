@@ -241,7 +241,7 @@ target).</li>
 If a string, it will be parsed according to the
 <cite>datetime_format`</cite>.</li>
 <li><strong>coordinates</strong> – A tuple of (x, y) stage coordinates at which the image
-was acquired.</li>
+was acquired; stage coordinates should be in microns.</li>
 <li><strong>size</strong> – A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</li>
 <li><strong>slide</strong> – A string or integer slide ID.</li>
 <li><strong>point_name</strong> – A string name for the point as assigned during the run.</li>
@@ -322,8 +322,8 @@ given as (mass, target) tuples; otherwise None.</p>
 <dl class="attribute">
 <dt id="mibidata.mibi_image.MibiImage.coordinates">
 <code class="descname">coordinates</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.coordinates" title="Permalink to this definition">¶</a></dt>
-<dd><p>A tuple of (x, y) stage coordinates at which the image
-was acquired.</p>
+<dd><p>A tuple of (x, y) stage coordinates in microns at which
+the image was acquired.</p>
 </dd></dl>
 
 <dl class="attribute">
