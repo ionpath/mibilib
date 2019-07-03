@@ -219,6 +219,18 @@ class MibiImage():
         """Equivalent to :meth:`~slice_data`."""
         return self.slice_data(channels)
 
+    def __repr__(self):
+        s = f"{type(self)}\n"
+        for key, val in self.metadata().items():
+            s += f'{key}: {val}\n'
+        return s
+
+    def __str__(self):
+        s = f"{type(self)} " + "{"
+        s += ', '.join(f'{key}: {val}' for key, val in self.metadata().items())
+        s += '}'
+        return s
+
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
         return {key: getattr(self, key) for key in _ATTRIBUTES}
