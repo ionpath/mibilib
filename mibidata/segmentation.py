@@ -88,18 +88,16 @@ def _circular_sectors_mean(inds, image, num_sectors=8):
     vals = image.data[inds]  # has shape (num_pixels_in_cell, num_channels)
 
     # convert to polar coordinates: y, x -> phi, r
-    inds_pol = np.zeros_like(inds, dtype=float) # force float for accuracy
-    inds_pol[1], inds_pol[0] = util.car2pol(inds[1], inds[0],
-                                            x_center, y_center)
+    phi = util.car2pol(inds[1], inds[0], x_center, y_center)[1]
 
     # create circular sectors
-    sectors = []
-    ang_step = 2.*np.pi/num_sectors
-    for i in range(num_sectors):
-        new_sector = vals[(inds_pol[0] >= i*ang_step)
-                          & (inds_pol[0] < (i + 1)*ang_step)].sum(axis=0)
-        sectors.append(new_sector)
-    secs = np.stack(sectors, axis=1)
+    edges = np.flip(np.linspace(2.*np.pi, 0., num_sectors, endpoint=False))
+    dig_phi = np.digitize(phi, edges)
+    secs = []
+    for i in range(len(image.channels)):
+        sec = np.bincount(dig_phi, weights=vals[:, i], minlength=num_sectors)
+        secs.append(sec)
+    secs = np.asarray(secs)
 
     # calculate the geometric mean among the sectors
     return np.power(np.product(secs, axis=1), 1 / num_sectors)
