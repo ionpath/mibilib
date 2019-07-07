@@ -47,19 +47,22 @@ class TestSegmentation(unittest.TestCase):
             expected
         )
 
+
     def test_circular_sectors(self):
+        """Test circular sectors method in segmentation.
+        """
         # create data for image 2 channels
         channels = ['ch0', 'ch1']
         data = np.stack((
             # channel 0
-            np.arange(36).reshape(6, 6),
+            np.arange(36, dtype='float').reshape(6, 6),
             # this is the matrix:
-            #array([[ 0,  1,  2,  3,  4,  5],
-            #       [ 6,  7,  8,  9, 10, 11],
-            #       [12, 13, 14, 15, 16, 17],
-            #       [18, 19, 20, 21, 22, 23],
-            #       [24, 25, 26, 27, 28, 29],
-            #       [30, 31, 32, 33, 34, 35]])
+            #np.array([[ 0,  1,  2,  3,  4,  5],
+            #          [ 6,  7,  8,  9, 10, 11],
+            #          [12, 13, 14, 15, 16, 17],
+            #          [18, 19, 20, 21, 22, 23],
+            #          [24, 25, 26, 27, 28, 29],
+            #          [30, 31, 32, 33, 34, 35]], dtype='float')
             # channel 1
             np.array([
                 [0, 0, 0, 0, 0, 0],
@@ -67,7 +70,7 @@ class TestSegmentation(unittest.TestCase):
                 [0, 0, 0, 1, 0, 0],
                 [0, 0, 0, 0, 0, 1],
                 [0, 1, 0, 0, 0, 0],
-                [0, 0, 3, 0, 0, 2]]),
+                [0, 0, 3, 0, 0, 2]], dtype='float'),
             ), axis=2)
         # assume labels are for cell ID 1, such as with label image:
         # np.array([
@@ -76,8 +79,7 @@ class TestSegmentation(unittest.TestCase):
         #     [1, 1, 1, 1, 1, 0],
         #     [1, 1, 1, 1, 1, 0],
         #     [1, 1, 1, 1, 1, 0],
-        #     [0, 0, 0, 0, 0, 0]
-        # ])
+        #     [0, 0, 0, 0, 0, 0]])
         # indices of the pixels of the cell
         x = np.arange(5)
         y = x
@@ -104,28 +106,46 @@ class TestSegmentation(unittest.TestCase):
                                                         image,
                                                         num_sectors=8)
         assert_array_equal(circ_secs, expected)
-        # test small cell
+
+
+    def test_circular_sectors_small_cell(self):
+        """Test small cell with empty sectors.
+        """
+        # create data for image 2 channels
+        channels = ['ch0', 'ch1']
+        data = np.stack((
+            # channel 0
+            np.arange(16, dtype='float').reshape(4, 4),
+            # this is the matrix:
+            #np.array([[ 0,  1,  2,  3],
+            #          [ 4,  5,  6,  7],
+            #          [ 8,  9, 10, 11],
+            #          [12, 13, 14, 15]], dtype='float')
+            # channel 1
+            np.array([
+                [0, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 0, 1],
+                [0, 0, 0, 0]], dtype='float'),
+            ), axis=2)
         # assume labels are for cell ID 1, such as with label image:
         # np.array([
-        #     [0, 1, 1, 0, 0, 0],
-        #     [0, 1, 1, 0, 0, 0],
-        #     [0, 0, 0, 0, 0, 0],
-        #     [0, 0, 0, 0, 0, 0],
-        #     [0, 0, 0, 0, 0, 0],
-        #     [0, 0, 0, 0, 0, 0]
-        # ])
+        #     [0, 1, 1, 0],
+        #     [0, 1, 1, 0],
+        #     [0, 0, 0, 0],
+        #     [0, 0, 0, 0]])
         # indices of the pixels of the cell
         inds = ((0, 0, 1, 1), (1, 2, 1, 2))
         # sum within sectors and calculate geometric mean for each channel
         secs = []
         for i in range(len(channels)):
-            sec1 = 1
+            sec1 = 1 # empty sector
             sec2 = data[1][2][i]
-            sec3 = 1
+            sec3 = 1 # empty sector
             sec4 = data[1][1][i]
-            sec5 = 1
+            sec5 = 1 # empty sector
             sec6 = data[0][1][i]
-            sec7 = 1
+            sec7 = 1 # empty sector
             sec8 = data[0][2][i]
             secs_geom_mean = np.power(sec1 * sec2 * sec3 * sec4 * \
                                 sec5 * sec6 * sec7 * sec8, 1/8)
@@ -292,6 +312,7 @@ class TestSegmentation(unittest.TestCase):
         assert_array_equal(segmentation.expand_objects(labels, 1), expected_1)
         assert_array_equal(segmentation.expand_objects(labels, 2), expected_2)
 
+
     def test_adjacency_matrix(self):
         cell_labels = np.array([
             [0, 1, 2, 2, 0],
@@ -307,7 +328,6 @@ class TestSegmentation(unittest.TestCase):
 
         assert_array_equal(segmentation.get_adjacency_matrix(cell_labels),
                            expected)
-
 
 
 if __name__ == '__main__':
