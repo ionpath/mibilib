@@ -104,6 +104,39 @@ class TestSegmentation(unittest.TestCase):
                                                         image,
                                                         num_sectors=8)
         assert_array_equal(circ_secs, expected)
+        # test small cell
+        # assume labels are for cell ID 1, such as with label image:
+        # np.array([
+        #     [0, 1, 1, 0, 0, 0],
+        #     [0, 1, 1, 0, 0, 0],
+        #     [0, 0, 0, 0, 0, 0],
+        #     [0, 0, 0, 0, 0, 0],
+        #     [0, 0, 0, 0, 0, 0],
+        #     [0, 0, 0, 0, 0, 0]
+        # ])
+        # indices of the pixels of the cell
+        inds = ((0, 0, 1, 1), (1, 2, 1, 2))
+        # sum within sectors and calculate geometric mean for each channel
+        secs = []
+        for i in range(len(channels)):
+            sec1 = 1
+            sec2 = data[1][2][i]
+            sec3 = 1
+            sec4 = data[1][1][i]
+            sec5 = 1
+            sec6 = data[0][1][i]
+            sec7 = 1
+            sec8 = data[0][2][i]
+            secs_geom_mean = np.power(sec1 * sec2 * sec3 * sec4 * \
+                                sec5 * sec6 * sec7 * sec8, 1/8)
+            secs.append(secs_geom_mean)
+        expected = np.array(secs)
+        # test the function
+        image = mi.MibiImage(data, channels)
+        circ_secs = segmentation._circular_sectors_mean(inds,
+                                                        image,
+                                                        num_sectors=8)
+        assert_array_equal(circ_secs, expected)
 
 
     def test_extract_cell_dataframe(self):
