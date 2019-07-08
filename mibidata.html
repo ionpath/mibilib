@@ -805,7 +805,7 @@ calibration: A dict containing mass calibration parameters.</td>
 <p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.segmentation.extract_cell_dataframe">
-<code class="descclassname">mibidata.segmentation.</code><code class="descname">extract_cell_dataframe</code><span class="sig-paren">(</span><em>label_image</em>, <em>image=None</em>, <em>mode='total'</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.extract_cell_dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mibidata.segmentation.</code><code class="descname">extract_cell_dataframe</code><span class="sig-paren">(</span><em>label_image</em>, <em>image=None</em>, <em>mode='total'</em>, <em>num_sectors=8</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.extract_cell_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a dataframe of single-cell statistics from a labeled image.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -819,11 +819,18 @@ other segment.</li>
 None; if not None, the sum or score (depending on the mode) of each
 channel within each labeled region is returned as column of the
 dataframe. Otherwise, only the regions’ size and area are returned.</li>
-<li><strong>mode</strong> – One of``’total’`` or <code class="docutils literal notranslate"><span class="pre">'quadrant'</span></code>, defaulting to <code class="docutils literal notranslate"><span class="pre">'total'</span></code>. If
-<code class="docutils literal notranslate"><span class="pre">'total'`,</span> <span class="pre">the</span> <span class="pre">ion</span> <span class="pre">counts</span> <span class="pre">within</span> <span class="pre">each</span> <span class="pre">labeled</span> <span class="pre">region</span> <span class="pre">are</span> <span class="pre">summed.</span> <span class="pre">If</span>
-<span class="pre">``quadrant</span></code>, the geometric mean of each regions’s four quadrants
-is calculated, which favors regions with even spatial distribution.
-This mode is ignored if an image is not specified.</li>
+<li><strong>mode</strong> – One of``’total’<code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">``'quadrant'</span></code> or <code class="docutils literal notranslate"><span class="pre">'circular_sectors'</span></code>,
+defaulting to <code class="docutils literal notranslate"><span class="pre">'total'</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">'total'`,</span> <span class="pre">the</span> <span class="pre">ion</span> <span class="pre">counts</span> <span class="pre">within</span> <span class="pre">each</span> <span class="pre">labeled</span> <span class="pre">region</span> <span class="pre">are</span> <span class="pre">summed.</span>
+<span class="pre">If</span> <span class="pre">``'quadrant'</span></code>, the geometric mean of each regions’s four
+quadrants is calculated, which favors regions with even spatial
+distribution.
+If <code class="docutils literal notranslate"><span class="pre">'circular_sectors'</span></code>, the geometric mean of each regions’s
+<code class="docutils literal notranslate"><span class="pre">num_sectors</span></code> circular sectors is calculated. This is a
+generalization of the <code class="docutils literal notranslate"><span class="pre">quadrant</span></code> mode.
+The mode is ignored if an image is not specified.</li>
+<li><strong>num_sectors</strong> – number of circular sectors to use in the
+<code class="docutils literal notranslate"><span class="pre">circular_sectors</span></code> mode. Optional, default is 8.</li>
 </ul>
 </td>
 </tr>
@@ -1135,6 +1142,35 @@ all text strings and text strings with numbers are sorted alphabetically.</p>
 <dt id="mibidata.util.format_for_filename">
 <code class="descclassname">mibidata.util.</code><code class="descname">format_for_filename</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.format_for_filename" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replaces delimiters and utf-8 encodes targets for use as filenames.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mibidata.util.car2pol">
+<code class="descclassname">mibidata.util.</code><code class="descname">car2pol</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>x_c=0</em>, <em>y_c=0</em>, <em>degrees=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.car2pol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert cartesian to polar coordinates w.r.t. a central point.
+Angle phi is returned in the range [0, 2 pi) rad. A flag can be activated
+to return phi angles in degrees.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> (<em>x</em><em>,</em>) – arrays of coordinates to transform.</li>
+<li><strong>y_c</strong> (<em>x_c</em><em>,</em>) – numbers representing the coordinates of the center
+(origin of polar coordinates). Optional; default is (0, 0).</li>
+<li><strong>degrees</strong> – flag to return phi angles in degrees instead of radians.
+Optional; default is False (i.e. radians).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">arrays of transformed coordinates.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">r, phi</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
