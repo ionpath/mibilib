@@ -4,6 +4,7 @@ Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import re
 import functools
+import numpy as np
 
 DELIMITERS = {'/', '\\'}
 
@@ -110,3 +111,28 @@ def format_for_filename(label):
     for char in set(label).intersection(DELIMITERS):
         label = label.replace(char, '-')
     return label
+
+
+def car2pol(x, y, x_c=0, y_c=0, degrees=False):
+    """Convert cartesian to polar coordinates w.r.t. a central point.
+    Angle phi is returned in the range [0, 2 pi) rad. A flag can be activated
+    to return phi angles in degrees.
+
+    Args:
+        x, y: arrays of coordinates to transform.
+        x_c, y_c: numbers representing the coordinates of the center
+            (origin of polar coordinates). Optional; default is (0, 0).
+        degrees: flag to return phi angles in degrees instead of radians.
+            Optional; default is False (i.e. radians).
+
+    Returns:
+        r, phi: arrays of transformed coordinates.
+    """
+    r = np.sqrt((x - x_c)**2 + (y - y_c)**2)
+    phi = np.arctan2(y - y_c, x - x_c)
+    # convert: (-pi, pi] --> [0, 2 pi)
+    phi[phi[:] < 0] += 2.*np.pi
+    if degrees:
+        phi *= 180./np.pi
+
+    return r, phi
