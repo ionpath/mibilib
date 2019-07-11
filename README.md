@@ -33,7 +33,7 @@ This option is useful if you want this library to be installed as part of an
 existing environment or as a dependency inside a requirements.txt file. You may
 install a particular release using its tag (recommended)
 ```
-pip install git+git://github.com/ionpath/mibitracker-client@mv0.9.9
+pip install git+git://github.com/ionpath/mibitracker-client@v0.9.9
 ```
 or a branch (that may be under development with frequent changes)
 ```
