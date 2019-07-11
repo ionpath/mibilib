@@ -466,6 +466,7 @@ class MibiRequests():
                 names or if more than one image matches the specified run and
                 point names
         """
+
         results = self.get(
             '/images/',
             params={
@@ -473,6 +474,16 @@ class MibiRequests():
                 'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
                 'paging': 'no'}
         ).json()
+
+        len_results = len(results)
+        if len_results == 0:
+            results = self.get(
+                '/images/',
+                params={
+                    'run__name': run_name,
+                    'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                    'paging': 'no'}
+            ).json()
 
         len_results = len(results)
         if len_results == 0:
