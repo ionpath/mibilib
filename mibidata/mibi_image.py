@@ -481,3 +481,20 @@ class MibiImage():
                 warnings.filterwarnings('ignore',
                                         message='.*low contrast image.*')
                 skio.imsave(f'{os.path.join(path, png_name)}.png', im)
+
+    def rename_targets(self, channel_map):
+        """Modifies target names according to the specified map
+
+        Args:
+            channel_map: A dict where each key is an existing target name
+                that is to be changed, and the value is the desired new
+                target name.
+        """
+        existing = list(self.channels)
+        for key in channel_map:
+            index = self.channel_inds(key)
+            if isinstance(existing[index], tuple):
+                existing[index] = existing[index][0], channel_map[key]
+            else:
+                existing[index] = channel_map[key]
+        self.channels = existing

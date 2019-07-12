@@ -404,5 +404,52 @@ class TestExportGrayscales(unittest.TestCase):
             np.testing.assert_array_equal(
                 roundtripped, im.data[:, :, i])
 
+    def test_rename_targets_tuple_channels(self):
+        masses = [1, 2, 3]
+        targets = ['Channel1', 'Channel2', 'Channel3']
+        data = np.random.randint(0, 255, (10, 10, 3)).astype(np.uint16)
+        im = mi.MibiImage(data, list(zip(masses, targets)))
+
+        channel_map = {
+            'Channel2': 'Channel2 - Renamed',
+            'Channel3': 'Channel3 - Renamed'}
+        im.rename_targets(channel_map)
+
+        expected_targets = [
+            'Channel1',
+            'Channel2 - Renamed',
+            'Channel3 - Renamed']
+
+        self.assertTupleEqual(im.channels, tuple(zip(masses, expected_targets)))
+
+    def test_rename_targets_targets_only(self):
+        targets = ['Channel1', 'Channel2', 'Channel3']
+        data = np.random.randint(0, 255, (10, 10, 3)).astype(np.uint16)
+        im = mi.MibiImage(data, targets)
+
+        channel_map = {
+            'Channel2': 'Channel2 - Renamed',
+            'Channel3': 'Channel3 - Renamed'}
+        im.rename_targets(channel_map)
+
+        expected_targets = [
+            'Channel1',
+            'Channel2 - Renamed',
+            'Channel3 - Renamed']
+
+        self.assertTupleEqual(im.channels, tuple(expected_targets))
+
+    def test_rename_targets_missing_target(self):
+        targets = ['Channel1', 'Channel2', 'Channel3']
+        data = np.random.randint(0, 255, (10, 10, 3)).astype(np.uint16)
+        im = mi.MibiImage(data, targets)
+
+        channel_map = {
+            'Channel2': 'Channel2 - Renamed',
+            'i_dont_exist': 'Channel3 - Renamed'}
+
+        with self.assertRaises(KeyError):
+            im.rename_targets(channel_map)
+
 if __name__ == '__main__':
     unittest.main()
