@@ -220,13 +220,12 @@ class MibiImage():
         return self.slice_data(channels)
 
     def __repr__(self):
-        s = f"{type(self)}\n"
-        for key, val in self.metadata().items():
-            s += f'{key}: {val}\n'
+        s = f'{type(self)}\n'
+        s += '\n'.join(f'{key}: {val}' for key, val in self.metadata().items())
         return s
 
     def __str__(self):
-        s = f"{type(self)} " + "{"
+        s = f'{type(self)} ' + '{'
         s += ', '.join(f'{key}: {val}' for key, val in self.metadata().items())
         s += '}'
         return s
