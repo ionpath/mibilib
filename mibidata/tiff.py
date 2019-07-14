@@ -283,8 +283,8 @@ def _page_metadata(page, description):
         page.tags['x_resolution'].value[1]
     y_resolution = page.tags['y_resolution'].value[0] / \
                    page.tags['y_resolution'].value[1]
-    assert (x_resolution == y_resolution,
-            'x-resolution and y-resolution are not equal')
+    assert x_resolution == y_resolution, \
+        'x-resolution and y-resolution are not equal'
     size = page.tags['image_width'].value / x_resolution * 1e4
     date = datetime.datetime.strptime(
         page.tags['datetime'].value.decode(ENCODING),
