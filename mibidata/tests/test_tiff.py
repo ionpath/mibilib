@@ -26,7 +26,7 @@ CHANNELS = ((1, 'Target1'), (2, 'Target2'), (3, 'Target3'),
             (4, 'Target4'), (5, 'Target5'))
 METADATA = {
     'run': 'Run', 'date': '2017-09-16T15:26:00',
-    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
+    'coordinates': (12345, -67890), 'size': 300., 'slide': '857',
     'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
