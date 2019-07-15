@@ -220,13 +220,12 @@ class MibiImage():
         return self.slice_data(channels)
 
     def __repr__(self):
-        s = f"{type(self)}\n"
-        for key, val in self.metadata().items():
-            s += f'{key}: {val}\n'
+        s = f'{type(self)}\n'
+        s += '\n'.join(f'{key}: {val}' for key, val in self.metadata().items())
         return s
 
     def __str__(self):
-        s = f"{type(self)} " + "{"
+        s = f'{type(self)} ' + '{'
         s += ', '.join(f'{key}: {val}' for key, val in self.metadata().items())
         s += '}'
         return s
@@ -493,3 +492,20 @@ class MibiImage():
                 warnings.filterwarnings('ignore',
                                         message='.*low contrast image.*')
                 skio.imsave(f'{os.path.join(path, png_name)}.png', im)
+
+    def rename_targets(self, channel_map):
+        """Modifies target names according to the specified map
+
+        Args:
+            channel_map: A dict where each key is an existing target name
+                that is to be changed, and the value is the desired new
+                target name.
+        """
+        existing = list(self.channels)
+        for key in channel_map:
+            index = self.channel_inds(key)
+            if isinstance(existing[index], tuple):
+                existing[index] = existing[index][0], channel_map[key]
+            else:
+                existing[index] = channel_map[key]
+        self.channels = existing
