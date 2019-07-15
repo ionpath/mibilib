@@ -280,7 +280,7 @@ def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
     assert page.tags['resolution_unit'].value == 3
     x_resolution = page.tags['x_resolution'].value[0] / \
-        page.tags['x_resolution'].value[1]
+                   page.tags['x_resolution'].value[1]
     y_resolution = page.tags['y_resolution'].value[0] / \
                    page.tags['y_resolution'].value[1]
     assert x_resolution == y_resolution, \
