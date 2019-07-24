@@ -61,13 +61,26 @@ class MibiRequests():
             response's status code is >= 400.
     """
 
-    def __init__(self, url, email, password, retries=MAX_RETRIES,
+    def __init__(self,
+                 url,
+                 email,
+                 password,
+                 token,
+                 retries=MAX_RETRIES,
                  retry_methods=RETRY_METHOD_WHITELIST,
                  retry_codes=RETRY_STATUS_CODES):
 
         self.url = url.rstrip('/')  # We add this as part of request params
         self.session = StatusCheckedSession()
-        self._auth(url, email, password)
+
+        # Provide either an email and password, or a token
+        # The token will be used in lieu of email and password if provided
+        if token:
+            self.session.headers.update({
+                'Authorization': 'JWT {}'.format(token)
+            })
+        else:
+            self._auth(url, email, password)
 
         retry = Retry(status=retries, method_whitelist=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
