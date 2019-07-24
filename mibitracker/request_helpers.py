@@ -449,12 +449,13 @@ class MibiRequests():
             '/images/{}/conjugates/'.format(image_id),
             params={'paging': 'no'}).json()
 
-    def image_id(self, run_name, point_name):
+    def image_id(self, run_name, point_name, run_label=None):
         """Gets the primary key of an image given the specified run and point
             names.
 
         Args:
             run_name: The name of the run the image belongs to.
+            run_label: The optional label of the run the image belongs to.
             point_name: The name of the point. It should be in the format of
                 `Point(n)` where n is the point number.
 
@@ -467,16 +468,17 @@ class MibiRequests():
                 point names
         """
 
-        results = self.get(
-            '/images/',
-            params={
-                'run__label': run_name,
-                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
-                'paging': 'no'}
-        ).json()
+        if run_label:
+            results = self.get(
+                '/images/',
+                params={
+                    'run__name': run_label,
+                    'run__label': run_name,
+                    'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                    'paging': 'no'}
+            ).json()
 
-        len_results = len(results)
-        if len_results == 0:
+        else:
             results = self.get(
                 '/images/',
                 params={
@@ -487,12 +489,20 @@ class MibiRequests():
 
         len_results = len(results)
         if len_results == 0:
-            raise MibiTrackerError(
-                f'No images found matching run {run_name} {point_name}.')
+            if run_label:
+                raise MibiTrackerError(
+                f'No images found matching run {run_name}:{run_label} {point_name}.')
+            else:
+                raise MibiTrackerError(
+                    f'No images found matching run {run_name} {point_name}.')
         if len_results > 1:
-            raise MibiTrackerError(
-                f'Multiple images match run {run_name} {point_name}.'
-            )
+            if run_label:
+                raise MibiTrackerError(
+                f'Multiple images match run {run_name}:{run_label} {point_name}.')
+            else:
+                raise MibiTrackerError(
+                    f'Multiple images match run {run_name} {point_name}.'
+                )
 
         return results[0]['id']
 
