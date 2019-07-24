@@ -455,9 +455,9 @@ class MibiRequests():
 
         Args:
             run_name: The name of the run the image belongs to.
-            run_label: The optional label of the run the image belongs to.
             point_name: The name of the point. It should be in the format of
                 `Point(n)` where n is the point number.
+            run_label: The optional label of the run the image belongs to.
 
         Returns:
             An int id corresponding to the primary key of the image.
