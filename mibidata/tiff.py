@@ -279,11 +279,13 @@ def _page_description(page):
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
     assert page.tags['resolution_unit'].value == 3
-    assert page.tags['x_resolution'].value[0] ==\
-        page.tags['y_resolution'].value[0],\
+    x_resolution = page.tags['x_resolution'].value[0] / \
+                   page.tags['x_resolution'].value[1]
+    y_resolution = page.tags['y_resolution'].value[0] / \
+                   page.tags['y_resolution'].value[1]
+    assert x_resolution == y_resolution, \
         'x-resolution and y-resolution are not equal'
-    size = (page.tags['image_width'].value /
-            float(page.tags['x_resolution'].value[0]) * 1e4)
+    size = page.tags['image_width'].value / x_resolution * 1e4
     date = datetime.datetime.strptime(
         page.tags['datetime'].value.decode(ENCODING),
         _DATETIME_FORMAT)
