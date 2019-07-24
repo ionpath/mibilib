@@ -454,7 +454,9 @@ class MibiRequests():
             names.
 
         Args:
-            run_name: The name of the run the image belongs to.
+            run_name: The name or label of the run the image belongs to. First
+                mibitracker is queried for run__label, if it is not found a
+                query for run__name is done.
             point_name: The name of the point. It should be in the format of
                 `Point(n)` where n is the point number.
 
