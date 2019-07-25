@@ -80,6 +80,7 @@ class MibiRequests():
             self.session.headers.update({
                 'Authorization': 'JWT {}'.format(token)
             })
+            self.session.options(self.url)
         elif email is not None and password is not None:
             self._auth(url, email, password)
         else:
@@ -578,6 +579,10 @@ class StatusCheckedSession(requests.Session):
 
     def get(self, *args, **kwargs):
         response = super().get(*args, **kwargs)
+        return self._check_status(response)
+
+    def options(self, *args, **kwargs):
+        response = super().options(*args, **kwargs)
         return self._check_status(response)
 
     def post(self, *args, **kwargs):
