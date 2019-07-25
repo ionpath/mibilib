@@ -63,9 +63,9 @@ class MibiRequests():
 
     def __init__(self,
                  url,
-                 email,
-                 password,
-                 token,
+                 email=None,
+                 password=None,
+                 token=None,
                  retries=MAX_RETRIES,
                  retry_methods=RETRY_METHOD_WHITELIST,
                  retry_codes=RETRY_STATUS_CODES):
@@ -75,12 +75,14 @@ class MibiRequests():
 
         # Provide either an email and password, or a token
         # The token will be used in lieu of email and password if provided
-        if token:
+        if token is not None:
             self.session.headers.update({
                 'Authorization': 'JWT {}'.format(token)
             })
-        else:
+        elif email is not None and password is not None:
             self._auth(url, email, password)
+        else:
+            raise ValueError('Provide either both an email and password or a token')
 
         retry = Retry(status=retries, method_whitelist=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
