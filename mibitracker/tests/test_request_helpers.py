@@ -39,6 +39,36 @@ class TestMibiRequests(unittest.TestCase):
     def tearDown(self):
         self.mock_auth.stop()
 
+    def test_initializing_with_token(self):
+        fake_token = """
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        """
+        try:
+            request_helpers.MibiRequests(
+                'https://mibitracker-instance.ionpath.com',
+                None,
+                None,
+                fake_token
+            )
+        except ValueError as e:
+            self.fail(e)
+
+    def test_parameter_validation(self):
+        try:
+            request_helpers.MibiRequests(
+                'https://mibitracker-instance.ionpath.com',
+                None,
+                None,
+                None
+            )
+        except ValueError:
+            return
+
+        self.fail(
+            'MibiRequests should fail to initialize\
+                without email and password or token'
+        )
+
     def test_prepare_route(self):
         self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')
         self.assertEqual(self.mtu._prepare_route('images/'), '/images/')
