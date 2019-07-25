@@ -43,6 +43,7 @@ class MibiRequests():
             ``'https://backend-dot-mibitracker-demo.appspot.com'``.
         email: The string email address of your MibiTracker account.
         password: The string password of your MibiTracker account.
+        token: A JSON Web Token (JWT) to validate a MibiTracker session.
         retries: The max number of retries for HTTP status errors. Defaults
             to ``MAX_RETRIES`` which is set to 3.
         retry_methods: The HTTP methods to retry. Defaults to
