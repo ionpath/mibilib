@@ -82,7 +82,9 @@ class MibiRequests():
         elif email is not None and password is not None:
             self._auth(url, email, password)
         else:
-            raise ValueError('Provide either both an email and password or a token')
+            raise ValueError(
+                'Provide either both an email and password or a token'
+            )
 
         retry = Retry(status=retries, method_whitelist=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
