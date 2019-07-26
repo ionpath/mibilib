@@ -43,6 +43,7 @@ class MibiRequests():
             ``'https://backend-dot-mibitracker-demo.appspot.com'``.
         email: The string email address of your MibiTracker account.
         password: The string password of your MibiTracker account.
+        token: A JSON Web Token (JWT) to validate a MibiTracker session.
         retries: The max number of retries for HTTP status errors. Defaults
             to ``MAX_RETRIES`` which is set to 3.
         retry_methods: The HTTP methods to retry. Defaults to
@@ -61,13 +62,31 @@ class MibiRequests():
             response's status code is >= 400.
     """
 
-    def __init__(self, url, email, password, retries=MAX_RETRIES,
+    def __init__(self,
+                 url,
+                 email=None,
+                 password=None,
+                 token=None,
+                 retries=MAX_RETRIES,
                  retry_methods=RETRY_METHOD_WHITELIST,
                  retry_codes=RETRY_STATUS_CODES):
 
         self.url = url.rstrip('/')  # We add this as part of request params
         self.session = StatusCheckedSession()
-        self._auth(url, email, password)
+
+        # Provide either an email and password, or a token
+        # The token will be used in lieu of email and password if provided
+        if token is not None:
+            self.session.headers.update({
+                'Authorization': 'JWT {}'.format(token)
+            })
+            self.session.options(self.url)
+        elif email is not None and password is not None:
+            self._auth(url, email, password)
+        else:
+            raise ValueError(
+                'Provide either both an email and password or a token'
+            )
 
         retry = Retry(status=retries, method_whitelist=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
@@ -581,6 +600,10 @@ class StatusCheckedSession(requests.Session):
 
     def get(self, *args, **kwargs):
         response = super().get(*args, **kwargs)
+        return self._check_status(response)
+
+    def options(self, *args, **kwargs):
+        response = super().options(*args, **kwargs)
         return self._check_status(response)
 
     def post(self, *args, **kwargs):

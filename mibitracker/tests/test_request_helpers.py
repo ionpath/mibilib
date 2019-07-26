@@ -39,6 +39,48 @@ class TestMibiRequests(unittest.TestCase):
     def tearDown(self):
         self.mock_auth.stop()
 
+    @patch('requests.Session.options')
+    def test_initializing_with_token(self, mock_option):
+        fake_token = """
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        """
+        try:
+            request_helpers.MibiRequests(
+                'https://mibitracker-instance.ionpath.com',
+                None,
+                None,
+                fake_token
+            )
+            mock_option.assert_called_once_with(
+                'https://mibitracker-instance.ionpath.com'
+            )
+        except ValueError as e:
+            self.fail(e)
+
+    @patch('requests.Session.options')
+    def test_initializing_with_bad_token(self, mock_option):
+        bad_token = """
+            bad_token
+        """
+        mock_option.side_effect = HTTPError()
+
+        with self.assertRaises(HTTPError):
+            request_helpers.MibiRequests(
+                'https://mibitracker-instance.ionpath.com',
+                None,
+                None,
+                bad_token
+            )
+
+    def test_parameter_validation(self):
+        with self.assertRaises(ValueError):
+            request_helpers.MibiRequests(
+                'https://mibitracker-instance.ionpath.com',
+                None,
+                None,
+                None
+            )
+
     def test_prepare_route(self):
         self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')
         self.assertEqual(self.mtu._prepare_route('images/'), '/images/')
