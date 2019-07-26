@@ -43,6 +43,7 @@ class MibiRequests():
             ``'https://backend-dot-mibitracker-demo.appspot.com'``.
         email: The string email address of your MibiTracker account.
         password: The string password of your MibiTracker account.
+        token: A JSON Web Token (JWT) to validate a MibiTracker session.
         retries: The max number of retries for HTTP status errors. Defaults
             to ``MAX_RETRIES`` which is set to 3.
         retry_methods: The HTTP methods to retry. Defaults to
@@ -61,13 +62,31 @@ class MibiRequests():
             response's status code is >= 400.
     """
 
-    def __init__(self, url, email, password, retries=MAX_RETRIES,
+    def __init__(self,
+                 url,
+                 email=None,
+                 password=None,
+                 token=None,
+                 retries=MAX_RETRIES,
                  retry_methods=RETRY_METHOD_WHITELIST,
                  retry_codes=RETRY_STATUS_CODES):
 
         self.url = url.rstrip('/')  # We add this as part of request params
         self.session = StatusCheckedSession()
-        self._auth(url, email, password)
+
+        # Provide either an email and password, or a token
+        # The token will be used in lieu of email and password if provided
+        if token is not None:
+            self.session.headers.update({
+                'Authorization': 'JWT {}'.format(token)
+            })
+            self.session.options(self.url)
+        elif email is not None and password is not None:
+            self._auth(url, email, password)
+        else:
+            raise ValueError(
+                'Provide either both an email and password or a token'
+            )
 
         retry = Retry(status=retries, method_whitelist=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
@@ -449,14 +468,15 @@ class MibiRequests():
             '/images/{}/conjugates/'.format(image_id),
             params={'paging': 'no'}).json()
 
-    def image_id(self, run_name, point_name):
+    def image_id(self, run_label, point_name):
         """Gets the primary key of an image given the specified run and point
             names.
 
         Args:
-            run_name: The name or label of the run the image belongs to. First
-                mibitracker is queried for run__label, if it is not found a
-                query for run__name is done.
+            run_label: The label of the run the image belongs to. If no images
+                found using run label (which is the unique identifier of
+                each run), run name is checked instead (run name is not
+                guaranteed to be unique per run).
             point_name: The name of the point. It should be in the format of
                 `Point(n)` where n is the point number.
 
@@ -466,23 +486,25 @@ class MibiRequests():
         Raises:
             ValueError: Raised if no images match the specified run and point
                 names or if more than one image matches the specified run and
-                point names
+                point names.
         """
-
         results = self.get(
             '/images/',
             params={
-                'run__label': run_name,
+                'run__label': run_label,
                 'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
                 'paging': 'no'}
         ).json()
 
         len_results = len(results)
         if len_results == 0:
+            warnings.warn('No images found matching run label: {run_label}, '
+                          'point_name: {point_name}. Checking run name '
+                          'instead.')
             results = self.get(
                 '/images/',
                 params={
-                    'run__name': run_name,
+                    'run__name': run_label,
                     'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
                     'paging': 'no'}
             ).json()
@@ -490,10 +512,10 @@ class MibiRequests():
         len_results = len(results)
         if len_results == 0:
             raise MibiTrackerError(
-                f'No images found matching run {run_name} {point_name}.')
+                f'No images found matching run {run_label} {point_name}.')
         if len_results > 1:
             raise MibiTrackerError(
-                f'Multiple images match run {run_name} {point_name}.'
+                f'Multiple images match run {run_label} {point_name}.'
             )
 
         return results[0]['id']
@@ -573,6 +595,10 @@ class StatusCheckedSession(requests.Session):
 
     def get(self, *args, **kwargs):
         response = super().get(*args, **kwargs)
+        return self._check_status(response)
+
+    def options(self, *args, **kwargs):
+        response = super().options(*args, **kwargs)
         return self._check_status(response)
 
     def post(self, *args, **kwargs):
