@@ -57,7 +57,7 @@ invalid or unexpected.</p>
 <p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="class">
 <dt id="mibitracker.request_helpers.MibiRequests">
-<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email</em>, <em>password</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email=None</em>, <em>password=None</em>, <em>token=None</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Helper class for making requests to the MibiTracker.</p>
 <p>This is an opinionated way of using <code class="docutils literal notranslate"><span class="pre">requests.Session</span></code> with the following
@@ -82,6 +82,7 @@ instance needs to be initialized.</dd>
 <code class="docutils literal notranslate"><span class="pre">'https://backend-dot-mibitracker-demo.appspot.com'</span></code>.</li>
 <li><strong>email</strong> – The string email address of your MibiTracker account.</li>
 <li><strong>password</strong> – The string password of your MibiTracker account.</li>
+<li><strong>token</strong> – A JSON Web Token (JWT) to validate a MibiTracker session.</li>
 <li><strong>retries</strong> – The max number of retries for HTTP status errors. Defaults
 to <code class="docutils literal notranslate"><span class="pre">MAX_RETRIES</span></code> which is set to 3.</li>
 <li><strong>retry_methods</strong> – The HTTP methods to retry. Defaults to
@@ -498,6 +499,27 @@ imageset. Defaults to None.</li>
 <dt id="mibitracker.request_helpers.StatusCheckedSession.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a GET request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</li>
+<li><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">requests.Response</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibitracker.request_helpers.StatusCheckedSession.options">
+<code class="descname">options</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a OPTIONS request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
