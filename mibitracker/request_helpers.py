@@ -468,15 +468,17 @@ class MibiRequests():
             '/images/{}/conjugates/'.format(image_id),
             params={'paging': 'no'}).json()
 
-    def image_id(self, run_name, point_name, run_label=None):
+    def image_id(self, run_label, point_name):
         """Gets the primary key of an image given the specified run and point
             names.
 
         Args:
-            run_name: The name of the run the image belongs to.
+            run_label: The label of the run the image belongs to. If no images
+                found using this run label (which is the unique identifier of
+                each run), run name will be checked instead but is not
+                guaranteed to be unique per run.
             point_name: The name of the point. It should be in the format of
                 `Point(n)` where n is the point number.
-            run_label: The optional label of the run the image belongs to.
 
         Returns:
             An int id corresponding to the primary key of the image.
@@ -484,44 +486,37 @@ class MibiRequests():
         Raises:
             ValueError: Raised if no images match the specified run and point
                 names or if more than one image matches the specified run and
-                point names
+                point names.
         """
-
-        if run_label:
-            params = {
-                'run__name': run_label,
-                'run__label': run_name,
-                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
-                'paging': 'no'}
-        else:
-            params = {
-                'run__name': run_name,
-                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
-                'paging': 'no'}
-
         results = self.get(
             '/images/',
-            params
+            params={
+                'run__label': run_label,
+                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                'paging': 'no'}
+        ).json()
+
+        len_results = len(results)
+        if len_results == 0:
+            warnings.warn('No images found matching run label: {run_label} '
+                          'point_name: {point_name}. Checking run name '
+                          'instead.')
+            results = self.get(
+                '/images/',
+                params={
+                    'run__name': run_label,
+                    'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                    'paging': 'no'}
             ).json()
 
         len_results = len(results)
         if len_results == 0:
-            if run_label:
-                error_msg = f'No images found matching run ' +\
-                    '{run_name}:{run_label} {point_name}.'
-            else:
-                error_msg = f'No images found matching run ' +\
-                        '{run_name} {point_name}.'
-            raise MibiTrackerError()
+            raise MibiTrackerError(
+                f'No images found matching run {run_label} {point_name}.')
         if len_results > 1:
-            if run_label:
-                error_msg = f'Multiple images match run ' +\
-                    '{run_name}:{run_label} {point_name}.'
-            else:
-                error_msg = f'Multiple images match run ' +\
-                    '{run_name} {point_name}.'
-
-            raise MibiTrackerError(error_msg)
+            raise MibiTrackerError(
+                f'Multiple images match run {run_label} {point_name}.'
+            )
 
         return results[0]['id']
 
