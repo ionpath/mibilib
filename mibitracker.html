@@ -402,7 +402,7 @@ section assigned, or if its section does not have a panel assigned.</td>
 
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.image_id">
-<code class="descname">image_id</code><span class="sig-paren">(</span><em>run_name</em>, <em>point_name</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.image_id" title="Permalink to this definition">¶</a></dt>
+<code class="descname">image_id</code><span class="sig-paren">(</span><em>run_label</em>, <em>point_name</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.image_id" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Gets the primary key of an image given the specified run and point</dt>
 <dd>names.</dd>
@@ -412,7 +412,10 @@ section assigned, or if its section does not have a panel assigned.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>run_name</strong> – The name of the run the image belongs to.</li>
+<li><strong>run_label</strong> – The label of the run the image belongs to. If no images
+found using run label (which is the unique identifier of
+each run), run name is checked instead (run name is not
+guaranteed to be unique per run).</li>
 <li><strong>point_name</strong> – The name of the point. It should be in the format of
 <cite>Point(n)</cite> where n is the point number.</li>
 </ul>
@@ -423,7 +426,7 @@ section assigned, or if its section does not have a panel assigned.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if no images match the specified run and point
 names or if more than one image matches the specified run and
-point names</p>
+point names.</p>
 </td>
 </tr>
 </tbody>
