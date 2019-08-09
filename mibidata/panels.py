@@ -57,6 +57,7 @@ def read_csv(path):
         # Combine and convert 'Mass' column to int
         combined = pd.concat(df, ignore_index=True)
         combined['Mass'] = combined['Mass'].astype(np.int64)
+        combined['Target'] = combined['Target'].astype(str)
         return merge_masses(combined)
 
 
