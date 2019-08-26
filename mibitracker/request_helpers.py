@@ -397,7 +397,7 @@ class MibiRequests():
         }
 
         response = self.post(
-            f'images/{image_id}/upload_channel/',
+            f'/images/{image_id}/upload_channel/',
             files=files
         )
         return response
