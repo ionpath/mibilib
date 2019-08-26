@@ -255,8 +255,7 @@ class TestMibiRequests(unittest.TestCase):
             'attachment': ('image.tiff', buf, 'image/tiff')
         }
         mock_post.assert_called_once_with(
-            'https://mibitracker-instance.ionpath.com/upload_channel/',
-            data={'image_id': 1},
+            'https://mibitracker-instance.ionpath.com/images/1/upload_channel/',
             files=expected_files,
         )
 
