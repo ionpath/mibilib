@@ -15,7 +15,6 @@ import os
 import shutil
 import tempfile
 import unittest
-import warnings
 
 from mock import patch
 import requests
