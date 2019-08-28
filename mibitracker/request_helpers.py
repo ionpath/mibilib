@@ -348,7 +348,7 @@ class MibiRequests():
         response.raise_for_status()
         return response
 
-    def upload_mibitiff(self, tiff_file, run_id=None):
+    def upload_mibitiff(self, tiff_file, run_id):
         """Uploads a single TIFF to the MibiTracker.
 
         This uses the 'run' and 'folder' fields in the MibiTiff's description to
@@ -367,10 +367,10 @@ class MibiRequests():
 
         Raises:
             TypeError: Raised if tiff_file is not a string path or file object.
+            ValueError: Raised if run_id is None.
         """
         if run_id is None:
-            warnings.warn('Specifying the run_id is recommended and may become '
-                          'mandatory in the future.', FutureWarning)
+            raise ValueError('run_id cannot be None')
         response = self.get('/upload_mibitiff/sign_tiff_url/').json()
         try:
             with open(tiff_file, 'rb') as fh:
