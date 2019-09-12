@@ -7,7 +7,7 @@ from setuptools import setup
 setup(name='mibitracker-client',
       author='IONpath, Inc.',
       author_email='mibitracker-support@ionpath.com',
-      version='1.0',
+      version='1.1.0',
       url='https://github.com/ionpath/mibitracker-client',
       description='Python utilities for IONpath MIBItracker and MIBItiff data',
       license='GNU General Public License v3.0',
