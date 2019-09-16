@@ -243,7 +243,7 @@ class MibiRequests():
             'slides': ','.join(str(d['id']) for d in data['slide_ids']),
             'aperture': data['aperture']['id'],  # required
             'label': new_label,
-            'magnification': data['magnification'],  # required, FOV size
+            'fov_size': data['fov_size'],  # required, FOV size
             'project': data['project'] and data['project']['id'],  # optional
             'description': data['description'],
             'operator': data['operator'],  # Not yet used, but field exists
