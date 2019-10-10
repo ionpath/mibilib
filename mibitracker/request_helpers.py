@@ -242,6 +242,8 @@ class MibiRequests():
             'instrument': data['instrument']['id'],  # required
             'slides': ','.join(str(d['id']) for d in data['slide_ids']),
             'label': new_label,
+            'fov_size': data['fov_size'],
+            'aperture': data['aperture'] and data['aperture']['id'],
             'project': data['project'] and data['project']['id'],  # optional
             'description': data['description'],
             'operator': data['operator'],  # Not yet used, but field exists
@@ -288,7 +290,6 @@ class MibiRequests():
                     new_run_label, item['folder']))
             assert len(response.json()) == 1
             new_image = response.json()[0]
-
             # Update the section and tissue of the copied image using
             # info from the original image
             updated_image = {
@@ -297,9 +298,6 @@ class MibiRequests():
                 'project': item['section'] and \
                            item['section']['slide']['project']['id'],
                 'fov_size': item['fov_size'],
-                'aperture': item['aperture'] and item['aperture']['id'],
-                'imaging_preset': item['imaging_preset'],
-                'lens1_voltage': item['lens1_voltage']
             }
             # Add optional updates to copy such as a different frame size due to
             # cropping, or fixed mass calibration, etc.
