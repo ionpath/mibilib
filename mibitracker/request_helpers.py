@@ -241,9 +241,7 @@ class MibiRequests():
         run_data = {
             'instrument': data['instrument']['id'],  # required
             'slides': ','.join(str(d['id']) for d in data['slide_ids']),
-            'aperture': data['aperture']['id'],  # required
             'label': new_label,
-            'fov_size': data['fov_size'],  # required, FOV size
             'project': data['project'] and data['project']['id'],  # optional
             'description': data['description'],
             'operator': data['operator'],  # Not yet used, but field exists
@@ -298,6 +296,10 @@ class MibiRequests():
                 'tissue': item['tissue'] and item['tissue']['id'],
                 'project': item['section'] and \
                            item['section']['slide']['project']['id'],
+                'fov_size': item['fov_size'],
+                'aperture': item['aperture'] and item['aperture']['id'],
+                'imaging_preset': item['imaging_preset'],
+                'lens1_voltage': item['lens1_voltage']
             }
             # Add optional updates to copy such as a different frame size due to
             # cropping, or fixed mass calibration, etc.
