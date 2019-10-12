@@ -15,7 +15,6 @@ import os
 import shutil
 import tempfile
 import unittest
-import warnings
 
 from mock import patch
 import requests
@@ -179,30 +178,10 @@ class TestMibiRequests(unittest.TestCase):
             headers={'content-type': 'application/json'}
         )
 
-    @patch.object(request_helpers.MibiRequests, '_upload_mibitiff')
-    def test_upload_mibitiff_without_run_id(self, mock_upload):
+    def test_upload_mibitiff_without_run_id(self):
         buf = io.BytesIO()
-        response = {
-            'location': 'some_path',
-            'url': 'http://somewhere'
-        }
-        expected_data = {
-            'location': response['location'],
-            'run_id': None,
-        }
-        with warnings.catch_warnings(record=True) as warned:
-            warnings.simplefilter('always')
-            with patch.object(self.mtu, 'get') as mock_get:
-                mock_get().json.return_value = response
-                with patch.object(self.mtu, 'post') as mock_post:
-                    self.mtu.upload_mibitiff(buf)
-        mock_post.assert_called_once_with(
-            '/upload_mibitiff/',
-            data=json.dumps(expected_data),
-            headers={'content-type': 'application/json'}
-        )
-        self.assertEqual(len(warned), 1)
-        self.assertTrue(issubclass(warned[0].category, FutureWarning))
+        with self.assertRaises(ValueError):
+            self.mtu.upload_mibitiff(buf, None)
 
     @patch.object(request_helpers.MibiRequests, '_upload_channel')
     def test_upload_channel_missing_filename(self, mock_upload):
