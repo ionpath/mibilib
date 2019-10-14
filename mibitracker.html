@@ -475,8 +475,12 @@ point names.</p>
 
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.create_imageset">
-<code class="descname">create_imageset</code><span class="sig-paren">(</span><em>image_ids</em>, <em>imageset_name</em>, <em>imageset_description=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.create_imageset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new imageset with the specified images.</p>
+<code class="descname">create_imageset</code><span class="sig-paren">(</span><em>image_ids</em>, <em>imageset_name</em>, <em>project_id</em>, <em>imageset_description=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.create_imageset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new imageset in a project with the specified images.</p>
+<blockquote>
+<div>Note that all images in the set must be either in the project
+specified or in other projects to which the user has access and
+sharing is enabled.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -485,6 +489,8 @@ point names.</p>
 <li><strong>image_ids</strong> – A list of ints of ids of the images in MibiTracker
 corresponding to the images to be added to the new imageset.</li>
 <li><strong>imageset_name</strong> – A string name for the new imageset.</li>
+<li><strong>project_id</strong> – An integer id specifying the project in which to create
+the image set.</li>
 <li><strong>imageset_description</strong> – (optional) A string description for the new
 imageset. Defaults to None.</li>
 </ul>
