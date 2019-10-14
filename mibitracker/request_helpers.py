@@ -559,14 +559,17 @@ class MibiRequests():
 
     def create_imageset(self, image_ids, imageset_name, project_id,
                         imageset_description=None):
-        """Creates a new imageset with the specified images.
+        """Creates a new imageset in a project with the specified images.
+
+         Note that all images in the set must be either in the project specified
+         or in other projects to which the user has acces and sharing enabled.
 
         Args:
             image_ids: A list of ints of ids of the images in MibiTracker
                 corresponding to the images to be added to the new imageset.
             imageset_name: A string name for the new imageset.
-            project_id: An integer number for identifying the project to which
-                the images belong.
+            project_id: An integer id specifying the project in which to create
+                the image set.
             imageset_description: (optional) A string description for the new
                 imageset. Defaults to None.
         """
