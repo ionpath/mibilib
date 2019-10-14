@@ -561,8 +561,9 @@ class MibiRequests():
                         imageset_description=None):
         """Creates a new imageset in a project with the specified images.
 
-         Note that all images in the set must be either in the project specified
-         or in other projects to which the user has acces and sharing enabled.
+         Note that all images in the set must be either in the project
+         specified or in other projects to which the user has access and
+         sharing is enabled.
 
         Args:
             image_ids: A list of ints of ids of the images in MibiTracker
