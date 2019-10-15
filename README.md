@@ -32,18 +32,17 @@ conda activate mibitracker-client
 This option is useful if you want this library to be installed as part of an
 existing environment or as a dependency inside a requirements.txt file. You may
 install a particular release using its tag (recommended)
-```
+```bash
 pip install git+git://github.com/ionpath/mibitracker-client@v0.9.9
 ```
 or a branch (that may be under development with frequent changes)
-```
+```bash
 pip install git+git://github.com/ionpath/master
 ```
 
 ## Usage
-```
+```python
 from mibitracker.request_helpers import MibiRequests
-
 
 request = MibiRequests(
     'https://your-mibitracker-backend.appspot.com',
@@ -64,3 +63,8 @@ More examples can be found in the following notebooks:
 
 Full documentation for this library can be found at
 https://ionpath.github.io/mibitracker-client/.
+
+## Sample data
+Access to sample data to run the tutorials in the notebooks can be
+requested by creating an account at the following URL:
+https://mibi-share.ionpath.com.

@@ -4,7 +4,7 @@ This tests for the retry and status checking utilities only.
 Specific helper functions that make use of the MibiTracker API and can be
 tested by running a local instance of the MibiTracker to ensure proper
 integration. A set of examples can be found in
-mibitof/notebooks/MibiRequestsTesting.
+mibitracker/testing/MibiRequestsTesting.ipynb.
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved.
 """
