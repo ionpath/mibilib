@@ -293,12 +293,11 @@ class MibiRequests():
             # Update the section and tissue of the copied image using
             # info from the original image
             updated_image = {
-                'section': item['section'] and item['section']['id'],
                 'tissue': item['tissue'] and item['tissue']['id'],
-                'project': item['section'] and \
-                           item['section']['slide']['project']['id'],
                 'fov_size': item['fov_size'],
             }
+            if item['section']:
+                updated_image.update({'section': item['section']['id']})
             # Add optional updates to copy such as a different frame size due to
             # cropping, or fixed mass calibration, etc.
             updated_image.update(kwargs)
