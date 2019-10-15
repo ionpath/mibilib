@@ -293,12 +293,23 @@ class MibiRequests():
             # Update the section and tissue of the copied image using
             # info from the original image
             updated_image = {
-                'section': item['section'] and item['section']['id'],
                 'tissue': item['tissue'] and item['tissue']['id'],
-                'project': item['section'] and \
-                           item['section']['slide']['project']['id'],
                 'fov_size': item['fov_size'],
             }
+            if item['section']:
+                updated_image.update({'section': item['section']['id']})
+
+            # TODO (Stanley) all these checks are for version compatibility.
+            # Should be removed for mibitracker >= V1.1.5
+            if 'aperture' in item:
+                updated_image.update({
+                    'aperture': item['aperture'] and item['aperture']['id']
+                    })
+            if 'imaging_preset' in item:
+                updated_image.update({'imaging_preset': item['imaging_preset']})
+            if 'lens1_voltage' in item:
+                updated_image.update({'imaging_preset': item['imaging_preset']})
+
             # Add optional updates to copy such as a different frame size due to
             # cropping, or fixed mass calibration, etc.
             updated_image.update(kwargs)
