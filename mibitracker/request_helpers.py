@@ -308,7 +308,7 @@ class MibiRequests():
             if 'imaging_preset' in item:
                 updated_image.update({'imaging_preset': item['imaging_preset']})
             if 'lens1_voltage' in item:
-                updated_image.update({'imaging_preset': item['imaging_preset']})
+                updated_image.update({'lens1_voltage': item['lens1_voltage']})
 
             # Add optional updates to copy such as a different frame size due to
             # cropping, or fixed mass calibration, etc.
