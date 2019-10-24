@@ -51,7 +51,7 @@ class TestMibiRequests(unittest.TestCase):
                 fake_token
             )
             mock_option.assert_called_once_with(
-                'https://mibitracker-instance.ionpath.com'
+                'https://mibitracker-instance.ionpath.com', timeout=10
             )
         except ValueError as e:
             self.fail(e)
@@ -89,7 +89,7 @@ class TestMibiRequests(unittest.TestCase):
         self.mtu.get('images', params={'key': 'value'})
         mock_get.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images',
-            params={'key': 'value'}
+            params={'key': 'value'}, timeout=10
         )
 
     @patch('requests.Session.post')
@@ -97,7 +97,7 @@ class TestMibiRequests(unittest.TestCase):
         self.mtu.post('/images/', data={'key': 'value'})
         mock_post.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/',
-            data={'key': 'value'}
+            data={'key': 'value'}, timeout=10
         )
 
     @patch('requests.Session.put')
@@ -105,14 +105,14 @@ class TestMibiRequests(unittest.TestCase):
         self.mtu.put('/images/1/', data={'key': 'value'})
         mock_put.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/1/',
-            data={'key': 'value'}
+            data={'key': 'value'}, timeout=10
         )
 
     @patch('requests.Session.delete')
     def test_delete(self, mock_delete):
         self.mtu.delete('/images/1/')
         mock_delete.assert_called_once_with(
-            'https://mibitracker-instance.ionpath.com/images/1/',
+            'https://mibitracker-instance.ionpath.com/images/1/', timeout=10
         )
 
     def test_init_sets_retries(self):
@@ -235,7 +235,7 @@ class TestMibiRequests(unittest.TestCase):
         }
         mock_post.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/1/upload_channel/',
-            files=expected_files,
+            files=expected_files, timeout=10
         )
 
     @patch.object(tiff, 'read')
