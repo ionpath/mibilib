@@ -177,7 +177,7 @@ class MibiRequests():
             rewound to the beginning of the file.
         """
         response = self.get('/download/', params={'path': path})
-        url = requests.get(response.json()['url'])
+        url = requests.get(response.json()['url'], timeout=30)
         buf = io.BytesIO()
         buf.write(url.content)
         buf.seek(0)
@@ -354,7 +354,8 @@ class MibiRequests():
         response = requests.put(
             url,
             data=tiff_file,
-            headers={'content-type': 'image/tiff'}
+            headers={'content-type': 'image/tiff'},
+            timeout=30
         )
         response.raise_for_status()
         return response
@@ -562,7 +563,8 @@ class MibiRequests():
             raise MibiTrackerError(
                 'Specified channel name is not present in image')
         buf = io.BytesIO()
-        response = requests.get(image_info['overlays'][channel_name])
+        response = requests.get(image_info['overlays'][channel_name],
+                                timeout=30)
         response.raise_for_status()
         buf.write(response.content)
         buf.seek(0)
@@ -612,21 +614,31 @@ class StatusCheckedSession(requests.Session):
         return response
 
     def get(self, *args, **kwargs):
+        if 'timeout' not in kwargs:
+            kwargs.update({'timeout': 10})
         response = super().get(*args, **kwargs)
         return self._check_status(response)
 
     def options(self, *args, **kwargs):
+        if 'timeout' not in kwargs:
+            kwargs.update({'timeout': 10})
         response = super().options(*args, **kwargs)
         return self._check_status(response)
 
     def post(self, *args, **kwargs):
+        if 'timeout' not in kwargs:
+            kwargs.update({'timeout': 10})
         response = super().post(*args, **kwargs)
         return self._check_status(response)
 
     def put(self, *args, **kwargs):
+        if 'timeout' not in kwargs:
+            kwargs.update({'timeout': 10})
         response = super().put(*args, **kwargs)
         return self._check_status(response)
 
     def delete(self, *args, **kwargs):
+        if 'timeout' not in kwargs:
+            kwargs.update({'timeout': 10})
         response = super().delete(*args, **kwargs)
         return self._check_status(response)
