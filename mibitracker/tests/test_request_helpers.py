@@ -51,7 +51,7 @@ class TestMibiRequests(unittest.TestCase):
                 fake_token
             )
             mock_option.assert_called_once_with(
-                'https://mibitracker-instance.ionpath.com', 
+                'https://mibitracker-instance.ionpath.com',
                 timeout=request_helpers.SESSION_TIMEOUT
             )
         except ValueError as e:
@@ -82,8 +82,8 @@ class TestMibiRequests(unittest.TestCase):
             )
 
     def test_prepare_route(self):
-        self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')
-        self.assertEqual(self.mtu._prepare_route('images/'), '/images/')
+        self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')  # pylint: disable=protected-access
+        self.assertEqual(self.mtu._prepare_route('images/'), '/images/')  # pylint: disable=protected-access
 
     @patch('requests.Session.get')
     def test_get(self, mock_get):
@@ -159,7 +159,7 @@ class TestMibiRequests(unittest.TestCase):
                     method_to_call('http://example.com')
 
     @patch.object(request_helpers.MibiRequests, '_upload_mibitiff')
-    def test_upload_mibitiff_with_run_id(self, mock_upload):
+    def test_upload_mibitiff_with_run_id(self, mock_upload):  # pylint: disable=unused-argument
         buf = io.BytesIO()
         response = {
             'location': 'some_path',
@@ -186,7 +186,7 @@ class TestMibiRequests(unittest.TestCase):
             self.mtu.upload_mibitiff(buf, None)
 
     @patch.object(request_helpers.MibiRequests, '_upload_channel')
-    def test_upload_channel_missing_filename(self, mock_upload):
+    def test_upload_channel_missing_filename(self, mock_upload):  # pylint: disable=unused-argument
         buf = io.BytesIO()
         with self.assertRaises(ValueError):
             self.mtu.upload_channel(1, buf)
@@ -230,7 +230,7 @@ class TestMibiRequests(unittest.TestCase):
     @patch('requests.Session.post')
     def test_upload_channel(self, mock_post):
         buf = io.BytesIO()
-        self.mtu._upload_channel(1, buf, 'image.tiff')
+        self.mtu._upload_channel(1, buf, 'image.tiff')  # pylint: disable=protected-access
 
         expected_files = {
             'attachment': ('image.tiff', buf, 'image/tiff')
