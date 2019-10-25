@@ -358,8 +358,7 @@ class MibiRequests():
             image_map[item['id']] = response.json()
         return image_map
 
-    @staticmethod
-    def _upload_mibitiff(url, tiff_file):
+    def _upload_mibitiff(self, url, tiff_file):
         # This shouldn't send mibitracker credentials so don't use the session
         response = requests.put(
             url,
