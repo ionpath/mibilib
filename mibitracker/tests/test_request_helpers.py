@@ -21,9 +21,8 @@ from mock import patch
 import requests
 from requests.exceptions import HTTPError
 
-from mibidata import tiff
+from mibidata import tiff, mibi_image as mi
 from mibitracker import request_helpers
-from mibitof import mibi_image as mi
 
 class TestMibiRequests(unittest.TestCase):
 
