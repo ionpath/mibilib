@@ -57,7 +57,7 @@ invalid or unexpected.</p>
 <p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="class">
 <dt id="mibitracker.request_helpers.MibiRequests">
-<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email=None</em>, <em>password=None</em>, <em>token=None</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email=None</em>, <em>password=None</em>, <em>token=None</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em>, <em>session_timeout=10</em>, <em>data_transfer_timeout=30</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Helper class for making requests to the MibiTracker.</p>
 <p>This is an opinionated way of using <code class="docutils literal notranslate"><span class="pre">requests.Session</span></code> with the following
@@ -90,6 +90,8 @@ to <code class="docutils literal notranslate"><span class="pre">MAX_RETRIES</spa
 whitelist with the addition of POST.</li>
 <li><strong>retry_codes</strong> – The HTTP status codes to retry. Defaults to <code class="docutils literal notranslate"><span class="pre">(502,</span> <span class="pre">503)</span></code>,
 which are associated with transient errors seen on app engine.</li>
+<li><strong>session_timeout</strong> – Timeout for MibiTracker requests.</li>
+<li><strong>data_transfer_timeout</strong> – Timeout for data transfer requests.</li>
 </ul>
 </td>
 </tr>
@@ -504,7 +506,7 @@ imageset. Defaults to None.</li>
 
 <dl class="class">
 <dt id="mibitracker.request_helpers.StatusCheckedSession">
-<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">StatusCheckedSession</code><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">StatusCheckedSession</code><span class="sig-paren">(</span><em>timeout=10</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">requests.sessions.Session</span></code></p>
 <p>Raises for HTTP errors and adds any response JSON to the message.</p>
 <dl class="method">
