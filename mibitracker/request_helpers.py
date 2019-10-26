@@ -451,6 +451,25 @@ class MibiRequests():
                                      'object that does not have a name')
             return self._upload_channel(image_id, image_file, filename)
 
+    def upload_channel_from_mibiimage(self, image, channel_label, image_id):
+        """Uploads a channel from a MibiImage to the MibiTracker.
+
+        The image passed as argument should contain only the channel that needs
+        to be uploaded.
+
+        Args:
+            image: a MibiImage with the channel to upload.
+            channel_label: the name of the channel to upload.
+            image_id: The integer id of the image to associate the channel with.
+
+        Returns:
+            The response from the MibiTracker after uploading the file.
+        """
+        buf = io.BytesIO()
+        skio.imsave(buf, image)
+        buf.seek(0)
+        return self.upload_channel(image_id, buf, f'{channel_label}.png')
+
     def run_images(self, run_label):
         """Gets a JSON array of image metadata from a given run label.
 
