@@ -509,9 +509,9 @@ class MibiRequests():
 
         len_results = len(results)
         if len_results == 0:
-            warnings.warn('No images found matching run label: {run_label}, '
-                          'point_name: {point_name}. Checking run name '
-                          'instead.')
+            message = (f'No images found matching run label: {run_label}, '
+                       f'point_name: {point_name}. Checking run name instead.')
+            warnings.warn(message)
             results = self.get(
                 '/images/',
                 params={
@@ -522,12 +522,11 @@ class MibiRequests():
 
         len_results = len(results)
         if len_results == 0:
-            raise MibiTrackerError(
-                f'No images found matching run {run_label} {point_name}.')
+            message = f'No images found matching run {run_label} {point_name}.'
+            raise MibiTrackerError(message)
         if len_results > 1:
-            raise MibiTrackerError(
-                f'Multiple images match run {run_label} {point_name}.'
-            )
+            message = f'Multiple images match run {run_label} {point_name}.'
+            raise MibiTrackerError(message)
 
         return results[0]['id']
 
