@@ -32,7 +32,8 @@ METADATA = {
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
     'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
-    'filename': 'Run'
+    'filename': 'Run',
+    'optional_metadata': {'description': 'test image', 'mass_range': 20}
 }
 
 

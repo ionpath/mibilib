@@ -111,6 +111,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         'mibi.miscalibrated': getattr(image, 'miscalibrated'),
         'mibi.check_reg': getattr(image, 'check_reg'),
         'mibi.filename': getattr(image, 'filename'),
+        'mibi.optional_metadata': getattr(image, 'optional_metadata')
     }
     description = {
         key: val for key, val in metadata.items() if val is not None}
@@ -311,6 +312,7 @@ def _page_metadata(page, description):
         'miscalibrated': description.get('mibi.miscalibrated'),
         'check_reg': description.get('mibi.check_reg'),
         'filename': description.get('mibi.filename'),
+        'optional_metadata': description.get('mibi.optional_metadata')
     }
 
 
