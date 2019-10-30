@@ -16,7 +16,7 @@ _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
                'folder', 'dwell', 'scans', 'aperture',
                'instrument', 'tissue', 'panel', 'version', 'mass_offset',
                'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
-               'filename')
+               'filename', 'optional_metadata')
 
 
 class MibiImage():
@@ -56,14 +56,17 @@ class MibiImage():
             peak locations after mass recalibration.
         check_reg: Whether or not the maximum shift between depths is higher
             than a threshold.
+        filename: The name of the Run XML file which corresponds to the run
+            name.
+        optional_metadata: A dictionary for storing additional metadata.
 
     Raises:
         ValueError: Raised if
-
             - the shape of data does not match length of channels.
             - the channel names are not unique.
             - the masses (if included in channel tuples) are not unique.
             - the targets (if included in channel tuples) are not unique.
+        TypeError: Raised if called with an unexpected metadata key.
 
     Attributes:
         data: An MxMxD numpy array of multiplexed image data, where D is
@@ -101,6 +104,7 @@ class MibiImage():
             than a threshold.
         filename: The name of the Run XML file which corresponds to the run
             name.
+        optional_metadata: A dictionary for storing additional metadata.
     """
 
     # pylint: disable=too-many-arguments
@@ -110,7 +114,8 @@ class MibiImage():
                  instrument=None, tissue=None, panel=None, version=None,
                  mass_offset=None, mass_gain=None, time_resolution=None,
                  miscalibrated=None, check_reg=None,
-                 datetime_format=_DATETIME_FORMAT, filename=None):
+                 datetime_format=_DATETIME_FORMAT, filename=None,
+                 optional_metadata=None):
 
         self._length = len(channels)
         if data.shape[2] != self._length:
@@ -142,6 +147,10 @@ class MibiImage():
         self.miscalibrated = miscalibrated
         self.check_reg = check_reg
         self.filename = filename
+        if optional_metadata is None:
+            self.optional_metadata = {}
+        else:
+            self.optional_metadata = optional_metadata
 
     @property
     def channels(self):

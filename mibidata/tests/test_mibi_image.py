@@ -29,7 +29,8 @@ METADATA = {
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': None,
     'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
-    'check_reg': None, 'filename': '20180703_1234'
+    'check_reg': None, 'filename': '20180703_1234',
+    'optional_metadata': {'description': 'test image', 'mass_range': 20}
 }
 
 
