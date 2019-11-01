@@ -9,7 +9,7 @@ import warnings
 import numpy as np
 from skimage import io as skio, transform
 
-# THe format of the run xml.
+# The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
 _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
