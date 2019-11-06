@@ -28,37 +28,41 @@ class MibiImage():
         channels: A tuple of channel names of length D. The names may
             either be strings, or tuples of strings of the format (mass,
             target).
-        run: A string name of the run during which this image was acquired.
-        date: The run date. It can either be a datetime object, or a string.
-            If a string, it will be parsed according to the
-            `datetime_format``.
-        coordinates: A tuple of (x, y) stage coordinates at which the image
-            was acquired; stage coordinates should be in microns.
-        size: A float size of the image width/height in  :math:`\\mu m`.
-        slide: A string or integer slide ID.
-        point_name: A string name for the point as assigned during the run.
-        folder: The folder name for this image as determined by the
-            acquisition software.
-        dwell: A float pixel dwell time in :math:`ms`.
-        scans: A comma-separated list of image scan numbers.
-        aperture: A string name of the aperture used during image
-            acquisition.
-        instrument: A string identifier for the instrument used.
-        tissue: A string name of the tissue type.
-        panel: A string name of the panel used to stain the tissue.
-        version: A string identifier for the software version used.
-        datetime_format: The optional format of the date, if given as a
-            string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
-        mass_offset: Mass offset parameter used for mass calibration.
-        mass_gain: Mass gain used for mass calibration.
-        time_resolution: Parameter used for mass calibration.
-        miscalibrated: Whether or not there was significant difference between
-            peak locations after mass recalibration.
-        check_reg: Whether or not the maximum shift between depths is higher
-            than a threshold.
-        filename: The name of the Run XML file which corresponds to the run
-            name.
-        optional_metadata: A dictionary for storing additional metadata.
+        kwargs: A sequence of arguments that will be used to define the
+            metadata. A list of valid metadata keys follows; anything not
+            defined in this list will be treated as optional metadata and stored
+            in the `optional_metadata` dictionary:
+            run: A string name of the run during which this image was acquired.
+            date: The run date. It can either be a datetime object, or a string.
+                If a string, it will be parsed according to the
+                `datetime_format``.
+            coordinates: A tuple of (x, y) stage coordinates at which the image
+                was acquired; stage coordinates should be in microns.
+            size: A float size of the image width/height in  :math:`\\mu m`.
+            slide: A string or integer slide ID.
+            point_name: A string name for the point as assigned during the run.
+            folder: The folder name for this image as determined by the
+                acquisition software.
+            dwell: A float pixel dwell time in :math:`ms`.
+            scans: A comma-separated list of image scan numbers.
+            aperture: A string name of the aperture used during image
+                acquisition.
+            instrument: A string identifier for the instrument used.
+            tissue: A string name of the tissue type.
+            panel: A string name of the panel used to stain the tissue.
+            version: A string identifier for the software version used.
+            datetime_format: The optional format of the date, if given as a
+                string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
+            mass_offset: Mass offset parameter used for mass calibration.
+            mass_gain: Mass gain used for mass calibration.
+            time_resolution: Parameter used for mass calibration.
+            miscalibrated: Whether or not there was significant difference
+                between peak locations after mass recalibration.
+            check_reg: Whether or not the maximum shift between depths is higher
+                than a threshold.
+            filename: The name of the Run XML file which corresponds to the run
+                name.
+            optional_metadata: A dictionary for storing additional metadata.
 
     Raises:
         ValueError: Raised if
@@ -98,8 +102,8 @@ class MibiImage():
         mass_offset: Mass offset parameter used for mass calibration.
         mass_gain: Mass gain used for mass calibration.
         time_resolution: Parameter used for mass calibration.
-        miscalibrated: Whether or not there was significant difference between
-            peak locations after mass recalibration.
+        miscalibrated: Whether or not there was significant difference
+            between peak locations after mass recalibration.
         check_reg: Whether or not the maximum shift between depths is higher
             than a threshold.
         filename: The name of the Run XML file which corresponds to the run
@@ -107,15 +111,7 @@ class MibiImage():
         optional_metadata: A dictionary for storing additional metadata.
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(self, data, channels, run=None, date=None,
-                 coordinates=None, size=None, slide=None, point_name=None,
-                 folder=None, dwell=None, scans=None, aperture=None,
-                 instrument=None, tissue=None, panel=None, version=None,
-                 mass_offset=None, mass_gain=None, time_resolution=None,
-                 miscalibrated=None, check_reg=None,
-                 datetime_format=_DATETIME_FORMAT, filename=None,
-                 optional_metadata=None):
+    def __init__(self, data, channels, **kwargs):
 
         self._length = len(channels)
         if data.shape[2] != self._length:
@@ -123,34 +119,54 @@ class MibiImage():
         self.data = data
         self._set_channels(channels, self._length)
 
+        # check for required metadata in input arguments
+        for attr in _ATTRIBUTES:
+            if attr != 'optional_metadata':
+                try:
+                    kwargs[attr]
+                except KeyError:
+                    kwargs[attr] = None
+        try:
+            kwargs['datetime_format']
+        except KeyError:
+            kwargs['datetime_format'] = _DATETIME_FORMAT
+
+        # fill required metadata
+        date = kwargs.pop('date')
+        datetime_format = kwargs.pop('datetime_format')
         try:
             self.date = datetime.datetime.strptime(date, datetime_format)
         except TypeError:  # Given as datetime obj already, or None.
             self.date = date
+        self.run = kwargs.pop('run')
+        self.coordinates = kwargs.pop('coordinates')
+        self.size = kwargs.pop('size')
+        self.slide = kwargs.pop('slide')
+        self.point_name = kwargs.pop('point_name')
+        self.folder = kwargs.pop('folder')
+        self.dwell = kwargs.pop('dwell')
+        self.scans = kwargs.pop('scans')
+        self.aperture = kwargs.pop('aperture')
+        self.instrument = kwargs.pop('instrument')
+        self.tissue = kwargs.pop('tissue')
+        self.panel = kwargs.pop('panel')
+        self.version = kwargs.pop('version')
+        self.mass_offset = kwargs.pop('mass_offset')
+        self.mass_gain = kwargs.pop('mass_gain')
+        self.time_resolution = kwargs.pop('time_resolution')
+        self.miscalibrated = kwargs.pop('miscalibrated')
+        self.check_reg = kwargs.pop('check_reg')
+        self.filename = kwargs.pop('filename')
 
-        self.run = run
-        self.coordinates = coordinates
-        self.size = size
-        self.slide = slide
-        self.point_name = point_name
-        self.folder = folder
-        self.dwell = dwell
-        self.scans = scans
-        self.aperture = aperture
-        self.instrument = instrument
-        self.tissue = tissue
-        self.panel = panel
-        self.version = version
-        self.mass_offset = mass_offset
-        self.mass_gain = mass_gain
-        self.time_resolution = time_resolution
-        self.miscalibrated = miscalibrated
-        self.check_reg = check_reg
-        self.filename = filename
-        if optional_metadata is None:
-            self.optional_metadata = {}
-        else:
-            self.optional_metadata = optional_metadata
+        # whatever remains (if anything) is optional metadata
+        try:
+            optional_metadata = kwargs.pop('optional_metadata')
+            # merge 2 dicts: in case of duplicated keys, the values specified
+            # outside optional_metadata will prevail
+            kwargs = {**optional_metadata, **kwargs}
+        except KeyError:
+            pass
+        self.optional_metadata = kwargs
 
     @property
     def channels(self):

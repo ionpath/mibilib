@@ -29,9 +29,9 @@ METADATA = {
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': None,
     'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
-    'check_reg': None, 'filename': '20180703_1234',
-    'optional_metadata': {'description': 'test image', 'mass_range': 20}
+    'check_reg': None, 'filename': '20180703_1234'
 }
+OPTIONAL_METADATA = {'description': 'test image', 'mass_range': 20}
 
 
 class TestMibiImage(unittest.TestCase):
@@ -138,8 +138,10 @@ class TestMibiImage(unittest.TestCase):
             image[['1', '2']], image.slice_data(['1', '2']))
 
     def test_metadata(self):
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **OPTIONAL_METADATA)
         metadata = METADATA.copy()
+        metadata['optional_metadata'] = OPTIONAL_METADATA.copy()
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
@@ -234,6 +236,7 @@ class TestMibiImage(unittest.TestCase):
         metadata = METADATA.copy()
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
+        metadata['optional_metadata'] = {}
         self.assertEqual(image.metadata(), metadata)
 
     def test_remove_layers_with_copy(self):
