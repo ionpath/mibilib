@@ -29,9 +29,9 @@ METADATA = {
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': None,
     'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
-    'check_reg': None, 'filename': '20180703_1234'
+    'check_reg': None, 'filename': '20180703_1234', 'description': 'test image'
 }
-OPTIONAL_METADATA = {'description': 'test image', 'mass_range': 20}
+OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 
 
 class TestMibiImage(unittest.TestCase):

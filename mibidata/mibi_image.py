@@ -16,7 +16,7 @@ _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
                'folder', 'dwell', 'scans', 'aperture',
                'instrument', 'tissue', 'panel', 'version', 'mass_offset',
                'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
-               'filename', 'optional_metadata')
+               'filename', 'description', 'optional_metadata')
 
 
 class MibiImage():
@@ -62,6 +62,7 @@ class MibiImage():
                 than a threshold.
             filename: The name of the Run XML file which corresponds to the run
                 name.
+            description: String describing the image.
             optional_metadata: A dictionary for storing additional metadata.
 
     Raises:
@@ -108,6 +109,7 @@ class MibiImage():
             than a threshold.
         filename: The name of the Run XML file which corresponds to the run
             name.
+        description: String describing the image.
         optional_metadata: A dictionary for storing additional metadata.
     """
 
@@ -157,6 +159,7 @@ class MibiImage():
         self.miscalibrated = kwargs.pop('miscalibrated')
         self.check_reg = kwargs.pop('check_reg')
         self.filename = kwargs.pop('filename')
+        self.description = kwargs.pop('description')
 
         # whatever remains (if anything) is optional metadata
         try:
