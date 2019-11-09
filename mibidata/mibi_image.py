@@ -13,7 +13,7 @@ from skimage import io as skio, transform
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
 _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
-               'folder', 'dwell', 'scans', 'aperture',
+               'fov_name', 'folder', 'dwell', 'scans', 'aperture',
                'instrument', 'tissue', 'panel', 'version', 'mass_offset',
                'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
                'filename', 'description', 'optional_metadata')
@@ -40,7 +40,9 @@ class MibiImage():
                 was acquired; stage coordinates should be in microns.
             size: A float size of the image width/height in  :math:`\\mu m`.
             slide: A string or integer slide ID.
-            point_name: A string name for the point as assigned during the run.
+            point_name: A string identifying the point in the run, such as
+                'Point2'.
+            fov_name: A string name for the FoV as assigned during the run.
             folder: The folder name for this image as determined by the
                 acquisition software.
             dwell: A float pixel dwell time in :math:`ms`.
@@ -71,7 +73,7 @@ class MibiImage():
             - the channel names are not unique.
             - the masses (if included in channel tuples) are not unique.
             - the targets (if included in channel tuples) are not unique.
-        TypeError: Raised if called with an unexpected metadata key.
+            - the point_name doesn't match the point in folder.
 
     Attributes:
         data: An MxMxD numpy array of multiplexed image data, where D is
@@ -89,7 +91,9 @@ class MibiImage():
             the image was acquired.
         size: A float size of the image width/height in :math:`\\mu m`.
         slide: A string or integer slide ID.
-        point_name: A string name for the point as assigned during the run.
+        point_name: A string identifying the point in the run, such as
+            'Point2'.
+        fov_name: A string name for the FoV as assigned during the run.
         folder: The folder name for this image as determined by the
             acquisition software.
         dwell: A float pixel dwell time in :math:`ms`.
@@ -145,6 +149,7 @@ class MibiImage():
         self.size = kwargs.pop('size')
         self.slide = kwargs.pop('slide')
         self.point_name = kwargs.pop('point_name')
+        self.fov_name = kwargs.pop('fov_name')
         self.folder = kwargs.pop('folder')
         self.dwell = kwargs.pop('dwell')
         self.scans = kwargs.pop('scans')
@@ -170,6 +175,9 @@ class MibiImage():
         except KeyError:
             pass
         self.optional_metadata = kwargs
+
+        # check consistency between point_name and folder
+        self._check_point_name()
 
     @property
     def channels(self):
@@ -226,6 +234,15 @@ class MibiImage():
             raise ValueError(
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
+
+    def _check_point_name(self):
+        if self.point_name is not None and self.folder is not None:
+            try:
+                assert self.point_name == self.folder.split('/')[0]
+            except AssertionError:
+                message = (f'The point_name {self.point_name} does not match '
+                           f'the folder {self.folder}.')
+                raise ValueError(message)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.

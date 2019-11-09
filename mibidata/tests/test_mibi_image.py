@@ -24,9 +24,10 @@ TARGET_LABELS = ('Target1', 'Target2', 'Target3')
 METADATA = {
     'run': 'Run', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, 67890), 'size': 500., 'slide': '857',
-    'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
+    'point_name': 'Point1', 'fov_name': 'R1C3_Tonsil',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
-    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'dwell': 4, 'scans': '0,5', 'aperture': '300um',
+    'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': None,
     'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
     'check_reg': None, 'filename': '20180703_1234', 'description': 'test image'
@@ -96,6 +97,15 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image.channels = invalid_tuple_3
 
+    def test_check_point_name(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        image.point_name = 'Point2'
+        image.folder = 'Point2/RowNumber0/Depth_Profile0'
+        image._check_point_name()
+        image.point_name = 'Point99'
+        with self.assertRaises(ValueError):
+            image._check_point_name()
+
     def test_get_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
         self.assertEqual(image.labels, image.channels)
@@ -145,6 +155,13 @@ class TestMibiImage(unittest.TestCase):
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
+
+    def test_metadata_wrong_point_name(self):
+        metadata = METADATA.copy()
+        metadata = {**metadata, **OPTIONAL_METADATA}
+        metadata['point_name'] = 'Point99'
+        with self.assertRaises(ValueError):
+            mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
