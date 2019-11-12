@@ -242,6 +242,19 @@ def gray2hsl(array, angle):
 
 def compose_overlay_from_image_data(image, overlay_settings):
     """Overlays multiple image channels using overlay_settings from mibitracker.
+
+    Args:
+        image: A MibiImage.
+        overlay_settings: Color overlay dictionary with the following fields:
+            'brightness': float between -1 and 1.
+            'channel': Name of the MibiImage channel.
+            'color': One of the following: 'Cyan', 'Yellow', 'Magenta', 'Green',
+                'Orange', 'Violet', 'Red', 'Blue', or 'Gray'.
+            'intensity_higher': Upper limit of the channel intensity.
+            'intensity_lower': Lower limit of the channel intensity.
+
+    Returns:
+        An NxMx3 uint8 array of an RGB image.
     """
     # Convolve with this filter no matter what, to mimic browser rendering.
     kernel = np.array([
@@ -269,7 +282,7 @@ def compose_overlay_from_image_data(image, overlay_settings):
             hsl = gray2hsl(float_array, COLORS[item['color']])
             rgb = hsl2rgb(hsl)
         if i == 0:
-            compose_overlay = rgb
+            overlay = rgb
         else:
-            compose_overlay = _porter_duff_screen(composite, rgb)
-    return compose_overlay
+            overlay = _porter_duff_screen(composite, rgb)
+    return np.uint8(overlay * 255)
