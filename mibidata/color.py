@@ -227,19 +227,6 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     return np.uint8(screened * 255)
 
 
-def gray2hsl(array, angle):
-    """Converts NxN grayscale to RGB of a single color.
-
-    The input array is assumed to be scaled in the unit interval [0, 1]
-    The angle is in the range [0, 2*pi]
-    """
-    hsl = np.zeros((array.shape[0], array.shape[1], 3))
-    hsl[:, :, 0] = angle
-    hsl[array > 0, 1] = 1
-    hsl[:, :, 2] = array / 2
-    return hsl
-
-
 def compose_overlay_from_image_data(image, overlay_settings):
     """Overlays multiple image channels using overlay_settings from mibitracker.
 
