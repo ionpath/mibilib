@@ -264,13 +264,19 @@ class MibiImage():
 
     def _check_fov_id(self):
         """Check that fov_id matches folder."""
-        if self.fov_id is not None and self.folder is not None:
+        if self.fov_id is None and self.folder is None:
+            pass
+        elif self.fov_id is not None and self.folder is not None:
             try:
                 assert self.fov_id == self.folder.split('/')[0]
             except AssertionError:
                 message = (f'The fov_id {self.fov_id} does not '
                            f'match the folder {self.folder}.')
                 raise ValueError(message)
+        else:
+            message = (f'The fov_id {self.fov_id} does not '
+                       f'match the folder {self.folder}.')
+            raise ValueError(message)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.

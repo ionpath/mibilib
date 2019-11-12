@@ -132,6 +132,9 @@ class TestMibiImage(unittest.TestCase):
         image.fov_id = 'Point99'
         with self.assertRaises(ValueError):
             image._check_fov_id()
+        image.fov_id = None
+        with self.assertRaises(ValueError):
+            image._check_fov_id()
 
     def test_get_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
