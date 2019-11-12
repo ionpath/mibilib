@@ -51,8 +51,10 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def setUp(self):
         self.image = mi.MibiImage(DATA, CHANNELS, **METADATA)
+        self.image_optional_metadata = mi.MibiImage(DATA, CHANNELS, **METADATA,
+                                                    **OPTIONAL_METADATA)
         self.folder = tempfile.mkdtemp()
-        self.filename = os.path.join(self.folder, 'test.tif')
+        self.filename = os.path.join(self.folder, 'test.tiff')
         self.maxDiff = None
 
     def tearDown(self):
@@ -171,8 +173,18 @@ class TestWriteReadTiff(unittest.TestCase):
                                                '%Y-%m-%dT%H:%M:%S'),
             'optional_metadata': {}
         })
-        print(f'me: {metadata}')
-        print(f'ex: {expected}')
+        self.assertEqual(metadata, expected)
+
+    def test_read_metadata_with_optional_metadata(self):
+        tiff.write(self.filename, self.image_optional_metadata)
+        metadata = tiff.info(self.filename)
+        expected = METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+            'optional_metadata': {**OPTIONAL_METADATA}
+        })
         self.assertEqual(metadata, expected)
 
     def test_sort_channels_before_writing(self):
