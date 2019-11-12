@@ -22,6 +22,14 @@ _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
 class MibiImage():
     """A multiplexed image with labeled channels and metadata.
 
+    The format for setting the point name in the metadata has changed.
+    The correct format for setting the point name in the metadata is show in
+    the following example:
+     'point_name': 'Point1'
+     'fov_name': 'R1C3_Tonsil'
+    For backwards compatibility, the class performs a check for the old format
+    ('point_name': 'R1C3_Tonsil') and converts it to the new format.
+
     Args:
         data: An MxMxD numpy array of multiplexed image data, where D is
             the channel index and the frame size of the image is MxM.
@@ -73,7 +81,9 @@ class MibiImage():
             - the channel names are not unique.
             - the masses (if included in channel tuples) are not unique.
             - the targets (if included in channel tuples) are not unique.
-            - the point_name doesn't match the point in folder.
+            - the point_name doesn't match the point in folder, unless the call
+                is using the old point name format, in which case, only a
+                warning is shown.
 
     Attributes:
         data: An MxMxD numpy array of multiplexed image data, where D is
@@ -238,11 +248,22 @@ class MibiImage():
     def _check_point_name(self):
         if self.point_name is not None and self.folder is not None:
             try:
+                # check that point_name matches folder
                 assert self.point_name == self.folder.split('/')[0]
             except AssertionError:
-                message = (f'The point_name {self.point_name} does not match '
-                           f'the folder {self.folder}.')
-                raise ValueError(message)
+                # check for old point name format for backwards compatibility
+                if self.fov_name is None:
+                    print("WARNING! you are trying to use the old metadata "
+                          "format for setting the point name. If you are "
+                          "creating a new image, we recommend to store the "
+                          "point name as in the following example: "
+                          "'point_name': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
+                    self.fov_name = self.point_name
+                    self.point_name = self.folder.split('/')[0]
+                else:
+                    message = (f'The point_name {self.point_name} does not '
+                               f'match the folder {self.folder}.')
+                    raise ValueError(message)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.

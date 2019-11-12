@@ -33,6 +33,16 @@ METADATA = {
     'check_reg': None, 'filename': '20180703_1234', 'description': 'test image'
 }
 OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
+OLD_METADATA = {
+    'run': 'Run', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, 67890), 'size': 500., 'slide': '857',
+    'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
+    'folder': 'Point1/RowNumber0/Depth_Profile0',
+    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'version': None, 'mass_offset': None,
+    'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
+    'check_reg': None, 'filename': '20180703_1234'
+}
 
 
 class TestMibiImage(unittest.TestCase):
@@ -101,6 +111,7 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         image.point_name = 'Point2'
         image.folder = 'Point2/RowNumber0/Depth_Profile0'
+        image.fov_name = 'R1C3_Tonsil'
         image._check_point_name()
         image.point_name = 'Point99'
         with self.assertRaises(ValueError):
@@ -162,6 +173,17 @@ class TestMibiImage(unittest.TestCase):
         metadata['point_name'] = 'Point99'
         with self.assertRaises(ValueError):
             mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
+
+    def test_metadata_backwards_compatibility(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **OLD_METADATA)
+        metadata = OLD_METADATA.copy()
+        metadata['date'] = datetime.datetime.strptime(metadata['date'],
+                                                      mi._DATETIME_FORMAT)
+        metadata['fov_name'] = metadata['point_name']
+        metadata['point_name'] = metadata['folder'].split('/')[0]
+        metadata['description'] = None
+        metadata['optional_metadata'] = {}
+        self.assertEqual(image.metadata(), metadata)
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
