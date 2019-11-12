@@ -241,20 +241,22 @@ def gray2hsl(array, angle):
 
 
 def compose_overlay_from_image_data(image, overlay_settings):
-
+    """Overlays multiple image channels using overlay_settings from mibitracker.
+    """
     # Convolve with this filter no matter what, to mimic browser rendering.
     kernel = np.array([
-        [0.05,  0.1,  0.05],
-        [0.1,  0.4,  0.1],
-        [0.05,  0.1,  0.05]
+        [0.05, 0.1, 0.05],
+        [0.1, 0.4, 0.1],
+        [0.05, 0.1, 0.05]
     ])
     for i, item in enumerate(overlay_settings):
+        int_array = image[item['channel']]
         # Because we treat the min differently, don't use np.clip
-        range_min, range_max = item['range']
-        image[image > range_max] = range_max
-        image[image < range_min] = 0
-        float_array = image / float(range_max)
-        float_array[image > 0] += item['brightness']
+        range_min, range_max = item['intensity_lower'], item['intensity_higher']
+        int_array[int_array > range_max] = range_max
+        int_array[int_array < range_min] = 0
+        float_array = int_array / float(range_max)
+        float_array[int_array > 0] += item['brightness']
         # Apply default filter even if no blurring
         ndimage.filters.convolve(float_array, kernel, output=float_array)
         if item['blur'] > 0:
@@ -267,7 +269,7 @@ def compose_overlay_from_image_data(image, overlay_settings):
             hsl = gray2hsl(float_array, COLORS[item['color']])
             rgb = hsl2rgb(hsl)
         if i == 0:
-            composite = rgb
+            compose_overlay = rgb
         else:
-            composite = _porter_duff_screen(composite, rgb)
-    return composite
+            compose_overlay = _porter_duff_screen(composite, rgb)
+    return compose_overlay
