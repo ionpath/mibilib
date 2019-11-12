@@ -266,7 +266,7 @@ def compose_overlay_from_image_data(image, overlay_settings):
         if item['color'] == 'Gray':
             rgb = np.stack((float_array, float_array, float_array), axis=2)
         else:
-            hsl = gray2hsl(float_array, COLORS[item['color']])
+            hsl = _gray2hsl(float_array, COLORS[item['color']])
             rgb = hsl2rgb(hsl)
         if i == 0:
             overlay = rgb
