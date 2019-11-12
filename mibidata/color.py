@@ -3,6 +3,7 @@
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
+from scipy import ndimage
 
 COLORS = {
     'Cyan': np.pi,
@@ -224,3 +225,49 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
             gamma)
     screened = _screen(data_map)
     return np.uint8(screened * 255)
+
+
+def gray2hsl(array, angle):
+    """Converts NxN grayscale to RGB of a single color.
+
+    The input array is assumed to be scaled in the unit interval [0, 1]
+    The angle is in the range [0, 2*pi]
+    """
+    hsl = np.zeros((array.shape[0], array.shape[1], 3))
+    hsl[:, :, 0] = angle
+    hsl[array > 0, 1] = 1
+    hsl[:, :, 2] = array / 2
+    return hsl
+
+
+def compose_overlay_from_image_data(image, overlay_settings):
+
+    # Convolve with this filter no matter what, to mimic browser rendering.
+    kernel = np.array([
+        [0.05,  0.1,  0.05],
+        [0.1,  0.4,  0.1],
+        [0.05,  0.1,  0.05]
+    ])
+    for i, item in enumerate(overlay_settings):
+        # Because we treat the min differently, don't use np.clip
+        range_min, range_max = item['range']
+        image[image > range_max] = range_max
+        image[image < range_min] = 0
+        float_array = image / float(range_max)
+        float_array[image > 0] += item['brightness']
+        # Apply default filter even if no blurring
+        ndimage.filters.convolve(float_array, kernel, output=float_array)
+        if item['blur'] > 0:
+            ndimage.filters.gaussian_filter(
+                float_array, item['blur'] * 100, output=float_array)
+        np.clip(float_array, 0, 1, out=float_array)
+        if item['color'] == 'Gray':
+            rgb = np.stack((float_array, float_array, float_array), axis=2)
+        else:
+            hsl = gray2hsl(float_array, COLORS[item['color']])
+            rgb = hsl2rgb(hsl)
+        if i == 0:
+            composite = rgb
+        else:
+            composite = _porter_duff_screen(composite, rgb)
+    return composite
