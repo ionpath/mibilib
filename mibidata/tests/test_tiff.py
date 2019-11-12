@@ -36,6 +36,16 @@ METADATA = {
     'check_reg': False, 'filename': '20180703_1234', 'description': 'test image'
 }
 OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
+OLD_METADATA = {
+    'run': 'Run', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
+    'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
+    'folder': 'Point1/RowNumber0/Depth_Profile0',
+    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
+    'check_reg': False, 'filename': '20180703_1234'
+}
 
 
 class TestTiffHelpers(unittest.TestCase):
@@ -53,6 +63,7 @@ class TestWriteReadTiff(unittest.TestCase):
         self.image = mi.MibiImage(DATA, CHANNELS, **METADATA)
         self.image_optional_metadata = mi.MibiImage(DATA, CHANNELS, **METADATA,
                                                     **OPTIONAL_METADATA)
+        self.image_old_metadata = mi.MibiImage(DATA, CHANNELS, **OLD_METADATA)
         self.folder = tempfile.mkdtemp()
         self.filename = os.path.join(self.folder, 'test.tiff')
         self.maxDiff = None
@@ -184,6 +195,19 @@ class TestWriteReadTiff(unittest.TestCase):
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
             'optional_metadata': {**OPTIONAL_METADATA}
+        })
+        self.assertEqual(metadata, expected)
+
+    def test_read_old_metadata(self):
+        tiff.write(self.filename, self.image_old_metadata)
+        metadata = tiff.info(self.filename)
+        expected = METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+            'description': None,
+            'optional_metadata': {}
         })
         self.assertEqual(metadata, expected)
 

@@ -41,9 +41,9 @@ OLD_METADATA = {
     'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'version': None, 'mass_offset': None,
-    'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
-    'check_reg': None, 'filename': '20180703_1234'
+    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
+    'check_reg': False, 'filename': '20180703_1234'
 }
 
 
@@ -203,8 +203,6 @@ class TestMibiImage(unittest.TestCase):
         del metadata['point_name']
         metadata['description'] = None
         metadata['optional_metadata'] = {}
-        print(f'im.me {image.metadata()}')
-        print(f'me {metadata}')
         self.assertEqual(image.metadata(), metadata)
 
     def test_channel_inds_single_channel(self):
