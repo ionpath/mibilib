@@ -3,10 +3,12 @@
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import datetime
+import io
 import os
 import shutil
 import tempfile
 import unittest
+import unittest.mock
 import warnings
 
 import numpy as np
@@ -24,7 +26,7 @@ TARGET_LABELS = ('Target1', 'Target2', 'Target3')
 METADATA = {
     'run': 'Run', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, 67890), 'size': 500., 'slide': '857',
-    'point_name': 'Point1', 'fov_name': 'R1C3_Tonsil',
+    'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'dwell': 4, 'scans': '0,5', 'aperture': '300um',
     'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
@@ -107,15 +109,29 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image.channels = invalid_tuple_3
 
-    def test_check_point_name(self):
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    def test_check_old_point_name_format(self, mock_stdout):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
-        image.point_name = 'Point2'
+        image.optional_metadata['point_name'] = 'R1C3_Tonsil'
+        image.folder = 'Point2/RowNumber0/Depth_Profile0'
+        image._check_old_point_name_format()
+        expected_output = 'test'
+        expected_output = ("WARNING! you are trying to use the old metadata "
+                           "format for setting the point name. If you are "
+                           "creating a new image, we recommend to store the "
+                           "point name as in the following example: "
+                           "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.\n")
+        self.assertEqual(mock_stdout.getvalue(), expected_output)
+
+    def test_check_fov_id(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        image.fov_id = 'Point2'
         image.folder = 'Point2/RowNumber0/Depth_Profile0'
         image.fov_name = 'R1C3_Tonsil'
-        image._check_point_name()
-        image.point_name = 'Point99'
+        image._check_fov_id()
+        image.fov_id = 'Point99'
         with self.assertRaises(ValueError):
-            image._check_point_name()
+            image._check_fov_id()
 
     def test_get_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -167,10 +183,10 @@ class TestMibiImage(unittest.TestCase):
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
 
-    def test_metadata_wrong_point_name(self):
+    def test_metadata_wrong_fov_id(self):
         metadata = METADATA.copy()
         metadata = {**metadata, **OPTIONAL_METADATA}
-        metadata['point_name'] = 'Point99'
+        metadata['fov_id'] = 'Point99'
         with self.assertRaises(ValueError):
             mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
 
@@ -180,9 +196,12 @@ class TestMibiImage(unittest.TestCase):
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
         metadata['fov_name'] = metadata['point_name']
-        metadata['point_name'] = metadata['folder'].split('/')[0]
+        metadata['fov_id'] = metadata['folder'].split('/')[0]
+        del metadata['point_name']
         metadata['description'] = None
         metadata['optional_metadata'] = {}
+        print(f'im.me {image.metadata()}')
+        print(f'me {metadata}')
         self.assertEqual(image.metadata(), metadata)
 
     def test_channel_inds_single_channel(self):

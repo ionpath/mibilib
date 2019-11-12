@@ -12,7 +12,7 @@ from skimage import io as skio, transform
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
-_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
+_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'fov_id',
                'fov_name', 'folder', 'dwell', 'scans', 'aperture',
                'instrument', 'tissue', 'panel', 'version', 'mass_offset',
                'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
@@ -25,7 +25,7 @@ class MibiImage():
     The format for setting the point name in the metadata has changed.
     The correct format for setting the point name in the metadata is show in
     the following example:
-     'point_name': 'Point1'
+     'fov_id': 'Point1'
      'fov_name': 'R1C3_Tonsil'
     For backwards compatibility, the class performs a check for the old format
     ('point_name': 'R1C3_Tonsil') and converts it to the new format.
@@ -48,8 +48,7 @@ class MibiImage():
                 was acquired; stage coordinates should be in microns.
             size: A float size of the image width/height in  :math:`\\mu m`.
             slide: A string or integer slide ID.
-            point_name: A string identifying the point in the run, such as
-                'Point2'.
+            fov_id: A string identifying the point in the run, such as 'Point2'.
             fov_name: A string name for the FoV as assigned during the run.
             folder: The folder name for this image as determined by the
                 acquisition software.
@@ -81,7 +80,7 @@ class MibiImage():
             - the channel names are not unique.
             - the masses (if included in channel tuples) are not unique.
             - the targets (if included in channel tuples) are not unique.
-            - the point_name doesn't match the point in folder, unless the call
+            - the fov_id doesn't match the point in folder, unless the call
                 is using the old point name format, in which case, only a
                 warning is shown.
 
@@ -101,8 +100,7 @@ class MibiImage():
             the image was acquired.
         size: A float size of the image width/height in :math:`\\mu m`.
         slide: A string or integer slide ID.
-        point_name: A string identifying the point in the run, such as
-            'Point2'.
+        fov_id: A string identifying the point in the run, such as 'Point2'.
         fov_name: A string name for the FoV as assigned during the run.
         folder: The folder name for this image as determined by the
             acquisition software.
@@ -158,7 +156,7 @@ class MibiImage():
         self.coordinates = kwargs.pop('coordinates')
         self.size = kwargs.pop('size')
         self.slide = kwargs.pop('slide')
-        self.point_name = kwargs.pop('point_name')
+        self.fov_id = kwargs.pop('fov_id')
         self.fov_name = kwargs.pop('fov_name')
         self.folder = kwargs.pop('folder')
         self.dwell = kwargs.pop('dwell')
@@ -186,8 +184,11 @@ class MibiImage():
             pass
         self.optional_metadata = kwargs
 
-        # check consistency between point_name and folder
-        self._check_point_name()
+        # check for old point name format for backwards compatibility
+        self._check_old_point_name_format()
+
+        # check consistency between fov_id and folder
+        self._check_fov_id()
 
     @property
     def channels(self):
@@ -245,25 +246,31 @@ class MibiImage():
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
 
-    def _check_point_name(self):
-        if self.point_name is not None and self.folder is not None:
+    def _check_old_point_name_format(self):
+        """Convert old point name format to new one.
+
+        This function ensures backwards compatibility for the old point name
+        format.
+        """
+        if (self.fov_id is None and self.fov_name is None and
+            'point_name' in self.optional_metadata):
+            print("WARNING! you are trying to use the old metadata "
+                  "format for setting the point name. If you are "
+                  "creating a new image, we recommend to store the "
+                  "point name as in the following example: "
+                  "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
+            self.fov_name = self.optional_metadata.pop('point_name')
+            self.fov_id = self.folder.split('/')[0]
+
+    def _check_fov_id(self):
+        """Check that fov_id matches folder."""
+        if self.fov_id is not None and self.folder is not None:
             try:
-                # check that point_name matches folder
-                assert self.point_name == self.folder.split('/')[0]
+                assert self.fov_id == self.folder.split('/')[0]
             except AssertionError:
-                # check for old point name format for backwards compatibility
-                if self.fov_name is None:
-                    print("WARNING! you are trying to use the old metadata "
-                          "format for setting the point name. If you are "
-                          "creating a new image, we recommend to store the "
-                          "point name as in the following example: "
-                          "'point_name': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
-                    self.fov_name = self.point_name
-                    self.point_name = self.folder.split('/')[0]
-                else:
-                    message = (f'The point_name {self.point_name} does not '
-                               f'match the folder {self.folder}.')
-                    raise ValueError(message)
+                message = (f'The fov_id {self.fov_id} does not '
+                           f'match the folder {self.folder}.')
+                raise ValueError(message)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
