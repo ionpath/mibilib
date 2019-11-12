@@ -26,15 +26,16 @@ CHANNELS = ((1, 'Target1'), (2, 'Target2'), (3, 'Target3'),
             (4, 'Target4'), (5, 'Target5'))
 METADATA = {
     'run': 'Run', 'date': '2017-09-16T15:26:00',
-    'coordinates': (12345, -67890), 'size': 300., 'slide': '857',
-    'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
+    'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
-    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
-    'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
-    'filename': 'Run',
-    'optional_metadata': {'description': 'test image', 'mass_range': 20}
+    'dwell': 4, 'scans': '0,5', 'aperture': '300um',
+    'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
+    'check_reg': False, 'filename': '20180703_1234', 'description': 'test image'
 }
+OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 
 
 class TestTiffHelpers(unittest.TestCase):
@@ -167,8 +168,11 @@ class TestWriteReadTiff(unittest.TestCase):
         expected.update({
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
-                                               '%Y-%m-%dT%H:%M:%S')
+                                               '%Y-%m-%dT%H:%M:%S'),
+            'optional_metadata': {}
         })
+        print(f'me: {metadata}')
+        print(f'ex: {expected}')
         self.assertEqual(metadata, expected)
 
     def test_sort_channels_before_writing(self):

@@ -253,7 +253,7 @@ class MibiImage():
         format.
         """
         if (self.fov_id is None and self.fov_name is None and
-            'point_name' in self.optional_metadata):
+                'point_name' in self.optional_metadata):
             print("WARNING! you are trying to use the old metadata "
                   "format for setting the point name. If you are "
                   "creating a new image, we recommend to store the "

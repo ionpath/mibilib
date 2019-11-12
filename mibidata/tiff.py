@@ -101,7 +101,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         'mibi.dwell': getattr(image, 'dwell'),
         'mibi.scans': getattr(image, 'scans'),
         'mibi.aperture': getattr(image, 'aperture'),
-        'mibi.description': getattr(image, 'point_name'),
+        'mibi.fov_id': getattr(image, 'fov_id'),
+        'mibi.fov_name': getattr(image, 'fov_name'),
         'mibi.folder': getattr(image, 'folder'),
         'mibi.tissue': getattr(image, 'tissue'),
         'mibi.panel': getattr(image, 'panel'),
@@ -111,6 +112,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         'mibi.miscalibrated': getattr(image, 'miscalibrated'),
         'mibi.check_reg': getattr(image, 'check_reg'),
         'mibi.filename': getattr(image, 'filename'),
+        'mibi.description': getattr(image, 'description'),
         'mibi.optional_metadata': getattr(image, 'optional_metadata')
     }
     description = {
@@ -292,13 +294,15 @@ def _page_metadata(page, description):
         _DATETIME_FORMAT)
     return {
         'run': description.get('mibi.run'),
+        'version': description.get('version'),
         'coordinates': (
             _cm_to_micron(page.tags['x_position'].value),
             _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
         'size': size,
         'slide': description.get('mibi.slide'),
-        'point_name': description.get('mibi.description'),
+        'fov_id': description.get('mibi.fov_id'),
+        'fov_name': description.get('mibi.fov_name'),
         'folder': description.get('mibi.folder'),
         'dwell': description.get('mibi.dwell'),
         'scans': description.get('mibi.scans'),
@@ -312,6 +316,7 @@ def _page_metadata(page, description):
         'miscalibrated': description.get('mibi.miscalibrated'),
         'check_reg': description.get('mibi.check_reg'),
         'filename': description.get('mibi.filename'),
+        'description': description.get('mibi.description'),
         'optional_metadata': description.get('mibi.optional_metadata')
     }
 
