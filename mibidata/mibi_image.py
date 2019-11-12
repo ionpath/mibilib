@@ -69,8 +69,7 @@ class MibiImage():
                 between peak locations after mass recalibration.
             check_reg: Whether or not the maximum shift between depths is higher
                 than a threshold.
-            filename: The name of the Run XML file which corresponds to the run
-                name.
+            filename: The name of the file with the run metadata.
             description: String describing the image.
             optional_metadata: A dictionary for storing additional metadata.
 
@@ -119,8 +118,7 @@ class MibiImage():
             between peak locations after mass recalibration.
         check_reg: Whether or not the maximum shift between depths is higher
             than a threshold.
-        filename: The name of the Run XML file which corresponds to the run
-            name.
+        filename: The name of the file with the run metadata.
         description: String describing the image.
         optional_metadata: A dictionary for storing additional metadata.
     """
