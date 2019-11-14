@@ -245,24 +245,6 @@ class MibiImage():
         """
         self._set_channels(values, self._length)
 
-    @property
-    def labels(self):
-        """For backwards compatibility.
-
-        This may be removed in a future version. Use the :attr:`~channels`
-        property instead.
-        """
-        return self.channels
-
-    @labels.setter
-    def labels(self, values):
-        """This property is for backwards compatibility only.
-
-        This may be removed in a future version. Use the :attr:`~channels`
-        property instead.
-        """
-        self._set_channels(values, self._length)
-
     def _set_channels(self, channels, length):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
@@ -548,7 +530,7 @@ class MibiImage():
                     anti_aliasing=False).astype(dtype)
 
         if copy:
-            return MibiImage(_resize(), self.labels, **self.metadata())
+            return MibiImage(_resize(), self.channels, **self.metadata())
         self.data = _resize()
 
     def export_pngs(self, path, size=None):

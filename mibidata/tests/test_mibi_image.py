@@ -142,15 +142,6 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image._check_fov_id()
 
-    def test_get_labels(self):
-        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
-        self.assertEqual(image.labels, image.channels)
-
-    def test_set_labels(self):
-        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
-        image.labels = TARGET_LABELS
-        self.assertEqual(image.channels, TARGET_LABELS)
-
     def test_equality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
         second = mi.MibiImage(TEST_DATA.copy(), STRING_LABELS)
