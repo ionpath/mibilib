@@ -24,7 +24,7 @@ MASS_LABELS = ('Mass1', 'Mass2', 'Mass3')
 MASS_INTEGERS = (1, 2, 3)
 TARGET_LABELS = ('Target1', 'Target2', 'Target3')
 METADATA = {
-    'run': 'Run', 'date': '2017-09-16T15:26:00',
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
     'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
@@ -32,18 +32,19 @@ METADATA = {
     'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': '1.0', 'mass_offset': 0.1,
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
-    'check_reg': False, 'filename': '20180703_1234', 'description': 'test image'
+    'check_reg': False, 'filename': '20180703_1234_test',
+    'description': 'test image'
 }
 OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
-    'run': 'Run', 'date': '2017-09-16T15:26:00',
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
     'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
-    'check_reg': False, 'filename': '20180703_1234'
+    'check_reg': False, 'filename': '20180703_1234_test'
 }
 
 
