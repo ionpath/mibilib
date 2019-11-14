@@ -291,7 +291,7 @@ class MibiImage():
         if self.version != MIBITIFF_VERSION:
             print("WARNING! you are trying to use the old metadata "
                   "format for setting the point name. If you are "
-                  "creating a new image, we recommend to store the "
+                  "creating a new image, we recommend storing the "
                   "point name as in the following example: "
                   "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
             self.fov_name = self.optional_metadata.pop('point_name')

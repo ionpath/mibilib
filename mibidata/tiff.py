@@ -292,6 +292,10 @@ def _page_metadata(page, description):
     date = datetime.datetime.strptime(
         page.tags['datetime'].value.decode(ENCODING),
         _DATETIME_FORMAT)
+
+    # check version for backwards compatibility
+    _convert_from_previous_metadata_versions(description)
+
     return {
         'run': description.get('mibi.run'),
         'version': description.get('mibi.version'),
@@ -319,6 +323,26 @@ def _page_metadata(page, description):
         'description': description.get('mibi.description'),
         'optional_metadata': description.get('mibi.optional_metadata')
     }
+
+
+def _convert_from_previous_metadata_versions(description):
+    """Convert old metadata format to new one.
+
+    This function ensures backwards compatibility for previous versions.
+    """
+    try:
+        description['mibi.version']
+    except KeyError:
+        # if the key doesn't exist it means that the version was None and hence
+        # not saved in the tiff file
+        description['mibi.version'] = None
+
+    if description['mibi.version'] != mi.MIBITIFF_VERSION:
+        description['mibi.fov_name'] = description['mibi.description']
+        description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
+        description['mibi.description'] = None
+        description['mibi.optional_metadata'] = {}
+        description['mibi.version'] = mi.MIBITIFF_VERSION
 
 
 def info(filename):
