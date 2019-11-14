@@ -9,6 +9,9 @@ import warnings
 import numpy as np
 from skimage import io as skio, transform
 
+# Increment this when making functional changes.
+MIBITIFF_VERSION = '1.0'
+
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
@@ -59,7 +62,7 @@ class MibiImage():
             instrument: A string identifier for the instrument used.
             tissue: A string name of the tissue type.
             panel: A string name of the panel used to stain the tissue.
-            version: A string identifier for the software version used.
+            version: A string identifier for the MIBItiff software version used.
             datetime_format: The optional format of the date, if given as a
                 string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
             mass_offset: Mass offset parameter used for mass calibration.
@@ -110,7 +113,7 @@ class MibiImage():
         instrument: A string identifier for the instrument used.
         tissue: A string name of the tissue type.
         panel: A string name of the panel used to stain the tissue.
-        version: A string identifier for the software version used.
+        version: A string identifier for the MIBItiff software version used.
         mass_offset: Mass offset parameter used for mass calibration.
         mass_gain: Mass gain used for mass calibration.
         time_resolution: Parameter used for mass calibration.
@@ -130,6 +133,42 @@ class MibiImage():
             raise ValueError('Channels length does not match data dimensions.')
         self.data = data
         self._set_channels(channels, self._length)
+
+        # initialize required metadata empty
+        self.date = None
+        self.run = None
+        self.coordinates = None
+        self.size = None
+        self.slide = None
+        self.fov_id = None
+        self.fov_name = None
+        self.folder = None
+        self.dwell = None
+        self.scans = None
+        self.aperture = None
+        self.instrument = None
+        self.tissue = None
+        self.panel = None
+        self.version = None
+        self.mass_offset = None
+        self.mass_gain = None
+        self.time_resolution = None
+        self.miscalibrated = None
+        self.check_reg = None
+        self.filename = None
+        self.description = None
+        self.optional_metadata = None
+
+        self._set_metadata(**kwargs)
+
+    def _set_metadata(self, **kwargs):
+
+        # check version
+        try:
+            kwargs['version']
+        except KeyError:
+            # if no version specified, assume current version
+            kwargs['version'] = MIBITIFF_VERSION
 
         # check for required metadata in input arguments
         for attr in _ATTRIBUTES:
@@ -182,8 +221,8 @@ class MibiImage():
             pass
         self.optional_metadata = kwargs
 
-        # check for old point name format for backwards compatibility
-        self._check_old_point_name_format()
+        # check version for backwards compatibility
+        self._convert_from_previous_metadata_versions()
 
         # check consistency between fov_id and folder
         self._check_fov_id()
@@ -244,14 +283,12 @@ class MibiImage():
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
 
-    def _check_old_point_name_format(self):
-        """Convert old point name format to new one.
+    def _convert_from_previous_metadata_versions(self):
+        """Convert old metadata format to new one.
 
-        This function ensures backwards compatibility for the old point name
-        format.
+        This function ensures backwards compatibility for previous versions.
         """
-        if (self.fov_id is None and self.fov_name is None and
-                'point_name' in self.optional_metadata):
+        if self.version != MIBITIFF_VERSION:
             print("WARNING! you are trying to use the old metadata "
                   "format for setting the point name. If you are "
                   "creating a new image, we recommend to store the "
@@ -259,6 +296,7 @@ class MibiImage():
                   "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
             self.fov_name = self.optional_metadata.pop('point_name')
             self.fov_id = self.folder.split('/')[0]
+            self.version = MIBITIFF_VERSION
 
     def _check_fov_id(self):
         """Check that fov_id matches folder."""

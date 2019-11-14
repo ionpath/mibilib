@@ -30,7 +30,7 @@ METADATA = {
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'dwell': 4, 'scans': '0,5', 'aperture': '300um',
     'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'panel': '20170916_1x', 'version': '1.0', 'mass_offset': 0.1,
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
     'check_reg': False, 'filename': '20180703_1234', 'description': 'test image'
 }
@@ -54,6 +54,8 @@ class TestMibiImage(unittest.TestCase):
         warnings.filterwarnings(
             'ignore',
             message='Anti-aliasing will be enabled by default.*')
+        self.maxDiff = None
+
 
     def test_mibi_image_string_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -110,18 +112,22 @@ class TestMibiImage(unittest.TestCase):
             image.channels = invalid_tuple_3
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_check_old_point_name_format(self, mock_stdout):
+    def test_convert_from_previous_metadata_versions(self, mock_stdout):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
-        image.optional_metadata['point_name'] = 'R1C3_Tonsil'
-        image.folder = 'Point2/RowNumber0/Depth_Profile0'
-        image._check_old_point_name_format()
-        expected_output = 'test'
-        expected_output = ("WARNING! you are trying to use the old metadata "
-                           "format for setting the point name. If you are "
-                           "creating a new image, we recommend to store the "
-                           "point name as in the following example: "
-                           "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.\n")
+        image.optional_metadata['point_name'] = OLD_METADATA['point_name']
+        image.folder = OLD_METADATA['folder']
+        image.version = OLD_METADATA['version']
+        image._convert_from_previous_metadata_versions()
+        message = ("WARNING! you are trying to use the old metadata "
+                   "format for setting the point name. If you are "
+                   "creating a new image, we recommend to store the "
+                   "point name as in the following example: "
+                   "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
+        expected_output = message + '\n'
         self.assertEqual(mock_stdout.getvalue(), expected_output)
+        self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
+        self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
+        self.assertEqual(image.version, mi.MIBITIFF_VERSION)
 
     def test_check_fov_id(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
@@ -202,6 +208,7 @@ class TestMibiImage(unittest.TestCase):
         metadata['fov_id'] = metadata['folder'].split('/')[0]
         del metadata['point_name']
         metadata['description'] = None
+        metadata['version'] = mi.MIBITIFF_VERSION
         metadata['optional_metadata'] = {}
         self.assertEqual(image.metadata(), metadata)
 

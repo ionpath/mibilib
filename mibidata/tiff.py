@@ -14,7 +14,7 @@ from skimage.external.tifffile import TiffFile, TiffWriter
 from mibidata import mibi_image as mi, util
 
 # Increment this when making functional changes.
-SOFTWARE_VERSION = 'IonpathMIBIv0.2'
+SOFTWARE_VERSION = 'IonpathMIBIv1.0'
 # Coordinates of where the slide labels are within the optical image.
 _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
@@ -294,7 +294,7 @@ def _page_metadata(page, description):
         _DATETIME_FORMAT)
     return {
         'run': description.get('mibi.run'),
-        'version': description.get('version'),
+        'version': description.get('mibi.version'),
         'coordinates': (
             _cm_to_micron(page.tags['x_position'].value),
             _cm_to_micron(page.tags['y_position'].value)),
