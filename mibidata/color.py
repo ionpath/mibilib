@@ -227,7 +227,7 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     return np.uint8(screened * 255)
 
 
-def compose_overlay_from_image_data(image, overlay_settings):
+def compose_overlay(image, overlay_settings):
     """Overlays multiple image channels using overlay_settings from mibitracker.
 
     Args:
