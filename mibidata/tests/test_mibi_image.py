@@ -205,7 +205,7 @@ class TestMibiImage(unittest.TestCase):
                              **USER_DEFINED_METADATA)
         user_defined_metadata = {key: value for key, value
                                  in image.metadata().items()
-                                 if key not in mi._ATTRIBUTES}
+                                 if key not in mi._EXPECTED_METADATA_ATTRIBUTES}
         self.assertEqual(user_defined_metadata, USER_DEFINED_METADATA)
 
     def test_metadata_wrong_fov_id(self):
@@ -226,6 +226,12 @@ class TestMibiImage(unittest.TestCase):
         metadata['description'] = None
         metadata['version'] = mi.MIBITIFF_VERSION
         self.assertEqual(image.metadata(), metadata)
+
+    def test_user_defined_attributes(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        expected = [key for key in USER_DEFINED_METADATA]
+        self.assertEqual(image.user_defined_attributes(), expected)
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)

@@ -15,11 +15,13 @@ MIBITIFF_VERSION = '1.0'
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
-_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'fov_id',
-               'fov_name', 'folder', 'dwell', 'scans', 'aperture',
-               'instrument', 'tissue', 'panel', 'version', 'mass_offset',
-               'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
-               'filename', 'description')
+_EXPECTED_METADATA_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide',
+                                 'fov_id', 'fov_name', 'folder', 'dwell',
+                                 'scans', 'aperture', 'instrument', 'tissue',
+                                 'panel', 'version', 'mass_offset', 'mass_gain',
+                                 'time_resolution', 'miscalibrated',
+                                 'check_reg', 'filename', 'description')
+_NON_METADATA_ATTRIBUTES = ('data', '_length', '_channels', 'masses', 'targets')
 
 
 class MibiImage():
@@ -168,7 +170,7 @@ class MibiImage():
             kwargs['version'] = MIBITIFF_VERSION
 
         # check for required metadata in input arguments
-        for attr in _ATTRIBUTES:
+        for attr in _EXPECTED_METADATA_ATTRIBUTES:
             try:
                 kwargs[attr]
             except KeyError:
@@ -319,13 +321,16 @@ class MibiImage():
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
-        metadata_keys = [key for key in _ATTRIBUTES]
+        metadata_keys = [key for key in _EXPECTED_METADATA_ATTRIBUTES]
         # find user-defined metadata
-        metadata_keys.extend([key for key in self.__dict__
-                              if key not in _ATTRIBUTES and
-                              key not in ['data', '_length', '_channels',
-                                          'masses', 'targets']])
+        metadata_keys.extend(self.user_defined_attributes())
         return {key: getattr(self, key) for key in metadata_keys}
+
+    def user_defined_attributes(self):
+        """Returns a list of keys corresponding to the user-defined metadata."""
+        return [key for key in self.__dict__
+                if key not in _EXPECTED_METADATA_ATTRIBUTES and
+                key not in _NON_METADATA_ATTRIBUTES]
 
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.
