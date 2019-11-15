@@ -227,33 +227,24 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     return np.uint8(screened * 255)
 
 
-def compose_overlay(image, overlay_settings):
+def compose_overlay_from_image_data(image, overlay_settings):
     """Overlays multiple image channels using overlay_settings from mibitracker.
 
     Args:
         image: A MibiImage.
-        overlay_settings: Dictionary in one of the forms:
-            {
-                'image_id': {
-                        'channels': {
-                            'channel1': {'color': color, ...},
-                            'channel2': {'color': color, ...},
-                            ...
-                    }
-                }
-            },
-            {
-                'channels': {
-                        'channel1': {color': color, ...},
-                        'channel2': {color': color, ...},
-                        ...
-                }
-            }, or
-            {
+        overlay_settings: Dictionary in a form of mibitracker visual setting
+            - {'image_id': {'channels': {
                 'channel1': {'color': color, ...},
                 'channel2': {'color': color, ...},
-                ...
-            }
+                ...}}},
+            - {'channels': {
+                'channel1': {'color': color, ...},
+                'channel2': {'color': color, ...},
+                ...}}`, or
+            - `{
+                'channel1': {'color': color, ...},
+                'channel2': {'color': color, ...},
+                ...}`
             Each channel should have the following fields:
                 'color': One of the following: 'Cyan', 'Yellow', 'Magenta',
                     'Green', 'Orange', 'Violet', 'Red', 'Blue', or 'Gray'.
@@ -286,28 +277,18 @@ def compose_overlay(image, overlay_settings):
             break
         raise ValueError("""
             The overlay_settings dictionary should have one of the forms:
-            {
-                'image_id': {
-                    'channels': {
-                        'channel1': {'color': color, ...},
-                        'channel2': {'color': color, ...},
-                        ...
-                }
-            }
-            },
-            {
-                'channels': {
-                    'channel1': {color': color, ...},
-                    'channel2': {color': color, ...},
-                    ...
-                }
-            },
-            or 
-            {
+            - {'image_id': {'channels': {
                 'channel1': {'color': color, ...},
                 'channel2': {'color': color, ...},
-                ...
-            }
+                ...}}},
+            - {'channels': {
+                'channel1': {'color': color, ...},
+                'channel2': {'color': color, ...},
+                ...}}`, or
+            - `{
+                'channel1': {'color': color, ...},
+                'channel2': {'color': color, ...},
+                ...}`
             """)
 
     for i, channel in enumerate(overlay_settings):
