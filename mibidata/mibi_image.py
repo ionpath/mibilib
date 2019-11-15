@@ -19,7 +19,7 @@ _ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'fov_id',
                'fov_name', 'folder', 'dwell', 'scans', 'aperture',
                'instrument', 'tissue', 'panel', 'version', 'mass_offset',
                'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
-               'filename', 'description', 'optional_metadata')
+               'filename', 'description')
 
 
 class MibiImage():
@@ -40,9 +40,9 @@ class MibiImage():
             either be strings, or tuples of strings of the format (mass,
             target).
         kwargs: A sequence of arguments that will be used to define the
-            metadata. A list of valid metadata keys follows; anything not
-            defined in this list will be treated as optional metadata and stored
-            in the `optional_metadata` dictionary:
+            metadata. A list of expected metadata keys follows; however, the
+            user can define other metadata key-value pairs that will be added
+            as attributes to the class instance in use.
             run: A string name of the run during which this image was acquired.
             date: The run date. It can either be a datetime object, or a string.
                 If a string, it will be parsed according to the
@@ -74,7 +74,6 @@ class MibiImage():
                 than a threshold.
             filename: The name of the file with the run metadata.
             description: String describing the image.
-            optional_metadata: A dictionary for storing additional metadata.
 
     Raises:
         ValueError: Raised if
@@ -123,7 +122,6 @@ class MibiImage():
             than a threshold.
         filename: The name of the file with the run metadata.
         description: String describing the image.
-        optional_metadata: A dictionary for storing additional metadata.
     """
 
     def __init__(self, data, channels, **kwargs):
@@ -157,7 +155,6 @@ class MibiImage():
         self.check_reg = None
         self.filename = None
         self.description = None
-        self.optional_metadata = None
 
         self._set_metadata(**kwargs)
 
@@ -172,11 +169,10 @@ class MibiImage():
 
         # check for required metadata in input arguments
         for attr in _ATTRIBUTES:
-            if attr != 'optional_metadata':
-                try:
-                    kwargs[attr]
-                except KeyError:
-                    kwargs[attr] = None
+            try:
+                kwargs[attr]
+            except KeyError:
+                kwargs[attr] = None
         try:
             kwargs['datetime_format']
         except KeyError:
@@ -211,15 +207,9 @@ class MibiImage():
         self.filename = kwargs.pop('filename')
         self.description = kwargs.pop('description')
 
-        # whatever remains (if anything) is optional metadata
-        try:
-            optional_metadata = kwargs.pop('optional_metadata')
-            # merge 2 dicts: in case of duplicated keys, the values specified
-            # outside optional_metadata will prevail
-            kwargs = {**optional_metadata, **kwargs}
-        except KeyError:
-            pass
-        self.optional_metadata = kwargs
+        # whatever remains (if anything) is user-defined metadata
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
         # check version for backwards compatibility
         self._convert_from_previous_metadata_versions()
@@ -276,7 +266,7 @@ class MibiImage():
                   "creating a new image, we recommend storing the "
                   "point name as in the following example: "
                   "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
-            self.fov_name = self.optional_metadata.pop('point_name')
+            self.fov_name = self.__dict__.pop('point_name')
             self.fov_id = self.folder.split('/')[0]
             self.version = MIBITIFF_VERSION
 
@@ -329,7 +319,13 @@ class MibiImage():
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
-        return {key: getattr(self, key) for key in _ATTRIBUTES}
+        metadata_keys = [key for key in _ATTRIBUTES]
+        # find user-defined metadata
+        metadata_keys.extend([key for key in self.__dict__
+                              if key not in _ATTRIBUTES and
+                              key not in ['data', '_length', '_channels',
+                                          'masses', 'targets']])
+        return {key: getattr(self, key) for key in metadata_keys}
 
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.

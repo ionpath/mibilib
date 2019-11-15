@@ -35,7 +35,7 @@ METADATA = {
     'check_reg': False, 'filename': '20180703_1234_test',
     'description': 'test image'
 }
-OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
+USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
     'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
@@ -115,7 +115,7 @@ class TestMibiImage(unittest.TestCase):
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def test_convert_from_previous_metadata_versions(self, mock_stdout):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
-        image.optional_metadata['point_name'] = OLD_METADATA['point_name']
+        image.point_name = OLD_METADATA['point_name']
         image.folder = OLD_METADATA['folder']
         image.version = OLD_METADATA['version']
         image._convert_from_previous_metadata_versions()
@@ -176,17 +176,41 @@ class TestMibiImage(unittest.TestCase):
             image[['1', '2']], image.slice_data(['1', '2']))
 
     def test_metadata(self):
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
-                             **OPTIONAL_METADATA)
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
         metadata = METADATA.copy()
-        metadata['optional_metadata'] = OPTIONAL_METADATA.copy()
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
 
+    def test_metadata_with_user_defined_metadata_in_instantiation(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        metadata = METADATA.copy()
+        metadata.update(USER_DEFINED_METADATA)
+        metadata['date'] = datetime.datetime.strptime(metadata['date'],
+                                                      mi._DATETIME_FORMAT)
+        self.assertEqual(image.metadata(), metadata)
+
+    def test_metadata_with_user_defined_metadata_as_new_attribute(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        metadata = METADATA.copy()
+        metadata['date'] = datetime.datetime.strptime(metadata['date'],
+                                                      mi._DATETIME_FORMAT)
+        image.undefine_attribute = 'value_for_undefined_attribute'
+        metadata.update({'undefine_attribute': 'value_for_undefined_attribute'})
+        self.assertEqual(image.metadata(), metadata)
+
+    def test_capture_of_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        user_defined_metadata = {key: value for key, value
+                                 in image.metadata().items()
+                                 if key not in mi._ATTRIBUTES}
+        self.assertEqual(user_defined_metadata, USER_DEFINED_METADATA)
+
     def test_metadata_wrong_fov_id(self):
         metadata = METADATA.copy()
-        metadata = {**metadata, **OPTIONAL_METADATA}
+        metadata = {**metadata, **USER_DEFINED_METADATA}
         metadata['fov_id'] = 'Point99'
         with self.assertRaises(ValueError):
             mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
@@ -201,7 +225,6 @@ class TestMibiImage(unittest.TestCase):
         del metadata['point_name']
         metadata['description'] = None
         metadata['version'] = mi.MIBITIFF_VERSION
-        metadata['optional_metadata'] = {}
         self.assertEqual(image.metadata(), metadata)
 
     def test_channel_inds_single_channel(self):
@@ -294,7 +317,6 @@ class TestMibiImage(unittest.TestCase):
         metadata = METADATA.copy()
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
-        metadata['optional_metadata'] = {}
         self.assertEqual(image.metadata(), metadata)
 
     def test_remove_layers_with_copy(self):
