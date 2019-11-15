@@ -36,7 +36,7 @@ METADATA = {
     'check_reg': False, 'filename': '20180703_1234_test',
     'description': 'test image'
 }
-OPTIONAL_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
+USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
     'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
@@ -64,8 +64,9 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def setUp(self):
         self.image = mi.MibiImage(DATA, CHANNELS, **METADATA)
-        self.image_optional_metadata = mi.MibiImage(DATA, CHANNELS, **METADATA,
-                                                    **OPTIONAL_METADATA)
+        self.image_user_defined_metadata = mi.MibiImage(DATA, CHANNELS,
+                                                        **METADATA,
+                                                        **USER_DEFINED_METADATA)
         self.image_old_metadata = mi.MibiImage(DATA, CHANNELS, **OLD_METADATA)
         self.folder = tempfile.mkdtemp()
         self.filename = os.path.join(self.folder, 'test.tiff')
@@ -184,21 +185,18 @@ class TestWriteReadTiff(unittest.TestCase):
         expected.update({
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
-                                               '%Y-%m-%dT%H:%M:%S'),
-            'optional_metadata': {}
-        })
+                                               '%Y-%m-%dT%H:%M:%S')})
         self.assertEqual(metadata, expected)
 
-    def test_read_metadata_with_optional_metadata(self):
-        tiff.write(self.filename, self.image_optional_metadata)
+    def test_read_metadata_with_user_defined_metadata(self):
+        tiff.write(self.filename, self.image_user_defined_metadata)
         metadata = tiff.info(self.filename)
         expected = METADATA.copy()
         expected.update({
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
-            'optional_metadata': {**OPTIONAL_METADATA}
-        })
+            **USER_DEFINED_METADATA})
         self.assertEqual(metadata, expected)
 
     def test_read_old_metadata(self):
@@ -209,9 +207,7 @@ class TestWriteReadTiff(unittest.TestCase):
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
-            'description': None,
-            'optional_metadata': {}
-        })
+            'description': None})
         self.assertEqual(metadata, expected)
 
     def test_open_file_with_old_metadata(self):
@@ -221,9 +217,7 @@ class TestWriteReadTiff(unittest.TestCase):
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
-            'description': None,
-            'optional_metadata': {}
-        })
+            'description': None})
         self.assertEqual(metadata, expected)
 
     def test_convert_from_previous_metadata_versions(self):

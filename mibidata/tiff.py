@@ -93,30 +93,13 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                   image.data.shape[1] * 1e4 / float(image.size),
                   'cm')
 
-    metadata = {
-        'mibi.run': getattr(image, 'run'),
-        'mibi.version': getattr(image, 'version'),
-        'mibi.instrument': getattr(image, 'instrument') or 'MIBI',
-        'mibi.slide': getattr(image, 'slide'),
-        'mibi.dwell': getattr(image, 'dwell'),
-        'mibi.scans': getattr(image, 'scans'),
-        'mibi.aperture': getattr(image, 'aperture'),
-        'mibi.fov_id': getattr(image, 'fov_id'),
-        'mibi.fov_name': getattr(image, 'fov_name'),
-        'mibi.folder': getattr(image, 'folder'),
-        'mibi.tissue': getattr(image, 'tissue'),
-        'mibi.panel': getattr(image, 'panel'),
-        'mibi.mass_offset': getattr(image, 'mass_offset'),
-        'mibi.mass_gain': getattr(image, 'mass_gain'),
-        'mibi.time_resolution': getattr(image, 'time_resolution'),
-        'mibi.miscalibrated': getattr(image, 'miscalibrated'),
-        'mibi.check_reg': getattr(image, 'check_reg'),
-        'mibi.filename': getattr(image, 'filename'),
-        'mibi.description': getattr(image, 'description'),
-        'mibi.optional_metadata': getattr(image, 'optional_metadata')
-    }
+    metadata = {'mibi.' + key: value for key, value in \
+                image.metadata().items() \
+                if key not in ['date']} # datetime objects are not
+                                        # JSON serializable
+
     description = {
-        key: val for key, val in metadata.items() if val is not None}
+        key: val for key, val in metadata.items()}
 
     if multichannel:
         targets = list(image.targets)
@@ -296,33 +279,16 @@ def _page_metadata(page, description):
     # check version for backwards compatibility
     _convert_from_previous_metadata_versions(description)
 
-    return {
-        'run': description.get('mibi.run'),
-        'version': description.get('mibi.version'),
+    metadata = {key.split('.')[1]: value for key, value in \
+                description.items() if key.startswith('mibi.')}
+    metadata.update({
         'coordinates': (
             _cm_to_micron(page.tags['x_position'].value),
             _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
-        'size': size,
-        'slide': description.get('mibi.slide'),
-        'fov_id': description.get('mibi.fov_id'),
-        'fov_name': description.get('mibi.fov_name'),
-        'folder': description.get('mibi.folder'),
-        'dwell': description.get('mibi.dwell'),
-        'scans': description.get('mibi.scans'),
-        'aperture': description.get('mibi.aperture'),
-        'instrument': description.get('mibi.instrument'),
-        'tissue': description.get('mibi.tissue'),
-        'panel': description.get('mibi.panel'),
-        'mass_offset': description.get('mibi.mass_offset'),
-        'mass_gain': description.get('mibi.mass_gain'),
-        'time_resolution': description.get('mibi.time_resolution'),
-        'miscalibrated': description.get('mibi.miscalibrated'),
-        'check_reg': description.get('mibi.check_reg'),
-        'filename': description.get('mibi.filename'),
-        'description': description.get('mibi.description'),
-        'optional_metadata': description.get('mibi.optional_metadata')
-    }
+        'size': size})
+
+    return metadata
 
 
 def _convert_from_previous_metadata_versions(description):
@@ -341,7 +307,6 @@ def _convert_from_previous_metadata_versions(description):
         description['mibi.fov_name'] = description['mibi.description']
         description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
         description['mibi.description'] = None
-        description['mibi.optional_metadata'] = {}
         description['mibi.version'] = mi.MIBITIFF_VERSION
 
 
