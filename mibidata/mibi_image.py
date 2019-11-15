@@ -21,6 +21,7 @@ _EXPECTED_METADATA_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide',
                                  'panel', 'version', 'mass_offset', 'mass_gain',
                                  'time_resolution', 'miscalibrated',
                                  'check_reg', 'filename', 'description')
+# The attributes not to include in the metadata dictionary.
 _NON_METADATA_ATTRIBUTES = ('data', '_length', '_channels', 'masses', 'targets')
 
 
@@ -279,10 +280,10 @@ class MibiImage():
         """Returns a dictionary of the image's metadata."""
         metadata_keys = [key for key in _EXPECTED_METADATA_ATTRIBUTES]
         # find user-defined metadata
-        metadata_keys.extend(self.user_defined_attributes())
+        metadata_keys.extend(self._user_defined_attributes())
         return {key: getattr(self, key) for key in metadata_keys}
 
-    def user_defined_attributes(self):
+    def _user_defined_attributes(self):
         """Returns a list of keys corresponding to the user-defined metadata."""
         return [key for key in self.__dict__
                 if key not in _EXPECTED_METADATA_ATTRIBUTES and

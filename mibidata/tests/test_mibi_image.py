@@ -231,7 +231,7 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
                              **USER_DEFINED_METADATA)
         expected = [key for key in USER_DEFINED_METADATA]
-        self.assertEqual(image.user_defined_attributes(), expected)
+        self.assertEqual(image._user_defined_attributes(), expected)
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
