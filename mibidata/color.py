@@ -228,10 +228,10 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
 
 
 def compose_overlay(image, overlay_settings):
-    """Overlays multiple image channels using overlay_settings from mibitracker.
+    """Overlays multiple image channels using overlay_settings from MIBItracker.
 
     The overlay_settings are intended to have the form of a channels.json file
-    as downloaded from mibitracker but they can have any of the of the following
+    as downloaded from MIBItracker but they can have any of the of the following
     forms:
 
     1. ``{'image_id': {'channels': {'channel_1': {'color': color, ...}, ...}}``,
@@ -256,7 +256,7 @@ def compose_overlay(image, overlay_settings):
 
     Args:
         image: A MibiImage.
-        overlay_settings: Dictionary of mibitracker visual settings.
+        overlay_settings: Dictionary of MIBItracker visual settings.
 
     Returns:
         An NxMx3 uint8 array of an RGB image.
