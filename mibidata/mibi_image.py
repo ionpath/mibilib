@@ -128,86 +128,42 @@ class MibiImage():
 
     def __init__(self, data, channels, **kwargs):
 
+        # initialize non metadata attributes
         self._length = len(channels)
         if data.shape[2] != self._length:
             raise ValueError('Channels length does not match data dimensions.')
         self.data = data
         self._set_channels(channels, self._length)
 
-        # initialize required metadata empty
-        self.date = None
-        self.run = None
-        self.coordinates = None
-        self.size = None
-        self.slide = None
-        self.fov_id = None
-        self.fov_name = None
-        self.folder = None
-        self.dwell = None
-        self.scans = None
-        self.aperture = None
-        self.instrument = None
-        self.tissue = None
-        self.panel = None
-        self.version = None
-        self.mass_offset = None
-        self.mass_gain = None
-        self.time_resolution = None
-        self.miscalibrated = None
-        self.check_reg = None
-        self.filename = None
-        self.description = None
-
-        self._set_metadata(**kwargs)
-
-    def _set_metadata(self, **kwargs):
-
-        # check version
-        try:
-            kwargs['version']
-        except KeyError:
-            # if no version specified, assume current version
-            kwargs['version'] = MIBITIFF_VERSION
-
-        # check for required metadata in input arguments
-        for attr in _EXPECTED_METADATA_ATTRIBUTES:
-            try:
-                kwargs[attr]
-            except KeyError:
-                kwargs[attr] = None
-        try:
-            kwargs['datetime_format']
-        except KeyError:
-            kwargs['datetime_format'] = _DATETIME_FORMAT
-
-        # fill required metadata
-        date = kwargs.pop('date')
-        datetime_format = kwargs.pop('datetime_format')
+        # initialize expected metadata
+        # if no version specified, assume current version
+        self.version = kwargs.pop('version', MIBITIFF_VERSION)
+        date = kwargs.pop('date', None)
+        datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
         try:
             self.date = datetime.datetime.strptime(date, datetime_format)
         except TypeError:  # Given as datetime obj already, or None.
             self.date = date
-        self.run = kwargs.pop('run')
-        self.coordinates = kwargs.pop('coordinates')
-        self.size = kwargs.pop('size')
-        self.slide = kwargs.pop('slide')
-        self.fov_id = kwargs.pop('fov_id')
-        self.fov_name = kwargs.pop('fov_name')
-        self.folder = kwargs.pop('folder')
-        self.dwell = kwargs.pop('dwell')
-        self.scans = kwargs.pop('scans')
-        self.aperture = kwargs.pop('aperture')
-        self.instrument = kwargs.pop('instrument')
-        self.tissue = kwargs.pop('tissue')
-        self.panel = kwargs.pop('panel')
-        self.version = kwargs.pop('version')
-        self.mass_offset = kwargs.pop('mass_offset')
-        self.mass_gain = kwargs.pop('mass_gain')
-        self.time_resolution = kwargs.pop('time_resolution')
-        self.miscalibrated = kwargs.pop('miscalibrated')
-        self.check_reg = kwargs.pop('check_reg')
-        self.filename = kwargs.pop('filename')
-        self.description = kwargs.pop('description')
+        self.run = kwargs.pop('run', None)
+        self.coordinates = kwargs.pop('coordinates', None)
+        self.size = kwargs.pop('size', None)
+        self.slide = kwargs.pop('slide', None)
+        self.fov_id = kwargs.pop('fov_id', None)
+        self.fov_name = kwargs.pop('fov_name', None)
+        self.folder = kwargs.pop('folder', None)
+        self.dwell = kwargs.pop('dwell', None)
+        self.scans = kwargs.pop('scans', None)
+        self.aperture = kwargs.pop('aperture', None)
+        self.instrument = kwargs.pop('instrument', None)
+        self.tissue = kwargs.pop('tissue', None)
+        self.panel = kwargs.pop('panel', None)
+        self.mass_offset = kwargs.pop('mass_offset', None)
+        self.mass_gain = kwargs.pop('mass_gain', None)
+        self.time_resolution = kwargs.pop('time_resolution', None)
+        self.miscalibrated = kwargs.pop('miscalibrated', None)
+        self.check_reg = kwargs.pop('check_reg', None)
+        self.filename = kwargs.pop('filename', None)
+        self.description = kwargs.pop('description', None)
 
         # whatever remains (if anything) is user-defined metadata
         for k, v in kwargs.items():
