@@ -227,34 +227,36 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     return np.uint8(screened * 255)
 
 
-def compose_overlay_from_image_data(image, overlay_settings):
+def compose_overlay(image, overlay_settings):
     """Overlays multiple image channels using overlay_settings from mibitracker.
+
+    The overlay_settings are intended to have the form of a channels.json file
+    as downloaded from mibitracker but they can have any of the of the following
+    forms:
+
+    1. ``{'image_id': {'channels': {'channel_1': {'color': color, ...}, ...}}``,
+    2. ``{'channels': {'channel_1': {'color': color, ...}, ...}``,
+    3. ``{'channel_1': {'color': color, ...}, ...}``.
+
+    Each channel is expected to have the following fields:
+
+    - 'color' (required):
+        One of the following: 'Cyan', 'Yellow', 'Magenta', 'Green', 'Orange',
+        'Violet', 'Red', 'Blue', or 'Gray'.
+    - 'brightness' (optional):
+        float between -1 and 1; defaults to 0.
+    - 'intensity_higher' (optional):
+        Upper limit of the channel intensity; defaults to maximum counts in the
+        channel.
+    - 'intensity_lower' (optional):
+        Lower limit of the channel intensity; defaults to 0.
+    - 'blur' (optional):
+        float between 0 and 1. Defines the gaussian blur of the channel;
+        defaults to 0.
 
     Args:
         image: A MibiImage.
-        overlay_settings: Dictionary in a form of mibitracker visual setting
-            - {'image_id': {'channels': {
-                'channel1': {'color': color, ...},
-                'channel2': {'color': color, ...},
-                ...}}},
-            - {'channels': {
-                'channel1': {'color': color, ...},
-                'channel2': {'color': color, ...},
-                ...}}`, or
-            - `{
-                'channel1': {'color': color, ...},
-                'channel2': {'color': color, ...},
-                ...}`
-            Each channel should have the following fields:
-                'color': One of the following: 'Cyan', 'Yellow', 'Magenta',
-                    'Green', 'Orange', 'Violet', 'Red', 'Blue', or 'Gray'.
-                'brightness': (optional) float between -1 and 1; defaults to 0.
-                'intensity_higher': (optional) Upper limit of the channel
-                    intensity; defaults to maximum counts in the channel.
-                'intensity_lower': (optional) Lower limit of the channel
-                    intensity; defaults to 0,
-                'blur': (optional) float between 0 and 1 defining the gaussian
-                    blur of the channel; defaults to 0.
+        overlay_settings: Dictionary of mibitracker visual settings.
 
     Returns:
         An NxMx3 uint8 array of an RGB image.
@@ -275,21 +277,7 @@ def compose_overlay_from_image_data(image, overlay_settings):
         if len(overlay_settings) == 1 and 'channels' in v:
             overlay_settings = v['channels']
             break
-        raise ValueError("""
-            The overlay_settings dictionary should have one of the forms:
-            - {'image_id': {'channels': {
-                'channel1': {'color': color, ...},
-                'channel2': {'color': color, ...},
-                ...}}},
-            - {'channels': {
-                'channel1': {'color': color, ...},
-                'channel2': {'color': color, ...},
-                ...}}`, or
-            - `{
-                'channel1': {'color': color, ...},
-                'channel2': {'color': color, ...},
-                ...}`
-            """)
+        raise ValueError("Unexpected format of overlay_settings dictionary.")
 
     for i, channel in enumerate(overlay_settings):
         item = overlay_settings[channel]
