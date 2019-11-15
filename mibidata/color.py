@@ -232,13 +232,38 @@ def compose_overlay_from_image_data(image, overlay_settings):
 
     Args:
         image: A MibiImage.
-        overlay_settings: Color overlay dictionary with the following fields:
-            'brightness': float between -1 and 1.
-            'channel': Name of the MibiImage channel.
-            'color': One of the following: 'Cyan', 'Yellow', 'Magenta', 'Green',
-                'Orange', 'Violet', 'Red', 'Blue', or 'Gray'.
-            'intensity_higher': Upper limit of the channel intensity.
-            'intensity_lower': Lower limit of the channel intensity.
+        overlay_settings: Dictionary in one of the forms:
+            {
+                'image_id': {
+                        'channels': {
+                            'channel1': {'color': color, ...},
+                            'channel2': {'color': color, ...},
+                            ...
+                    }
+                }
+            },
+            {
+                'channels': {
+                        'channel1': {color': color, ...},
+                        'channel2': {color': color, ...},
+                        ...
+                }
+            }, or
+            {
+                'channel1': {'color': color, ...},
+                'channel2': {'color': color, ...},
+                ...
+            }
+            Each channel should have the following fields:
+                'color': One of the following: 'Cyan', 'Yellow', 'Magenta',
+                    'Green', 'Orange', 'Violet', 'Red', 'Blue', or 'Gray'.
+                'brightness': (optional) float between -1 and 1; defaults to 0.
+                'intensity_higher': (optional) Upper limit of the channel
+                    intensity; defaults to maximum counts in the channel.
+                'intensity_lower': (optional) Lower limit of the channel
+                    intensity; defaults to 0,
+                'blur': (optional) float between 0 and 1 defining the gaussian
+                    blur of the channel; defaults to 0.
 
     Returns:
         An NxMx3 uint8 array of an RGB image.
@@ -249,17 +274,55 @@ def compose_overlay_from_image_data(image, overlay_settings):
         [0.1, 0.4, 0.1],
         [0.05, 0.1, 0.05]
     ])
-    for i, item in enumerate(overlay_settings):
-        int_array = image[item['channel']]
+
+    for v in overlay_settings.values():
+        if 'color' in v:
+            break
+        if 'channels' in overlay_settings:
+            overlay_settings = overlay_settings['channels']
+            break
+        if len(overlay_settings) == 1 and 'channels' in v:
+            overlay_settings = v['channels']
+            break
+        raise ValueError("""
+            The overlay_settings dictionary should have one of the forms:
+            {
+                'image_id': {
+                    'channels': {
+                        'channel1': {'color': color, ...},
+                        'channel2': {'color': color, ...},
+                        ...
+                }
+            }
+            },
+            {
+                'channels': {
+                    'channel1': {color': color, ...},
+                    'channel2': {color': color, ...},
+                    ...
+                }
+            },
+            or 
+            {
+                'channel1': {'color': color, ...},
+                'channel2': {'color': color, ...},
+                ...
+            }
+            """)
+
+    for i, channel in enumerate(overlay_settings):
+        item = overlay_settings[channel]
+        int_array = image[channel]
         # Because we treat the min differently, don't use np.clip
-        range_min, range_max = item['intensity_lower'], item['intensity_higher']
+        range_min = item.get('intensity_lower', 0)
+        range_max = item.get('intensity_higher', int_array.max())
         int_array[int_array > range_max] = range_max
         int_array[int_array < range_min] = 0
         float_array = int_array / float(range_max)
-        float_array[int_array > 0] += item['brightness']
+        float_array[int_array > 0] += item.get('brightness', 0)
         # Apply default filter even if no blurring
         ndimage.filters.convolve(float_array, kernel, output=float_array)
-        if item['blur'] > 0:
+        if item.get('blur', 0) > 0:
             ndimage.filters.gaussian_filter(
                 float_array, item['blur'] * 100, output=float_array)
         np.clip(float_array, 0, 1, out=float_array)
@@ -271,5 +334,5 @@ def compose_overlay_from_image_data(image, overlay_settings):
         if i == 0:
             overlay = rgb
         else:
-            overlay = _porter_duff_screen(composite, rgb)
+            overlay = _porter_duff_screen(overlay, rgb)
     return np.uint8(overlay * 255)
