@@ -3,6 +3,7 @@
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
+from scipy import ndimage
 
 COLORS = {
     'Cyan': np.pi,
@@ -224,3 +225,83 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
             gamma)
     screened = _screen(data_map)
     return np.uint8(screened * 255)
+
+
+def compose_overlay(image, overlay_settings):
+    """Overlays multiple image channels using overlay_settings from MIBItracker.
+
+    The overlay_settings are intended to have the form of a channels.json file
+    as downloaded from MIBItracker but they can have any of the of the following
+    forms:
+
+    1. ``{'image_id': {'channels': {'channel_1': {'color': color, ...}, ...}}``,
+    2. ``{'channels': {'channel_1': {'color': color, ...}, ...}``,
+    3. ``{'channel_1': {'color': color, ...}, ...}``.
+
+    Each channel is expected to have the following fields:
+
+    - 'color' (required):
+        One of the following: 'Cyan', 'Yellow', 'Magenta', 'Green', 'Orange',
+        'Violet', 'Red', 'Blue', or 'Gray'.
+    - 'brightness' (optional):
+        float between -1 and 1; defaults to 0.
+    - 'intensity_higher' (optional):
+        Upper limit of the channel intensity; defaults to maximum counts in the
+        channel.
+    - 'intensity_lower' (optional):
+        Lower limit of the channel intensity; defaults to 0.
+    - 'blur' (optional):
+        float between 0 and 1. Defines the gaussian blur of the channel;
+        defaults to 0.
+
+    Args:
+        image: A MibiImage.
+        overlay_settings: Dictionary of MIBItracker visual settings.
+
+    Returns:
+        An NxMx3 uint8 array of an RGB image.
+    """
+    # Convolve with this filter no matter what, to mimic browser rendering.
+    kernel = np.array([
+        [0.05, 0.1, 0.05],
+        [0.1, 0.4, 0.1],
+        [0.05, 0.1, 0.05]
+    ])
+
+    for v in overlay_settings.values():
+        if 'color' in v:
+            break
+        if 'channels' in overlay_settings:
+            overlay_settings = overlay_settings['channels']
+            break
+        if len(overlay_settings) == 1 and 'channels' in v:
+            overlay_settings = v['channels']
+            break
+        raise ValueError("Unexpected format of overlay_settings dictionary.")
+
+    for i, channel in enumerate(overlay_settings):
+        item = overlay_settings[channel]
+        int_array = image[channel]
+        # Because we treat the min differently, don't use np.clip
+        range_min = item.get('intensity_lower', 0)
+        range_max = item.get('intensity_higher', int_array.max())
+        int_array[int_array > range_max] = range_max
+        int_array[int_array < range_min] = 0
+        float_array = int_array / float(range_max)
+        float_array[int_array > 0] += item.get('brightness', 0)
+        # Apply default filter even if no blurring
+        ndimage.filters.convolve(float_array, kernel, output=float_array)
+        if item.get('blur', 0) > 0:
+            ndimage.filters.gaussian_filter(
+                float_array, item['blur'] * 100, output=float_array)
+        np.clip(float_array, 0, 1, out=float_array)
+        if item['color'] == 'Gray':
+            rgb = np.stack((float_array, float_array, float_array), axis=2)
+        else:
+            hsl = _gray2hsl(float_array, COLORS[item['color']])
+            rgb = hsl2rgb(hsl)
+        if i == 0:
+            overlay = rgb
+        else:
+            overlay = _porter_duff_screen(overlay, rgb)
+    return np.uint8(overlay * 255)
