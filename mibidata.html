@@ -154,6 +154,66 @@ only a few counts from being scaled incorrectly to [0, 1].</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="mibidata.color.compose_overlay">
+<code class="descclassname">mibidata.color.</code><code class="descname">compose_overlay</code><span class="sig-paren">(</span><em>image</em>, <em>overlay_settings</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.compose_overlay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlays multiple image channels using overlay_settings from MIBItracker.</p>
+<p>The overlay_settings are intended to have the form of a channels.json file
+as downloaded from MIBItracker but they can have any of the of the following
+forms:</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">{'image_id':</span> <span class="pre">{'channels':</span> <span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}}</span></code>,</li>
+<li><code class="docutils literal notranslate"><span class="pre">{'channels':</span> <span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}</span></code>,</li>
+<li><code class="docutils literal notranslate"><span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}</span></code>.</li>
+</ol>
+<p>Each channel is expected to have the following fields:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>‘color’ (required):</dt>
+<dd>One of the following: ‘Cyan’, ‘Yellow’, ‘Magenta’, ‘Green’, ‘Orange’,
+‘Violet’, ‘Red’, ‘Blue’, or ‘Gray’.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘brightness’ (optional):</dt>
+<dd>float between -1 and 1; defaults to 0.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘intensity_higher’ (optional):</dt>
+<dd>Upper limit of the channel intensity; defaults to maximum counts in the
+channel.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘intensity_lower’ (optional):</dt>
+<dd>Lower limit of the channel intensity; defaults to 0.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘blur’ (optional):</dt>
+<dd>float between 0 and 1. Defines the gaussian blur of the channel;
+defaults to 0.</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> – A MibiImage.</li>
+<li><strong>overlay_settings</strong> – Dictionary of MIBItracker visual settings.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An NxMx3 uint8 array of an RGB image.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-mibidata.combine_tiffs">
 <span id="mibidata-combine-tiffs-module"></span><h2>mibidata.combine_tiffs module<a class="headerlink" href="#module-mibidata.combine_tiffs" title="Permalink to this headline">¶</a></h2>
