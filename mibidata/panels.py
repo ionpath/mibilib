@@ -1,4 +1,4 @@
-"""Utility for working with panels saved as CSV files.
+"""Utility for working with panels.
 
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
@@ -6,6 +6,10 @@ import numpy as np
 import pandas as pd
 from pandas.errors import ParserError
 from mibidata import util
+
+
+def pascal_case(st):
+    return ''.join(x for x in st.title() if x.isalnum())
 
 
 def read_csv(path):
@@ -78,6 +82,10 @@ def merge_masses(df):
     """
     conjugates = {}
     target_list = []
+
+    # Ensure that all the columns have the same name convention.
+    df.columns = [pascal_case(x) for x in df.columns]
+
     for conj in df.to_dict(orient='records'):
         mass = conj['Mass']
         target = conj['Target']
