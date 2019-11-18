@@ -15,12 +15,13 @@ MIBITIFF_VERSION = '1.0'
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
-_EXPECTED_METADATA_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide',
+_REQUIRED_METADATA_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide',
                                  'fov_id', 'fov_name', 'folder', 'dwell',
                                  'scans', 'aperture', 'instrument', 'tissue',
-                                 'panel', 'version', 'mass_offset', 'mass_gain',
+                                 'panel', 'mass_offset', 'mass_gain',
                                  'time_resolution', 'miscalibrated',
-                                 'check_reg', 'filename', 'description')
+                                 'check_reg', 'filename', 'description',
+                                 'version', 'MIBItiff_version')
 # The attributes not to include in the metadata dictionary.
 _NON_METADATA_ATTRIBUTES = ('data', '_length', '_channels', 'masses', 'targets')
 
@@ -43,7 +44,7 @@ class MibiImage():
             either be strings, or tuples of strings of the format (mass,
             target).
         kwargs: A sequence of arguments that will be used to define the
-            metadata. A list of expected metadata keys follows; however, the
+            metadata. A list of required metadata keys follows; however, the
             user can define other metadata key-value pairs that will be added
             as attributes to the class instance in use.
             run: A string name of the run during which this image was acquired.
@@ -54,7 +55,8 @@ class MibiImage():
                 was acquired; stage coordinates should be in microns.
             size: A float size of the image width/height in  :math:`\\mu m`.
             slide: A string or integer slide ID.
-            fov_id: A string identifying the point in the run, such as 'Point2'.
+            fov_id: A string identifying the FOV within the run, i.e. 'FOV2' in
+                MIBIcontrol and 'Point2' in earlier versions.
             fov_name: A string name for the FoV as assigned during the run.
             folder: The folder name for this image as determined by the
                 acquisition software.
@@ -65,7 +67,9 @@ class MibiImage():
             instrument: A string identifier for the instrument used.
             tissue: A string name of the tissue type.
             panel: A string name of the panel used to stain the tissue.
-            version: A string identifier for the MIBItiff software version used.
+            version: A string identifier for the software version used.
+            MIBItiff_version: A string identifier for the MIBItiff software
+                version used.
             datetime_format: The optional format of the date, if given as a
                 string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
             mass_offset: Mass offset parameter used for mass calibration.
@@ -115,7 +119,9 @@ class MibiImage():
         instrument: A string identifier for the instrument used.
         tissue: A string name of the tissue type.
         panel: A string name of the panel used to stain the tissue.
-        version: A string identifier for the MIBItiff software version used.
+        version: A string identifier for the software version used.
+        MIBItiff_version: A string identifier for the MIBItiff software
+            version used.
         mass_offset: Mass offset parameter used for mass calibration.
         mass_gain: Mass gain used for mass calibration.
         time_resolution: Parameter used for mass calibration.
@@ -136,9 +142,7 @@ class MibiImage():
         self.data = data
         self._set_channels(channels, self._length)
 
-        # initialize expected metadata
-        # if no version specified, assume current version
-        self.version = kwargs.pop('version', MIBITIFF_VERSION)
+        # initialize required metadata
         date = kwargs.pop('date', None)
         datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
         try:
@@ -165,6 +169,8 @@ class MibiImage():
         self.check_reg = kwargs.pop('check_reg', None)
         self.filename = kwargs.pop('filename', None)
         self.description = kwargs.pop('description', None)
+        self.version = kwargs.pop('version', None)
+        self.MIBItiff_version = kwargs.pop('MIBItiff_version', None)
 
         # whatever remains (if anything) is user-defined metadata
         for k, v in kwargs.items():
@@ -219,7 +225,17 @@ class MibiImage():
 
         This function ensures backwards compatibility for previous versions.
         """
-        if self.version != MIBITIFF_VERSION:
+        # check for the old format, when MIBItiff_version was not implemented
+        if self.MIBItiff_version is None:
+            try:
+                self.__dict__['point_name']
+                # if this worked, this is old format
+            except KeyError:
+                # no version specified; assume current version
+                self.MIBItiff_version = MIBITIFF_VERSION
+
+        # convert old format to current MIBItiff_VERSION
+        if self.MIBItiff_version is None:
             print("WARNING! you are trying to use the old metadata "
                   "format for setting the point name. If you are "
                   "creating a new image, we recommend storing the "
@@ -227,7 +243,7 @@ class MibiImage():
                   "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
             self.fov_name = self.__dict__.pop('point_name')
             self.fov_id = self.folder.split('/')[0]
-            self.version = MIBITIFF_VERSION
+            self.MIBItiff_version = MIBITIFF_VERSION
 
     def _check_fov_id(self):
         """Check that fov_id matches folder."""
@@ -278,7 +294,7 @@ class MibiImage():
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
-        metadata_keys = [key for key in _EXPECTED_METADATA_ATTRIBUTES]
+        metadata_keys = [key for key in _REQUIRED_METADATA_ATTRIBUTES]
         # find user-defined metadata
         metadata_keys.extend(self._user_defined_attributes())
         return {key: getattr(self, key) for key in metadata_keys}
@@ -286,7 +302,7 @@ class MibiImage():
     def _user_defined_attributes(self):
         """Returns a list of keys corresponding to the user-defined metadata."""
         return [key for key in self.__dict__
-                if key not in _EXPECTED_METADATA_ATTRIBUTES and
+                if key not in _REQUIRED_METADATA_ATTRIBUTES and
                 key not in _NON_METADATA_ATTRIBUTES]
 
     def channel_inds(self, channels):

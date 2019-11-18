@@ -30,10 +30,10 @@ METADATA = {
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'dwell': 4, 'scans': '0,5', 'aperture': '300um',
     'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'version': '1.0', 'mass_offset': 0.1,
-    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
-    'check_reg': False, 'filename': '20180703_1234_test',
-    'description': 'test image'
+    'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
+    'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
+    'filename': '20180703_1234_test', 'description': 'test image',
+    'version': None, 'MIBItiff_version': '1.0'
 }
 USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
@@ -117,7 +117,7 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         image.point_name = OLD_METADATA['point_name']
         image.folder = OLD_METADATA['folder']
-        image.version = OLD_METADATA['version']
+        image.MIBItiff_version = None
         image._convert_from_previous_metadata_versions()
         message = ("WARNING! you are trying to use the old metadata "
                    "format for setting the point name. If you are "
@@ -128,7 +128,7 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(mock_stdout.getvalue(), expected_output)
         self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
         self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
-        self.assertEqual(image.version, mi.MIBITIFF_VERSION)
+        self.assertEqual(image.MIBItiff_version, mi.MIBITIFF_VERSION)
 
     def test_check_fov_id(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
@@ -205,7 +205,7 @@ class TestMibiImage(unittest.TestCase):
                              **USER_DEFINED_METADATA)
         user_defined_metadata = {key: value for key, value
                                  in image.metadata().items()
-                                 if key not in mi._EXPECTED_METADATA_ATTRIBUTES}
+                                 if key not in mi._REQUIRED_METADATA_ATTRIBUTES}
         self.assertEqual(user_defined_metadata, USER_DEFINED_METADATA)
 
     def test_metadata_wrong_fov_id(self):
@@ -224,7 +224,7 @@ class TestMibiImage(unittest.TestCase):
         metadata['fov_id'] = metadata['folder'].split('/')[0]
         del metadata['point_name']
         metadata['description'] = None
-        metadata['version'] = mi.MIBITIFF_VERSION
+        metadata['MIBItiff_version'] = mi.MIBITIFF_VERSION
         self.assertEqual(image.metadata(), metadata)
 
     def test_user_defined_attributes(self):
