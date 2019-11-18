@@ -245,15 +245,10 @@ class MibiImage():
     def _check_fov_id(self):
         """Check that fov_id matches folder."""
         if self.fov_id is None and self.folder is None:
-            pass
-        elif self.fov_id is not None and self.folder is not None:
-            try:
-                assert self.fov_id == self.folder.split('/')[0]
-            except AssertionError:
-                message = (f'The fov_id {self.fov_id} does not '
-                           f'match the folder {self.folder}.')
-                raise ValueError(message)
-        else:
+          return
+        try:
+          assert self.fov_id == self.folder.split('/')[0]
+        except (AttributeError, AssertionError):
             message = (f'The fov_id {self.fov_id} does not '
                        f'match the folder {self.folder}.')
             raise ValueError(message)
@@ -291,7 +286,7 @@ class MibiImage():
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
-        metadata_keys = [key for key in _REQUIRED_METADATA_ATTRIBUTES]
+        metadata_keys = list(_REQUIRED_METADATA_ATTRIBUTES)
         # find user-defined metadata
         metadata_keys.extend(self._user_defined_attributes())
         return {key: getattr(self, key) for key in metadata_keys}
