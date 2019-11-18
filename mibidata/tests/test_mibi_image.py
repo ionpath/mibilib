@@ -3,12 +3,10 @@
 Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 
 import datetime
-import io
 import os
 import shutil
 import tempfile
 import unittest
-import unittest.mock
 import warnings
 
 import numpy as np
@@ -112,20 +110,13 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image.channels = invalid_tuple_3
 
-    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def test_convert_from_previous_metadata_versions(self, mock_stdout):
+    def test_convert_from_previous_metadata_versions(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         image.point_name = OLD_METADATA['point_name']
         image.folder = OLD_METADATA['folder']
         image.MIBItiff_version = None
-        image._convert_from_previous_metadata_versions()
-        message = ("WARNING! you are trying to use the old metadata "
-                   "format for setting the point name. If you are "
-                   "creating a new image, we recommend storing the "
-                   "point name as in the following example: "
-                   "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
-        expected_output = message + '\n'
-        self.assertEqual(mock_stdout.getvalue(), expected_output)
+        with self.assertWarns(UserWarning) as warn:
+            image._convert_from_previous_metadata_versions()
         self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
         self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
         self.assertEqual(image.MIBItiff_version, mi.MIBITIFF_VERSION)

@@ -236,11 +236,8 @@ class MibiImage():
 
         # convert old format to current MIBItiff_VERSION
         if self.MIBItiff_version is None:
-            print("WARNING! you are trying to use the old metadata "
-                  "format for setting the point name. If you are "
-                  "creating a new image, we recommend storing the "
-                  "point name as in the following example: "
-                  "'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil'.")
+            warnings.warn("WARNING! 'point_name' attribute is deprecated. "
+                "Switching to 'fov_id' and 'fov_name'.")
             self.fov_name = self.__dict__.pop('point_name')
             self.fov_id = self.folder.split('/')[0]
             self.MIBItiff_version = MIBITIFF_VERSION
