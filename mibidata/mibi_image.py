@@ -22,8 +22,6 @@ _REQUIRED_METADATA_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide',
                                  'time_resolution', 'miscalibrated',
                                  'check_reg', 'filename', 'description',
                                  'version', 'MIBItiff_version')
-# The attributes not to include in the metadata dictionary.
-_NON_METADATA_ATTRIBUTES = ('data', '_length', '_channels', 'masses', 'targets')
 
 
 class MibiImage():
@@ -172,9 +170,13 @@ class MibiImage():
         self.version = kwargs.pop('version', None)
         self.MIBItiff_version = kwargs.pop('MIBItiff_version', None)
 
+        # empty list for storing user-defined attribute names
+        self._user_defined_attributes = []
+
         # whatever remains (if anything) is user-defined metadata
         for k, v in kwargs.items():
             setattr(self, k, v)
+            self._user_defined_attributes.append(k)
 
         # check version for backwards compatibility
         self._convert_from_previous_metadata_versions()
@@ -239,6 +241,10 @@ class MibiImage():
             warnings.warn("WARNING! 'point_name' attribute is deprecated. "
                 "Switching to 'fov_id' and 'fov_name'.")
             self.fov_name = self.__dict__.pop('point_name')
+            try:
+                self._user_defined_attributes.remove('point_name')
+            except ValueError:
+                pass
             self.fov_id = self.folder.split('/')[0]
             self.MIBItiff_version = MIBITIFF_VERSION
 
@@ -288,14 +294,8 @@ class MibiImage():
         """Returns a dictionary of the image's metadata."""
         metadata_keys = list(_REQUIRED_METADATA_ATTRIBUTES)
         # find user-defined metadata
-        metadata_keys.extend(self._user_defined_attributes())
+        metadata_keys.extend(self._user_defined_attributes)
         return {key: getattr(self, key) for key in metadata_keys}
-
-    def _user_defined_attributes(self):
-        """Returns a list of keys corresponding to the user-defined metadata."""
-        return [key for key in self.__dict__
-                if key not in _REQUIRED_METADATA_ATTRIBUTES and
-                key not in _NON_METADATA_ATTRIBUTES]
 
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.

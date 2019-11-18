@@ -120,6 +120,7 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
         self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
         self.assertEqual(image.MIBItiff_version, mi.MIBITIFF_VERSION)
+        self.assertEqual(len(image._user_defined_attributes), 0)
 
     def test_check_fov_id(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
@@ -182,22 +183,11 @@ class TestMibiImage(unittest.TestCase):
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
 
-    def test_metadata_with_user_defined_metadata_as_new_attribute(self):
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
-        metadata = METADATA.copy()
-        metadata['date'] = datetime.datetime.strptime(metadata['date'],
-                                                      mi._DATETIME_FORMAT)
-        image.undefine_attribute = 'value_for_undefined_attribute'
-        metadata.update({'undefine_attribute': 'value_for_undefined_attribute'})
-        self.assertEqual(image.metadata(), metadata)
-
     def test_capture_of_user_defined_metadata(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
                              **USER_DEFINED_METADATA)
-        user_defined_metadata = {key: value for key, value
-                                 in image.metadata().items()
-                                 if key not in mi._REQUIRED_METADATA_ATTRIBUTES}
-        self.assertEqual(user_defined_metadata, USER_DEFINED_METADATA)
+        self.assertEqual(image._user_defined_attributes,
+                         list(USER_DEFINED_METADATA))
 
     def test_metadata_wrong_fov_id(self):
         metadata = METADATA.copy()
@@ -217,12 +207,7 @@ class TestMibiImage(unittest.TestCase):
         metadata['description'] = None
         metadata['MIBItiff_version'] = mi.MIBITIFF_VERSION
         self.assertEqual(image.metadata(), metadata)
-
-    def test_user_defined_attributes(self):
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
-                             **USER_DEFINED_METADATA)
-        expected = [key for key in USER_DEFINED_METADATA]
-        self.assertEqual(image._user_defined_attributes(), expected)
+        self.assertEqual(len(image._user_defined_attributes), 0)
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
