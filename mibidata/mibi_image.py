@@ -239,7 +239,7 @@ class MibiImage():
         # convert old format to current MIBItiff_VERSION
         if self.MIBItiff_version is None:
             warnings.warn("WARNING! 'point_name' attribute is deprecated. "
-                "Switching to 'fov_id' and 'fov_name'.")
+                          "Switching to 'fov_id' and 'fov_name'.")
             self.fov_name = self.__dict__.pop('point_name')
             try:
                 self._user_defined_attributes.remove('point_name')
@@ -251,9 +251,9 @@ class MibiImage():
     def _check_fov_id(self):
         """Check that fov_id matches folder."""
         if self.fov_id is None and self.folder is None:
-          return
+            return
         try:
-          assert self.fov_id == self.folder.split('/')[0]
+            assert self.fov_id == self.folder.split('/')[0]
         except (AttributeError, AssertionError):
             message = (f'The fov_id {self.fov_id} does not '
                        f'match the folder {self.folder}.')

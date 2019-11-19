@@ -31,10 +31,10 @@ METADATA = {
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'dwell': 4, 'scans': '0,5', 'aperture': '300um',
     'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'version': '1.0', 'mass_offset': 0.1,
-    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
-    'check_reg': False, 'filename': '20180703_1234_test',
-    'description': 'test image'
+    'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
+    'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
+    'filename': '20180703_1234_test', 'description': 'test image',
+    'version': 'alpha', 'MIBItiff_version': '1.0'
 }
 USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
@@ -74,6 +74,9 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.folder)
+
+    def test_current_software_version(self):
+        self.assertEqual(tiff.SOFTWARE_VERSION, 'IonpathMIBIv1.0')
 
     def test_sims_only(self):
         tiff.write(self.filename, self.image)
@@ -207,7 +210,7 @@ class TestWriteReadTiff(unittest.TestCase):
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
-            'description': None})
+            'description': None, 'version': None})
         self.assertEqual(metadata, expected)
 
     def test_open_file_with_old_metadata(self):
@@ -218,6 +221,7 @@ class TestWriteReadTiff(unittest.TestCase):
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
             'description': None})
+        del expected['version']
         self.assertEqual(metadata, expected)
 
     def test_convert_from_previous_metadata_versions(self):
@@ -229,7 +233,8 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(description['mibi.fov_name'],
                          OLD_METADATA['point_name'])
         self.assertEqual(description['mibi.description'], None)
-        self.assertEqual(description['mibi.version'], mi.MIBITIFF_VERSION)
+        self.assertEqual(description['mibi.MIBItiff_version'],
+                         mi.MIBITIFF_VERSION)
 
     def test_sort_channels_before_writing(self):
 

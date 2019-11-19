@@ -31,7 +31,7 @@ METADATA = {
     'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
     'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
     'filename': '20180703_1234_test', 'description': 'test image',
-    'version': None, 'MIBItiff_version': '1.0'
+    'version': 'alpha', 'MIBItiff_version': '1.0'
 }
 USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
@@ -55,6 +55,8 @@ class TestMibiImage(unittest.TestCase):
             message='Anti-aliasing will be enabled by default.*')
         self.maxDiff = None
 
+    def test_current_mibitiff_version(self):
+        self.assertEqual(mi.MIBITIFF_VERSION, '1.0')
 
     def test_mibi_image_string_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -115,7 +117,7 @@ class TestMibiImage(unittest.TestCase):
         image.point_name = OLD_METADATA['point_name']
         image.folder = OLD_METADATA['folder']
         image.MIBItiff_version = None
-        with self.assertWarns(UserWarning) as warn:
+        with self.assertWarns(UserWarning):
             image._convert_from_previous_metadata_versions()
         self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
         self.assertEqual(image.fov_name, OLD_METADATA['point_name'])

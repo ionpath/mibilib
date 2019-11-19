@@ -14,7 +14,7 @@ from skimage.external.tifffile import TiffFile, TiffWriter
 from mibidata import mibi_image as mi, util
 
 # Increment this when making functional changes.
-SOFTWARE_VERSION = 'IonpathMIBIv1.0'
+SOFTWARE_VERSION = 'IonpathMIBIv' + mi.MIBITIFF_VERSION
 # Coordinates of where the slide labels are within the optical image.
 _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
@@ -297,17 +297,17 @@ def _convert_from_previous_metadata_versions(description):
     This function ensures backwards compatibility for previous versions.
     """
     try:
-        description['mibi.version']
+        description['mibi.MIBItiff_version']
     except KeyError:
         # if the key doesn't exist it means that the version was None and hence
         # not saved in the tiff file
-        description['mibi.version'] = None
+        description['mibi.MIBItiff_version'] = None
 
-    if description['mibi.version'] != mi.MIBITIFF_VERSION:
+    if description['mibi.MIBItiff_version'] != mi.MIBITIFF_VERSION:
         description['mibi.fov_name'] = description['mibi.description']
         description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
         description['mibi.description'] = None
-        description['mibi.version'] = mi.MIBITIFF_VERSION
+        description['mibi.MIBItiff_version'] = mi.MIBITIFF_VERSION
 
 
 def info(filename):
