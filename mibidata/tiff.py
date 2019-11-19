@@ -93,10 +93,16 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                   image.data.shape[1] * 1e4 / float(image.size),
                   'cm')
 
+    # add required metadata
     metadata = {'mibi.' + key: value for key, value in \
                 image.metadata().items() \
-                if key not in ['date']} # datetime objects are not
-                                        # JSON serializable
+                if key in mi._REQUIRED_METADATA_ATTRIBUTES and # pylint: disable=protected-access
+                key not in ['date']} # datetime objects are not
+                                     # JSON serializable
+    # add user-defined metadata
+    metadata.update({'user-def.' + key: value for key, value in \
+                image.metadata().items() \
+                     if key in image._user_defined_attributes}) # pylint: disable=protected-access
 
     description = {
         key: val for key, val in metadata.items()}
@@ -233,7 +239,7 @@ def read(file, sims=True, sed=False, optical=False, label=False):
                 channels.append((description['channel.mass'],
                                  description['channel.target']))
                 sims_data.append(page.asarray())
-                #  Get metadata on first SIMS page only
+                # Get metadata on first SIMS page only
                 if not metadata:
                     metadata.update(_page_metadata(page, description))
             elif return_types.get(image_type):
@@ -279,6 +285,7 @@ def _page_metadata(page, description):
     # check version for backwards compatibility
     _convert_from_previous_metadata_versions(description)
 
+    # add required metadata
     metadata = {key.split('.')[1]: value for key, value in \
                 description.items() if key.startswith('mibi.')}
     metadata.update({
@@ -287,6 +294,9 @@ def _page_metadata(page, description):
             _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
         'size': size})
+    # add user-defined metadata
+    metadata.update({key.split('.')[1]: value for key, value in \
+                description.items() if key.startswith('user-def.')})
 
     return metadata
 
