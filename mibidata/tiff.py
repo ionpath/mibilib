@@ -93,16 +93,18 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                   image.data.shape[1] * 1e4 / float(image.size),
                   'cm')
 
-    # add required metadata
-    metadata = {'mibi.' + key: value for key, value in \
-                image.metadata().items() \
+    # store required metadata
+    metadata = {'mibi.' + key: value for key, value in
+                image.metadata().items()
                 if key in mi._REQUIRED_METADATA_ATTRIBUTES and # pylint: disable=protected-access
                 key not in ['date']} # datetime objects are not
                                      # JSON serializable
-    # add user-defined metadata
-    metadata.update({'user-def.' + key: value for key, value in \
-                image.metadata().items() \
-                     if key in image._user_defined_attributes}) # pylint: disable=protected-access
+    # store user-defined metadata
+    user_defined_attrs = image._user_defined_attributes # pylint: disable=protected-access
+    metadata.update({key: value for key, value in
+                     image.metadata().items()
+                     if key in user_defined_attrs})
+    metadata.update({'user_defined_attributes': user_defined_attrs})
 
     description = {
         key: val for key, val in metadata.items()}
@@ -285,8 +287,8 @@ def _page_metadata(page, description):
     # check version for backwards compatibility
     _convert_from_previous_metadata_versions(description)
 
-    # add required metadata
-    metadata = {key.split('.')[1]: value for key, value in \
+    # retrieve required metadata
+    metadata = {key.split('.')[1]: value for key, value in
                 description.items() if key.startswith('mibi.')}
     metadata.update({
         'coordinates': (
@@ -294,9 +296,15 @@ def _page_metadata(page, description):
             _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
         'size': size})
-    # add user-defined metadata
-    metadata.update({key.split('.')[1]: value for key, value in \
-                description.items() if key.startswith('user-def.')})
+    # retrieve user-defined metadata
+    try:
+        user_defined_attrs = description['user_defined_attributes']
+        print(user_defined_attrs)
+        metadata.update({key: value for key, value in description.items()
+                         if key in user_defined_attrs})
+    except KeyError:
+        # no user-defined metadata found
+        pass
 
     return metadata
 
