@@ -185,6 +185,12 @@ class TestMibiImage(unittest.TestCase):
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
 
+    def test_retrieve_user_defined_attributes(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **USER_DEFINED_METADATA)
+        self.assertEqual(image.mass_range, 20) # pylint: disable=no-member
+        self.assertEqual(image.x_size, 500.) # pylint: disable=no-member
+        self.assertEqual(image.y_size, 500.) # pylint: disable=no-member
+
     def test_capture_of_user_defined_metadata(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
                              **USER_DEFINED_METADATA)
