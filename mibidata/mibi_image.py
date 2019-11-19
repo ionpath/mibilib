@@ -28,7 +28,7 @@ class MibiImage():
     """A multiplexed image with labeled channels and metadata.
 
     The format for setting the point name in the metadata has changed.
-    The correct format for setting the point name in the metadata is show in
+    The correct format for setting the point name in the metadata is shown in
     the following example:
      'fov_id': 'Point1'
      'fov_name': 'R1C3_Tonsil'
@@ -55,7 +55,7 @@ class MibiImage():
             slide: A string or integer slide ID.
             fov_id: A string identifying the FOV within the run, i.e. 'FOV2' in
                 MIBIcontrol and 'Point2' in earlier versions.
-            fov_name: A string name for the FoV as assigned during the run.
+            fov_name: A string name for the FOV as assigned during the run.
             folder: The folder name for this image as determined by the
                 acquisition software.
             dwell: A float pixel dwell time in :math:`ms`.
@@ -107,7 +107,7 @@ class MibiImage():
         size: A float size of the image width/height in :math:`\\mu m`.
         slide: A string or integer slide ID.
         fov_id: A string identifying the point in the run, such as 'Point2'.
-        fov_name: A string name for the FoV as assigned during the run.
+        fov_name: A string name for the FOV as assigned during the run.
         folder: The folder name for this image as determined by the
             acquisition software.
         dwell: A float pixel dwell time in :math:`ms`.
