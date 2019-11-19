@@ -69,7 +69,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     Raises:
         ValueError: Raised if the image is not a
             ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates
-            run date, or size are None.
+            size, masses or targets are None.
     """
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibitof.mibi_image.MibiImage '
