@@ -283,7 +283,7 @@ image.</li>
 <p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="class">
 <dt id="mibidata.mibi_image.MibiImage">
-<em class="property">class </em><code class="descclassname">mibidata.mibi_image.</code><code class="descname">MibiImage</code><span class="sig-paren">(</span><em>data</em>, <em>channels</em>, <em>run=None</em>, <em>date=None</em>, <em>coordinates=None</em>, <em>size=None</em>, <em>slide=None</em>, <em>point_name=None</em>, <em>folder=None</em>, <em>dwell=None</em>, <em>scans=None</em>, <em>aperture=None</em>, <em>instrument=None</em>, <em>tissue=None</em>, <em>panel=None</em>, <em>version=None</em>, <em>mass_offset=None</em>, <em>mass_gain=None</em>, <em>time_resolution=None</em>, <em>miscalibrated=None</em>, <em>check_reg=None</em>, <em>datetime_format='%Y-%m-%dT%H:%M:%S'</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mibidata.mibi_image.</code><code class="descname">MibiImage</code><span class="sig-paren">(</span><em>data</em>, <em>channels</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A multiplexed image with labeled channels and metadata.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -296,44 +296,71 @@ the channel index and the frame size of the image is MxM.</li>
 <li><strong>channels</strong> – A tuple of channel names of length D. The names may
 either be strings, or tuples of strings of the format (mass,
 target).</li>
-<li><strong>run</strong> – A string name of the run during which this image was acquired.</li>
-<li><strong>date</strong> – The run date. It can either be a datetime object, or a string.
-If a string, it will be parsed according to the
-<cite>datetime_format`</cite>.</li>
-<li><strong>coordinates</strong> – A tuple of (x, y) stage coordinates at which the image
-was acquired; stage coordinates should be in microns.</li>
-<li><strong>size</strong> – A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</li>
-<li><strong>slide</strong> – A string or integer slide ID.</li>
-<li><strong>point_name</strong> – A string name for the point as assigned during the run.</li>
-<li><strong>folder</strong> – The folder name for this image as determined by the
-acquisition software.</li>
-<li><strong>dwell</strong> – A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</li>
-<li><strong>scans</strong> – A comma-separated list of image scan numbers.</li>
-<li><strong>aperture</strong> – A string name of the aperture used during image
-acquisition.</li>
-<li><strong>instrument</strong> – A string identifier for the instrument used.</li>
-<li><strong>tissue</strong> – A string name of the tissue type.</li>
-<li><strong>panel</strong> – A string name of the panel used to stain the tissue.</li>
-<li><strong>version</strong> – A string identifier for the software version used.</li>
-<li><strong>datetime_format</strong> – The optional format of the date, if given as a
-string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</li>
-<li><strong>mass_offset</strong> – Mass offset parameter used for mass calibration.</li>
-<li><strong>mass_gain</strong> – Mass gain used for mass calibration.</li>
-<li><strong>time_resolution</strong> – Parameter used for mass calibration.</li>
-<li><strong>miscalibrated</strong> – Whether or not there was significant difference between
-peak locations after mass recalibration.</li>
-<li><strong>check_reg</strong> – Whether or not the maximum shift between depths is higher
-than a threshold.</li>
+<li><strong>kwargs</strong> – <p>A mapping of arguments that used to define the image
+metadata. A list of required keys follows; however, the
+user can define other metadata key-value pairs that will be added
+as attributes to the class instance in use.
+run: A string name of the run during which this image was acquired.
+date: The run date. It can either be a datetime object, or a string.</p>
+<blockquote>
+<div>If a string, it will be parsed according to the
+<cite>datetime_format`</cite>.</div></blockquote>
+<dl class="docutils">
+<dt>coordinates: A tuple of (x, y) stage coordinates at which the image</dt>
+<dd>was acquired; stage coordinates should be in microns.</dd>
+</dl>
+<p>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.
+slide: A string or integer slide ID.
+fov_id: A string identifying the FOV within the run, i.e. ‘FOV1’ in</p>
+<blockquote>
+<div>MIBIcontrol or ‘Point1’ in earlier versions.</div></blockquote>
+<dl class="docutils">
+<dt>fov_name: A user-defined string name for the FOV as assigned before</dt>
+<dd>the run. In prior versions this was called ‘point_name’.</dd>
+<dt>folder: The folder name for this image as determined by the</dt>
+<dd>acquisition software. For data generated from MIBIcontrol
+software, this will the same as the fov_id.</dd>
+</dl>
+<p>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.
+scans: A comma-separated list of image scan numbers.
+aperture: A string name of the aperture used during image</p>
+<blockquote>
+<div>acquisition.</div></blockquote>
+<p>instrument: A string identifier for the instrument used.
+tissue: A string name of the tissue type.
+panel: A string name of the panel used to stain the tissue.
+version: A string identifier for the software version used.
+datetime_format: The optional format of the date, if given as a</p>
+<blockquote>
+<div>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</div></blockquote>
+<p>mass_offset: Mass offset parameter used for mass calibration.
+mass_gain: Mass gain used for mass calibration.
+time_resolution: Parameter used for mass calibration.
+miscalibrated: Whether or not there was significant difference</p>
+<blockquote>
+<div>between peak locations after mass recalibration.</div></blockquote>
+<dl class="docutils">
+<dt>check_reg: Whether or not the maximum shift between depths is higher</dt>
+<dd>than a threshold.</dd>
+<dt>filename: The name of the instrument file containing the run</dt>
+<dd>metadata.</dd>
+<dt>description: String describing any additional information about the</dt>
+<dd>image.</dd>
+</dl>
+</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
-<ul class="last simple">
-<li>the shape of data does not match length of channels.</li>
-<li>the channel names are not unique.</li>
-<li>the masses (if included in channel tuples) are not unique.</li>
-<li>the targets (if included in channel tuples) are not unique.</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if
+- the shape of data does not match length of channels.
+- the channel names are not unique.
+- the masses (if included in channel tuples) are not unique.
+- the targets (if included in channel tuples) are not unique.
+- the fov_id doesn’t match the point in folder, unless the call</p>
+<blockquote class="last">
+<div><p>is using the old point name format, in which case, only a
+warning is shown.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -354,143 +381,59 @@ target).</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.masses">
-<code class="descname">masses</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.masses" title="Permalink to this definition">¶</a></dt>
-<dd><p>A tuple of the masses of the channels, if the channels were
-given as (mass, target) tuples; otherwise None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.targets">
-<code class="descname">targets</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.targets" title="Permalink to this definition">¶</a></dt>
-<dd><p>A tuple of the targets of the channels, if the channels were
-given as (mass, target) tuples; otherwise None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.run">
-<code class="descname">run</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string name of the run during which this image was acquired.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.date">
-<code class="descname">date</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.date" title="Permalink to this definition">¶</a></dt>
-<dd><p>A datetime object of the run date.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.coordinates">
-<code class="descname">coordinates</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.coordinates" title="Permalink to this definition">¶</a></dt>
-<dd><p>A tuple of (x, y) stage coordinates in microns at which
-the image was acquired.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.size">
-<code class="descname">size</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>A float size of the image width/height in <span class="math notranslate nohighlight">\(\mu m\)</span>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.slide">
-<code class="descname">slide</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.slide" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string or integer slide ID.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.point_name">
-<code class="descname">point_name</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.point_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string name for the point as assigned during the run.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.folder">
-<code class="descname">folder</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.folder" title="Permalink to this definition">¶</a></dt>
-<dd><p>The folder name for this image as determined by the
-acquisition software.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.dwell">
-<code class="descname">dwell</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.dwell" title="Permalink to this definition">¶</a></dt>
-<dd><p>A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.scans">
-<code class="descname">scans</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.scans" title="Permalink to this definition">¶</a></dt>
-<dd><p>A comma-separated list of image scan numbers.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.aperture">
-<code class="descname">aperture</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.aperture" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string name of the aperture used during image
-acquisition.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.instrument">
-<code class="descname">instrument</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.instrument" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string identifier for the instrument used.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.tissue">
-<code class="descname">tissue</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.tissue" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string name of the tissue type.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.panel">
-<code class="descname">panel</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.panel" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string name of the panel used to stain the tissue.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.version">
-<code class="descname">version</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string identifier for the software version used.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.mass_offset">
-<code class="descname">mass_offset</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.mass_offset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mass offset parameter used for mass calibration.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.mass_gain">
-<code class="descname">mass_gain</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.mass_gain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mass gain used for mass calibration.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.time_resolution">
-<code class="descname">time_resolution</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.time_resolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parameter used for mass calibration.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.miscalibrated">
-<code class="descname">miscalibrated</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.miscalibrated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether or not there was significant difference between
-peak locations after mass recalibration.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.check_reg">
-<code class="descname">check_reg</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.check_reg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether or not the maximum shift between depths is higher
-than a threshold.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.filename">
-<code class="descname">filename</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the Run XML file which corresponds to the run
-name.</p>
+<dt id="mibidata.mibi_image.MibiImage.kwargs">
+<code class="descname">kwargs</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mapping of arguments that used to define the image
+metadata. A list of required keys follows; however, the
+user can define other metadata key-value pairs that will be added
+as attributes to the class instance in use.
+run: A string name of the run during which this image was acquired.
+date: The run date. It can either be a datetime object, or a string.</p>
+<blockquote>
+<div>If a string, it will be parsed according to the
+<cite>datetime_format`</cite>.</div></blockquote>
+<dl class="docutils">
+<dt>coordinates: A tuple of (x, y) stage coordinates at which the image</dt>
+<dd>was acquired; stage coordinates should be in microns.</dd>
+</dl>
+<p>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.
+slide: A string or integer slide ID.
+fov_id: A string identifying the FOV within the run, i.e. ‘FOV1’ in</p>
+<blockquote>
+<div>MIBIcontrol or ‘Point1’ in earlier versions.</div></blockquote>
+<dl class="docutils">
+<dt>fov_name: A user-defined string name for the FOV as assigned before</dt>
+<dd>the run. In prior versions this was called ‘point_name’.</dd>
+<dt>folder: The folder name for this image as determined by the</dt>
+<dd>acquisition software. For data generated from MIBIcontrol
+software, this will the same as the fov_id.</dd>
+</dl>
+<p>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.
+scans: A comma-separated list of image scan numbers.
+aperture: A string name of the aperture used during image</p>
+<blockquote>
+<div>acquisition.</div></blockquote>
+<p>instrument: A string identifier for the instrument used.
+tissue: A string name of the tissue type.
+panel: A string name of the panel used to stain the tissue.
+version: A string identifier for the software version used.
+datetime_format: The optional format of the date, if given as a</p>
+<blockquote>
+<div>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</div></blockquote>
+<p>mass_offset: Mass offset parameter used for mass calibration.
+mass_gain: Mass gain used for mass calibration.
+time_resolution: Parameter used for mass calibration.
+miscalibrated: Whether or not there was significant difference</p>
+<blockquote>
+<div>between peak locations after mass recalibration.</div></blockquote>
+<dl class="docutils">
+<dt>check_reg: Whether or not the maximum shift between depths is higher</dt>
+<dd>than a threshold.</dd>
+<dt>filename: The name of the instrument file containing the run</dt>
+<dd>metadata.</dd>
+<dt>description: String describing any additional information about the</dt>
+<dd>image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -499,14 +442,6 @@ name.</p>
 <dd><p>A tuple of channel names.</p>
 <p>The names may either be strings, or tuples of strings of the format
 (mass, target).</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.labels">
-<code class="descname">labels</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>For backwards compatibility.</p>
-<p>This may be removed in a future version. Use the <a class="reference internal" href="#mibidata.mibi_image.MibiImage.channels" title="mibidata.mibi_image.MibiImage.channels"><code class="xref py py-attr docutils literal notranslate"><span class="pre">channels</span></code></a>
-property instead.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1061,8 +996,8 @@ saving, however saves the integer counts as floating point numbers.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the image is not a
-<code class="docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance, or if its coordinates
-run date, or size are None.</p>
+<code class="docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance, or if its coordinates,
+size, masses or targets are None.</p>
 </td>
 </tr>
 </tbody>
