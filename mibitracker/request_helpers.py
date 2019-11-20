@@ -519,9 +519,9 @@ class MibiRequests():
 
         len_results = len(results)
         if len_results == 0:
-            warnings.warn('No images found matching run label: {run_label}, '
-                          'point_name: {point_name}. Checking run name '
-                          'instead.')
+            warnings.warn(f'No images found matching run label: {run_label}, '
+                          f'point_name: {point_name}. Checking run name '
+                          f'instead.')
             results = self.get(
                 '/images/',
                 params={

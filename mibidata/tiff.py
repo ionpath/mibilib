@@ -7,6 +7,7 @@ from fractions import Fraction
 import datetime
 import json
 import os
+import warnings
 
 import numpy as np
 from skimage.external.tifffile import TiffFile, TiffWriter
@@ -14,7 +15,10 @@ from skimage.external.tifffile import TiffFile, TiffWriter
 from mibidata import mibi_image as mi, util
 
 # Increment this when making functional changes.
-SOFTWARE_VERSION = 'IonpathMIBIv0.2'
+SOFTWARE_VERSION = 'IonpathMIBIv1.0'
+# These are reserved by the tiff writer and cannot be specified by the user.
+RESERVED_MIBITIFF_ATTRIBUTES = ('image.type', 'SIMS', 'channel.mass',
+                                'channel.target', 'shape')
 # Coordinates of where the slide labels are within the optical image.
 _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
@@ -68,8 +72,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
 
     Raises:
         ValueError: Raised if the image is not a
-            ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates
-            run date, or size are None.
+            ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates,
+            size, masses or targets are None.
     """
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibitof.mibi_image.MibiImage '
@@ -93,27 +97,20 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                   image.data.shape[1] * 1e4 / float(image.size),
                   'cm')
 
-    metadata = {
-        'mibi.run': getattr(image, 'run'),
-        'mibi.version': getattr(image, 'version'),
-        'mibi.instrument': getattr(image, 'instrument') or 'MIBI',
-        'mibi.slide': getattr(image, 'slide'),
-        'mibi.dwell': getattr(image, 'dwell'),
-        'mibi.scans': getattr(image, 'scans'),
-        'mibi.aperture': getattr(image, 'aperture'),
-        'mibi.description': getattr(image, 'point_name'),
-        'mibi.folder': getattr(image, 'folder'),
-        'mibi.tissue': getattr(image, 'tissue'),
-        'mibi.panel': getattr(image, 'panel'),
-        'mibi.mass_offset': getattr(image, 'mass_offset'),
-        'mibi.mass_gain': getattr(image, 'mass_gain'),
-        'mibi.time_resolution': getattr(image, 'time_resolution'),
-        'mibi.miscalibrated': getattr(image, 'miscalibrated'),
-        'mibi.check_reg': getattr(image, 'check_reg'),
-        'mibi.filename': getattr(image, 'filename'),
-    }
-    description = {
-        key: val for key, val in metadata.items() if val is not None}
+    # The mibi. prefix is added to attributes defined in the spec.
+    # Other user-defined attributes are included too but without the prefix.
+    prefixed_attributes = mi.SPECIFIED_METADATA_ATTRIBUTES[1:]
+    description = {}
+    for key, value in image.metadata().items():
+        if key in prefixed_attributes:
+            description[f'mibi.{key}'] = value
+        elif key in RESERVED_MIBITIFF_ATTRIBUTES:
+            warnings.warn(f'Skipping writing user-defined {key} to the '
+                          f'metadata as it is a reserved attribute.')
+        elif key != 'date':
+            description[key] = value
+    # TODO: Decide if should filter out those that are None or convert to empty
+    # string so that don't get saved as 'None'
 
     if multichannel:
         targets = list(image.targets)
@@ -247,7 +244,7 @@ def read(file, sims=True, sed=False, optical=False, label=False):
                 channels.append((description['channel.mass'],
                                  description['channel.target']))
                 sims_data.append(page.asarray())
-                #  Get metadata on first SIMS page only
+                # Get metadata on first SIMS page only
                 if not metadata:
                     metadata.update(_page_metadata(page, description))
             elif return_types.get(image_type):
@@ -289,29 +286,49 @@ def _page_metadata(page, description):
     date = datetime.datetime.strptime(
         page.tags['datetime'].value.decode(ENCODING),
         _DATETIME_FORMAT)
-    return {
-        'run': description.get('mibi.run'),
+
+    # check version for backwards compatibility
+    _convert_from_previous(description)
+
+    metadata = {}
+    for key, val in description.items():
+        if key.startswith('mibi.'):
+            metadata[key[5:]] = val
+        elif key not in RESERVED_MIBITIFF_ATTRIBUTES:
+            metadata[key] = val
+
+    metadata.update({
         'coordinates': (
             _cm_to_micron(page.tags['x_position'].value),
             _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
-        'size': size,
-        'slide': description.get('mibi.slide'),
-        'point_name': description.get('mibi.description'),
-        'folder': description.get('mibi.folder'),
-        'dwell': description.get('mibi.dwell'),
-        'scans': description.get('mibi.scans'),
-        'aperture': description.get('mibi.aperture'),
-        'instrument': description.get('mibi.instrument'),
-        'tissue': description.get('mibi.tissue'),
-        'panel': description.get('mibi.panel'),
-        'mass_offset': description.get('mibi.mass_offset'),
-        'mass_gain': description.get('mibi.mass_gain'),
-        'time_resolution': description.get('mibi.time_resolution'),
-        'miscalibrated': description.get('mibi.miscalibrated'),
-        'check_reg': description.get('mibi.check_reg'),
-        'filename': description.get('mibi.filename'),
-    }
+        'size': size})
+
+    return metadata
+
+
+def _convert_from_previous(description):
+    """Convert old metadata format for backwards compatibility.
+
+    Most of these conversions would happen during MibiImage construction,
+    but we do them here in case reading the info only.
+    """
+    if not description.get('mibi.fov_name') and description.get(
+            'mibi.description'):
+        description['mibi.fov_name'] = description.pop('mibi.description')
+    # TODO: Clean up repetition between this and the same MibiImage method
+    if description.get('mibi.folder') and not description.get('mibi.fov_id'):
+        description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
+        warnings.warn(
+            'The "fov_id" attribute is now required if "folder" is '
+            'specified. Setting "fov_id" to {}.'.format(
+                description['mibi.fov_id']))
+    if (not description.get('mibi.folder') and description.get('mibi.fov_id')
+            and description.get('mibi.fov_id').startswith('FOV')):
+        description['mibi.folder'] = description['mibi.fov_id']
+        warnings.warn(
+            'The "folder" attribute is required if "fov_id" is specified. '
+            'Setting "folder" to {}.'.format(description['mibi.folder']))
 
 
 def info(filename):

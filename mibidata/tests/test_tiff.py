@@ -10,7 +10,7 @@ import unittest
 import warnings
 
 import numpy as np
-from skimage import io, img_as_ubyte, transform
+from skimage import io as skio, img_as_ubyte, transform
 from skimage.external.tifffile import TiffFile
 
 from mibidata import mibi_image as mi
@@ -25,15 +25,29 @@ LABEL = (img_as_ubyte(transform.rotate(
 CHANNELS = ((1, 'Target1'), (2, 'Target2'), (3, 'Target3'),
             (4, 'Target4'), (5, 'Target5'))
 METADATA = {
-    'run': 'Run', 'date': '2017-09-16T15:26:00',
-    'coordinates': (12345, -67890), 'size': 300., 'slide': '857',
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
+    'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil',
+    'folder': 'Point1/RowNumber0/Depth_Profile0',
+    'dwell': 4, 'scans': '0,5', 'aperture': '300um',
+    'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
+    'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
+    'filename': '20180703_1234_test', 'description': 'test image',
+    'version': 'alpha',
+}
+USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
+OLD_METADATA = {
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
     'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
-    'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
-    'filename': 'Run'
+    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
+    'check_reg': False, 'filename': '20180703_1234_test'
 }
+OLD_TIFF_FILE = os.path.join(os.path.dirname(__file__), 'data', 'v0.1.tiff')
 
 
 class TestTiffHelpers(unittest.TestCase):
@@ -49,12 +63,19 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def setUp(self):
         self.image = mi.MibiImage(DATA, CHANNELS, **METADATA)
+        self.image_user_defined_metadata = mi.MibiImage(DATA, CHANNELS,
+                                                        **METADATA,
+                                                        **USER_DEFINED_METADATA)
+        self.image_old_metadata = mi.MibiImage(DATA, CHANNELS, **OLD_METADATA)
         self.folder = tempfile.mkdtemp()
-        self.filename = os.path.join(self.folder, 'test.tif')
+        self.filename = os.path.join(self.folder, 'test.tiff')
         self.maxDiff = None
 
     def tearDown(self):
         shutil.rmtree(self.folder)
+
+    def test_current_software_version(self):
+        self.assertEqual(tiff.SOFTWARE_VERSION, 'IonpathMIBIv1.0')
 
     def test_sims_only(self):
         tiff.write(self.filename, self.image)
@@ -150,7 +171,7 @@ class TestWriteReadTiff(unittest.TestCase):
     def test_read_wrong_software_tag(self):
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', message='.*low contrast image.*')
-            io.imsave(self.filename, DATA)
+            skio.imsave(self.filename, DATA)
         with self.assertRaises(ValueError):
             tiff.read(self.filename)
 
@@ -166,9 +187,55 @@ class TestWriteReadTiff(unittest.TestCase):
         expected.update({
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
-                                               '%Y-%m-%dT%H:%M:%S')
-        })
+                                               '%Y-%m-%dT%H:%M:%S')})
         self.assertEqual(metadata, expected)
+
+    def test_read_metadata_with_user_defined_metadata(self):
+        tiff.write(self.filename, self.image_user_defined_metadata)
+        metadata = tiff.info(self.filename)
+        expected = METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+            **USER_DEFINED_METADATA})
+        self.assertEqual(metadata, expected)
+
+    def test_read_old_metadata(self):
+        tiff.write(self.filename, self.image_old_metadata)
+        metadata = tiff.info(self.filename)
+        expected = METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+            'description': None, 'version': None})
+        self.assertEqual(metadata, expected)
+
+    def test_open_file_with_old_metadata(self):
+        metadata = tiff.info(OLD_TIFF_FILE)
+        expected = METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+        })
+        del expected['description']
+        del expected['version']
+        for key, val in metadata.items():
+            print(key)
+            if val != expected.get(key):
+                print(val, expected.get(key))
+        self.assertEqual(metadata, expected)
+
+    def test_convert_from_previous(self):
+        description = {'mibi.description': OLD_METADATA['point_name'],
+                       'mibi.folder': OLD_METADATA['folder']}
+        tiff._convert_from_previous(description)
+        self.assertEqual(description,
+                         {'mibi.fov_name': OLD_METADATA['point_name'],
+                          'mibi.folder': OLD_METADATA['folder'],
+                          'mibi.fov_id': OLD_METADATA['folder'].split('/')[0]})
 
     def test_sort_channels_before_writing(self):
 
@@ -182,6 +249,8 @@ class TestWriteReadTiff(unittest.TestCase):
 
         tiff.write(self.filename, unordered_image)
         image = tiff.read(self.filename)
+        print(image.metadata())
+        print(self.image.metadata())
         self.assertEqual(image, self.image)
 
     def test_write_single_channel_tiffs(self):
