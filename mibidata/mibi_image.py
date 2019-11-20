@@ -202,6 +202,7 @@ class MibiImage():
                 'list of str')
 
     def _convert_from_previous(self):
+        # pylint: disable=access-member-before-definition
         """Convert old metadata format for backwards compatibility."""
         if hasattr(self, 'point_name') and not self.fov_name:
             warnings.warn('The "point_name" attribute is deprecated. '
