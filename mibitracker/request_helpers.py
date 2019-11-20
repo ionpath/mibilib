@@ -23,6 +23,10 @@ RETRY_STATUS_CODES = (502, 503)
 # POST is added here as compared to the urllib3 defaults.
 RETRY_METHOD_WHITELIST = (
     'HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'POST')
+# Timeout for MibiTracker requests
+SESSION_TIMEOUT = 10
+# Timeout for data transfer requests
+DATA_TRANSFER_TIMEOUT = 30
 
 
 class MibiRequests():
@@ -51,6 +55,8 @@ class MibiRequests():
             whitelist with the addition of POST.
         retry_codes: The HTTP status codes to retry. Defaults to ``(502, 503)``,
             which are associated with transient errors seen on app engine.
+        session_timeout: Timeout for MibiTracker requests.
+        data_transfer_timeout: Timeout for data transfer requests.
 
     Attributes:
         url: The string url to the backend of a MibiTracker instance.
@@ -69,10 +75,13 @@ class MibiRequests():
                  token=None,
                  retries=MAX_RETRIES,
                  retry_methods=RETRY_METHOD_WHITELIST,
-                 retry_codes=RETRY_STATUS_CODES):
+                 retry_codes=RETRY_STATUS_CODES,
+                 session_timeout=SESSION_TIMEOUT,
+                 data_transfer_timeout=DATA_TRANSFER_TIMEOUT):
 
         self.url = url.rstrip('/')  # We add this as part of request params
-        self.session = StatusCheckedSession()
+        self.session = StatusCheckedSession(timeout=session_timeout)
+        self._data_transfer_timeout = data_transfer_timeout
 
         # Provide either an email and password, or a token
         # The token will be used in lieu of email and password if provided
@@ -177,7 +186,8 @@ class MibiRequests():
             rewound to the beginning of the file.
         """
         response = self.get('/download/', params={'path': path})
-        url = requests.get(response.json()['url'])
+        url = requests.get(response.json()['url'],
+                           timeout=self._data_transfer_timeout)
         buf = io.BytesIO()
         buf.write(url.content)
         buf.seek(0)
@@ -348,13 +358,13 @@ class MibiRequests():
             image_map[item['id']] = response.json()
         return image_map
 
-    @staticmethod
-    def _upload_mibitiff(url, tiff_file):
+    def _upload_mibitiff(self, url, tiff_file):
         # This shouldn't send mibitracker credentials so don't use the session
         response = requests.put(
             url,
             data=tiff_file,
-            headers={'content-type': 'image/tiff'}
+            headers={'content-type': 'image/tiff'},
+            timeout=self._data_transfer_timeout
         )
         response.raise_for_status()
         return response
@@ -562,7 +572,8 @@ class MibiRequests():
             raise MibiTrackerError(
                 'Specified channel name is not present in image')
         buf = io.BytesIO()
-        response = requests.get(image_info['overlays'][channel_name])
+        response = requests.get(image_info['overlays'][channel_name],
+                                timeout=self._data_transfer_timeout)
         response.raise_for_status()
         buf.write(response.content)
         buf.seek(0)
@@ -599,6 +610,10 @@ class MibiRequests():
 class StatusCheckedSession(requests.Session):
     """Raises for HTTP errors and adds any response JSON to the message."""
 
+    def __init__(self, timeout=SESSION_TIMEOUT):
+        super(StatusCheckedSession, self).__init__()
+        self.timeout = timeout
+
     @staticmethod
     def _check_status(response):
         try:
@@ -611,22 +626,31 @@ class StatusCheckedSession(requests.Session):
             raise HTTPError(str(e), response_json)
         return response
 
+    def _set_timeout(self, kwargs):
+        if 'timeout' not in kwargs:
+            kwargs.update({'timeout': self.timeout})
+
     def get(self, *args, **kwargs):
+        self._set_timeout(kwargs)
         response = super().get(*args, **kwargs)
         return self._check_status(response)
 
     def options(self, *args, **kwargs):
+        self._set_timeout(kwargs)
         response = super().options(*args, **kwargs)
         return self._check_status(response)
 
     def post(self, *args, **kwargs):
+        self._set_timeout(kwargs)
         response = super().post(*args, **kwargs)
         return self._check_status(response)
 
     def put(self, *args, **kwargs):
+        self._set_timeout(kwargs)
         response = super().put(*args, **kwargs)
         return self._check_status(response)
 
     def delete(self, *args, **kwargs):
+        self._set_timeout(kwargs)
         response = super().delete(*args, **kwargs)
         return self._check_status(response)
