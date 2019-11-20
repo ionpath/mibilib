@@ -34,7 +34,7 @@ METADATA = {
     'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
     'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
     'filename': '20180703_1234_test', 'description': 'test image',
-    'version': 'alpha', 'MIBItiff_version': '1.0'
+    'version': 'alpha',
 }
 USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
 OLD_METADATA = {
@@ -47,8 +47,7 @@ OLD_METADATA = {
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
     'check_reg': False, 'filename': '20180703_1234_test'
 }
-OLD_TIFF_FILE = os.path.join(os.path.dirname(__file__),
-                             'data', '20180703_1234_test_old_metadata.tiff')
+OLD_TIFF_FILE = os.path.join(os.path.dirname(__file__), 'data', 'v0.1.tiff')
 
 
 class TestTiffHelpers(unittest.TestCase):
@@ -220,21 +219,23 @@ class TestWriteReadTiff(unittest.TestCase):
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
-            'description': None})
+        })
+        del expected['description']
         del expected['version']
+        for key, val in metadata.items():
+            print(key)
+            if val != expected.get(key):
+                print(val, expected.get(key))
         self.assertEqual(metadata, expected)
 
-    def test_convert_from_previous_metadata_versions(self):
+    def test_convert_from_previous(self):
         description = {'mibi.description': OLD_METADATA['point_name'],
                        'mibi.folder': OLD_METADATA['folder']}
-        tiff._convert_from_previous_metadata_versions(description)
-        self.assertEqual(description['mibi.fov_id'],
-                         OLD_METADATA['folder'].split('/')[0])
-        self.assertEqual(description['mibi.fov_name'],
-                         OLD_METADATA['point_name'])
-        self.assertEqual(description['mibi.description'], None)
-        self.assertEqual(description['mibi.MIBItiff_version'],
-                         mi.MIBITIFF_VERSION)
+        tiff._convert_from_previous(description)
+        self.assertEqual(description,
+                         {'mibi.fov_name': OLD_METADATA['point_name'],
+                          'mibi.folder': OLD_METADATA['folder'],
+                          'mibi.fov_id': OLD_METADATA['folder'].split('/')[0]})
 
     def test_sort_channels_before_writing(self):
 
@@ -248,6 +249,8 @@ class TestWriteReadTiff(unittest.TestCase):
 
         tiff.write(self.filename, unordered_image)
         image = tiff.read(self.filename)
+        print(image.metadata())
+        print(self.image.metadata())
         self.assertEqual(image, self.image)
 
     def test_write_single_channel_tiffs(self):

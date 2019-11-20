@@ -7,6 +7,7 @@ from fractions import Fraction
 import datetime
 import json
 import os
+import warnings
 
 import numpy as np
 from skimage.external.tifffile import TiffFile, TiffWriter
@@ -14,7 +15,10 @@ from skimage.external.tifffile import TiffFile, TiffWriter
 from mibidata import mibi_image as mi, util
 
 # Increment this when making functional changes.
-SOFTWARE_VERSION = 'IonpathMIBIv' + mi.MIBITIFF_VERSION
+SOFTWARE_VERSION = 'IonpathMIBIv1.0'
+# These are reserved by the tiff writer and cannot be specified by the user.
+RESERVED_MIBITIFF_ATTRIBUTES = ('image.type', 'SIMS', 'channel.mass',
+                                'channel.target', 'shape')
 # Coordinates of where the slide labels are within the optical image.
 _TOP_LABEL_COORDINATES = ((570, 1170), (355, 955))
 _BOTTOM_LABEL_COORDINATES = ((1420, 2020), (355, 955))
@@ -68,7 +72,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
 
     Raises:
         ValueError: Raised if the image is not a
-            ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates
+            ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates,
             size, masses or targets are None.
     """
     if not isinstance(image, mi.MibiImage):
@@ -93,21 +97,20 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                   image.data.shape[1] * 1e4 / float(image.size),
                   'cm')
 
-    # store required metadata
-    metadata = {'mibi.' + key: value for key, value in
-                image.metadata().items()
-                if key in mi._REQUIRED_METADATA_ATTRIBUTES and # pylint: disable=protected-access
-                key not in ['date']} # datetime objects are not
-                                     # JSON serializable
-    # store user-defined metadata
-    user_defined_attrs = image._user_defined_attributes # pylint: disable=protected-access
-    metadata.update({key: value for key, value in
-                     image.metadata().items()
-                     if key in user_defined_attrs})
-    metadata.update({'user_defined_attributes': user_defined_attrs})
-
-    description = {
-        key: val for key, val in metadata.items()}
+    # The mibi. prefix is added to attributes defined in the spec.
+    # Other user-defined attributes are included too but without the prefix.
+    prefixed_attributes = mi._REQUIRED_METADATA_ATTRIBUTES[1:]  # pylint: disable=protected-access
+    description = {}
+    for key, value in image.metadata().items():
+        if key in prefixed_attributes:
+            description[f'mibi.{key}'] = value
+        elif key in RESERVED_MIBITIFF_ATTRIBUTES:
+            warnings.warn(f'Skipping writing user-defined {key} to the '
+                          f'metadata as it is a reserved attribute.')
+        elif key != 'date':
+            description[key] = value
+    # TODO: Decide if should filter out those that are None or convert to empty
+    # string so that don't get saved as 'None'
 
     if multichannel:
         targets = list(image.targets)
@@ -285,47 +288,47 @@ def _page_metadata(page, description):
         _DATETIME_FORMAT)
 
     # check version for backwards compatibility
-    _convert_from_previous_metadata_versions(description)
+    _convert_from_previous(description)
 
-    # retrieve required metadata
-    metadata = {key.split('.')[1]: value for key, value in
-                description.items() if key.startswith('mibi.')}
+    metadata = {}
+    for key, val in description.items():
+        if key.startswith('mibi.'):
+            metadata[key[5:]] = val
+        elif key not in RESERVED_MIBITIFF_ATTRIBUTES:
+            metadata[key] = val
+
     metadata.update({
         'coordinates': (
             _cm_to_micron(page.tags['x_position'].value),
             _cm_to_micron(page.tags['y_position'].value)),
         'date': date,
         'size': size})
-    # retrieve user-defined metadata
-    try:
-        user_defined_attrs = description['user_defined_attributes']
-        print(user_defined_attrs)
-        metadata.update({key: value for key, value in description.items()
-                         if key in user_defined_attrs})
-    except KeyError:
-        # no user-defined metadata found
-        pass
 
     return metadata
 
 
-def _convert_from_previous_metadata_versions(description):
-    """Convert old metadata format to new one.
+def _convert_from_previous(description):
+    """Convert old metadata format for backwards compatibility.
 
-    This function ensures backwards compatibility for previous versions.
+    Most of these conversions would happen during MibiImage construction,
+    but we do them here in case reading the info only.
     """
-    try:
-        description['mibi.MIBItiff_version']
-    except KeyError:
-        # if the key doesn't exist it means that the version was None and hence
-        # not saved in the tiff file
-        description['mibi.MIBItiff_version'] = None
-
-    if description['mibi.MIBItiff_version'] != mi.MIBITIFF_VERSION:
-        description['mibi.fov_name'] = description['mibi.description']
+    if not description.get('mibi.fov_name') and description.get(
+            'mibi.description'):
+        description['mibi.fov_name'] = description.pop('mibi.description')
+    # TODO: Clean up repetition between this and the same MibiImage method
+    if description.get('mibi.folder') and not description.get('mibi.fov_id'):
         description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
-        description['mibi.description'] = None
-        description['mibi.MIBItiff_version'] = mi.MIBITIFF_VERSION
+        warnings.warn(
+            'The "fov_id" attribute is now required if "folder" is '
+            'specified. Setting "fov_id" to {}.'.format(
+                description['mibi.fov_id']))
+    if (not description.get('mibi.folder') and description.get('mibi.fov_id')
+            and description.get('mibi.fov_id').startswith('FOV')):
+        description['mibi.folder'] = description['mibi.fov_id']
+        warnings.warn(
+            'The "folder" attribute is required if "fov_id" is specified. '
+            'Setting "folder" to {}.'.format(description['mibi.folder']))
 
 
 def info(filename):
