@@ -99,7 +99,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
 
     # The mibi. prefix is added to attributes defined in the spec.
     # Other user-defined attributes are included too but without the prefix.
-    prefixed_attributes = mi._REQUIRED_METADATA_ATTRIBUTES[1:]  # pylint: disable=protected-access
+    prefixed_attributes = mi.SPECIFIED_METADATA_ATTRIBUTES[1:]
     description = {}
     for key, value in image.metadata().items():
         if key in prefixed_attributes:

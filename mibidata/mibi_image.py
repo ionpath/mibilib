@@ -12,7 +12,7 @@ from skimage import io as skio, transform
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
-_REQUIRED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
+SPECIFIED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
                                  'fov_id', 'fov_name', 'folder', 'dwell',
                                  'scans', 'aperture', 'instrument', 'tissue',
                                  'panel', 'mass_offset', 'mass_gain',
@@ -146,7 +146,7 @@ class MibiImage():
         except TypeError:  # Given as datetime obj already, or None.
             self.date = date
 
-        for attr in _REQUIRED_METADATA_ATTRIBUTES[1:]:
+        for attr in SPECIFIED_METADATA_ATTRIBUTES[1:]:
             setattr(self, attr, kwargs.pop(attr, None))
 
         # empty list for storing user-defined attribute names
@@ -263,7 +263,7 @@ class MibiImage():
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
-        metadata_keys = list(_REQUIRED_METADATA_ATTRIBUTES)
+        metadata_keys = list(SPECIFIED_METADATA_ATTRIBUTES)
         # find user-defined metadata
         metadata_keys.extend(self._user_defined_attributes)
         return {key: getattr(self, key) for key in metadata_keys}
