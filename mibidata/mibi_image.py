@@ -9,31 +9,20 @@ import warnings
 import numpy as np
 from skimage import io as skio, transform
 
-# Increment this when making functional changes.
-MIBITIFF_VERSION = '1.0'
-
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
-_REQUIRED_METADATA_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide',
+_REQUIRED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
                                  'fov_id', 'fov_name', 'folder', 'dwell',
                                  'scans', 'aperture', 'instrument', 'tissue',
                                  'panel', 'mass_offset', 'mass_gain',
                                  'time_resolution', 'miscalibrated',
                                  'check_reg', 'filename', 'description',
-                                 'version', 'MIBItiff_version')
+                                 'version')
 
 
 class MibiImage():
     """A multiplexed image with labeled channels and metadata.
-
-    The format for setting the point name in the metadata has changed.
-    The correct format for setting the point name in the metadata is shown in
-    the following example:
-     'fov_id': 'Point1'
-     'fov_name': 'R1C3_Tonsil'
-    For backwards compatibility, the class performs a check for the old format
-    ('point_name': 'R1C3_Tonsil') and converts it to the new format.
 
     Args:
         data: An MxMxD numpy array of multiplexed image data, where D is
@@ -41,8 +30,8 @@ class MibiImage():
         channels: A tuple of channel names of length D. The names may
             either be strings, or tuples of strings of the format (mass,
             target).
-        kwargs: A sequence of arguments that will be used to define the
-            metadata. A list of required metadata keys follows; however, the
+        kwargs: A mapping of arguments that used to define the image
+            metadata. A list of required keys follows; however, the
             user can define other metadata key-value pairs that will be added
             as attributes to the class instance in use.
             run: A string name of the run during which this image was acquired.
@@ -53,11 +42,13 @@ class MibiImage():
                 was acquired; stage coordinates should be in microns.
             size: A float size of the image width/height in  :math:`\\mu m`.
             slide: A string or integer slide ID.
-            fov_id: A string identifying the FOV within the run, i.e. 'FOV2' in
-                MIBIcontrol and 'Point2' in earlier versions.
-            fov_name: A string name for the FOV as assigned during the run.
+            fov_id: A string identifying the FOV within the run, i.e. 'FOV1' in
+                MIBIcontrol or 'Point1' in earlier versions.
+            fov_name: A user-defined string name for the FOV as assigned before
+                the run. In prior versions this was called 'point_name'.
             folder: The folder name for this image as determined by the
-                acquisition software.
+                acquisition software. For data generated from MIBIcontrol
+                software, this will the same as the fov_id.
             dwell: A float pixel dwell time in :math:`ms`.
             scans: A comma-separated list of image scan numbers.
             aperture: A string name of the aperture used during image
@@ -66,8 +57,6 @@ class MibiImage():
             tissue: A string name of the tissue type.
             panel: A string name of the panel used to stain the tissue.
             version: A string identifier for the software version used.
-            MIBItiff_version: A string identifier for the MIBItiff software
-                version used.
             datetime_format: The optional format of the date, if given as a
                 string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
             mass_offset: Mass offset parameter used for mass calibration.
@@ -77,8 +66,10 @@ class MibiImage():
                 between peak locations after mass recalibration.
             check_reg: Whether or not the maximum shift between depths is higher
                 than a threshold.
-            filename: The name of the file with the run metadata.
-            description: String describing the image.
+            filename: The name of the instrument file containing the run
+                metadata.
+            description: String describing any additional information about the
+                image.
 
     Raises:
         ValueError: Raised if
@@ -109,7 +100,8 @@ class MibiImage():
         fov_id: A string identifying the point in the run, such as 'Point2'.
         fov_name: A string name for the FOV as assigned during the run.
         folder: The folder name for this image as determined by the
-            acquisition software.
+            acquisition software. For data generated from MIBIcontrol software,
+            this will the same as the fov_id.
         dwell: A float pixel dwell time in :math:`ms`.
         scans: A comma-separated list of image scan numbers.
         aperture: A string name of the aperture used during image
@@ -118,8 +110,6 @@ class MibiImage():
         tissue: A string name of the tissue type.
         panel: A string name of the panel used to stain the tissue.
         version: A string identifier for the software version used.
-        MIBItiff_version: A string identifier for the MIBItiff software
-            version used.
         mass_offset: Mass offset parameter used for mass calibration.
         mass_gain: Mass gain used for mass calibration.
         time_resolution: Parameter used for mass calibration.
@@ -127,7 +117,7 @@ class MibiImage():
             between peak locations after mass recalibration.
         check_reg: Whether or not the maximum shift between depths is higher
             than a threshold.
-        filename: The name of the file with the run metadata.
+        filename: The name of the file from the iwith the run metadata.
         description: String describing the image.
     """
 
@@ -147,28 +137,9 @@ class MibiImage():
             self.date = datetime.datetime.strptime(date, datetime_format)
         except TypeError:  # Given as datetime obj already, or None.
             self.date = date
-        self.run = kwargs.pop('run', None)
-        self.coordinates = kwargs.pop('coordinates', None)
-        self.size = kwargs.pop('size', None)
-        self.slide = kwargs.pop('slide', None)
-        self.fov_id = kwargs.pop('fov_id', None)
-        self.fov_name = kwargs.pop('fov_name', None)
-        self.folder = kwargs.pop('folder', None)
-        self.dwell = kwargs.pop('dwell', None)
-        self.scans = kwargs.pop('scans', None)
-        self.aperture = kwargs.pop('aperture', None)
-        self.instrument = kwargs.pop('instrument', None)
-        self.tissue = kwargs.pop('tissue', None)
-        self.panel = kwargs.pop('panel', None)
-        self.mass_offset = kwargs.pop('mass_offset', None)
-        self.mass_gain = kwargs.pop('mass_gain', None)
-        self.time_resolution = kwargs.pop('time_resolution', None)
-        self.miscalibrated = kwargs.pop('miscalibrated', None)
-        self.check_reg = kwargs.pop('check_reg', None)
-        self.filename = kwargs.pop('filename', None)
-        self.description = kwargs.pop('description', None)
-        self.version = kwargs.pop('version', None)
-        self.MIBItiff_version = kwargs.pop('MIBItiff_version', None)
+
+        for attr in _REQUIRED_METADATA_ATTRIBUTES[1:]:
+            setattr(self, attr, kwargs.pop(attr, None))
 
         # empty list for storing user-defined attribute names
         self._user_defined_attributes = []
@@ -179,7 +150,7 @@ class MibiImage():
             self._user_defined_attributes.append(k)
 
         # check version for backwards compatibility
-        self._convert_from_previous_metadata_versions()
+        self._convert_from_previous()
 
         # check consistency between fov_id and folder
         self._check_fov_id()
@@ -222,31 +193,21 @@ class MibiImage():
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
 
-    def _convert_from_previous_metadata_versions(self):
-        """Convert old metadata format to new one.
-
-        This function ensures backwards compatibility for previous versions.
-        """
-        # check for the old format, when MIBItiff_version was not implemented
-        if self.MIBItiff_version is None:
-            try:
-                self.__dict__['point_name']
-                # if this worked, this is old format
-            except KeyError:
-                # no version specified; assume current version
-                self.MIBItiff_version = MIBITIFF_VERSION
-
-        # convert old format to current MIBItiff_VERSION
-        if self.MIBItiff_version is None:
-            warnings.warn("WARNING! 'point_name' attribute is deprecated. "
-                          "Switching to 'fov_id' and 'fov_name'.")
+    def _convert_from_previous(self):
+        """Convert old metadata format for backwards compatibility."""
+        if hasattr(self, 'point_name') and not self.fov_name:
+            warnings.warn('The "point_name" attribute is deprecated. '
+                          'Setting "fov_name" to {}'.format(self.fov_name))
             self.fov_name = self.__dict__.pop('point_name')
-            try:
-                self._user_defined_attributes.remove('point_name')
-            except ValueError:
-                pass
+            self._user_defined_attributes.remove('point_name')
+        if self.folder and not self.fov_id:
             self.fov_id = self.folder.split('/')[0]
-            self.MIBItiff_version = MIBITIFF_VERSION
+            warnings.warn('The "fov_id" attribute is now required if "folder" '
+                          'is specified. Setting to {}'.format(self.fov_id))
+        if not self.folder and self.fov_id and self.fov_id.startswith('FOV'):
+            self.folder = self.fov_id
+            warnings.warn('The "folder" attribute is required if "fov_id" '
+                          'is specified. Setting to {}'.format(self.folder))
 
     def _check_fov_id(self):
         """Check that fov_id matches folder."""
@@ -254,7 +215,7 @@ class MibiImage():
             return
         try:
             assert self.fov_id == self.folder.split('/')[0]
-        except (AttributeError, AssertionError):
+        except AssertionError:
             message = (f'The fov_id {self.fov_id} does not '
                        f'match the folder {self.folder}.')
             raise ValueError(message)
