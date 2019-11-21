@@ -161,6 +161,7 @@ class MibiImage():
 
     @property
     def point_name(self):
+        """Return fov_name instead of deprecated point_name."""
         return self.fov_name
 
     @point_name.setter
