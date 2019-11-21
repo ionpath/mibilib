@@ -206,7 +206,6 @@ class TestWriteReadTiff(unittest.TestCase):
         metadata = tiff.info(self.filename)
         expected = METADATA.copy()
         expected.update({
-            'point_name': OLD_METADATA['point_name'],
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),

@@ -156,8 +156,8 @@ class MibiImage():
 
         # whatever remains (if anything) is user-defined metadata
         for k, v in kwargs.items():
-            setattr(self, k, v)
             self._user_defined_attributes.append(k)
+            setattr(self, k, v)
 
     @property
     def point_name(self):
@@ -169,6 +169,7 @@ class MibiImage():
         warnings.warn('The "point_name" attribute is deprecated. '
                       'Setting "fov_name" to "{}".'.format(value))
         self.fov_name = value  # pylint: disable=attribute-defined-outside-init
+        self._user_defined_attributes.remove('point_name')
 
     @property
     def folder(self):
