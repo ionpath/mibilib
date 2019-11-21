@@ -139,6 +139,8 @@ class MibiImage():
         self._set_channels(channels, self._length)
 
         # initialize required metadata
+        self._folder = None
+        self._fov_id = None
         date = kwargs.pop('date', None)
         datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
         try:
@@ -157,11 +159,58 @@ class MibiImage():
             setattr(self, k, v)
             self._user_defined_attributes.append(k)
 
-        # check version for backwards compatibility
-        self._convert_from_previous()
+    @property
+    def point_name(self):
+        return self.fov_name
 
-        # check consistency between fov_id and folder
-        self._check_fov_id()
+    @point_name.setter
+    def point_name(self, value):
+        """Convert deprecated point_name to fov_name."""
+        warnings.warn('The "point_name" attribute is deprecated. '
+                      'Setting "fov_name" to "{}".'.format(value))
+        self.fov_name = value
+
+    @property
+    def folder(self):
+        return self._folder
+
+    @folder.setter
+    def folder(self, value):
+        """Enforce consistency with fov_id."""
+        if value:
+            fov = value.split('/')[0]
+            if not self.fov_id:
+                warnings.warn(
+                    'The "fov_id" attribute is now required if "folder" is '
+                    'specified. Setting "fov_id" to {}.'.format(fov))
+                self._fov_id = fov
+                self._folder = value
+                return
+            elif self.fov_id != fov:
+                raise ValueError('fov_id must match folder, but here '
+                                 'folder={} and you are trying to set fov_id '
+                                 'to {}.'.format(value, self.fov_id))
+        self._folder = value
+
+    @property
+    def fov_id(self):
+        return self._fov_id
+
+    @fov_id.setter
+    def fov_id(self, value):
+        """Enforce consistency with folder."""
+        if value and not self.folder:
+            warnings.warn(
+                'The "folder" attribute is required if "fov_id" is specified. '
+                'Setting "folder" to {}.'.format(value))
+            self._fov_id = value
+            self._folder = value
+        elif self.folder and value != self.folder.split('/')[0]:
+            raise ValueError('fov_id must match folder, but here '
+                             'folder={} and you are trying to set fov_id '
+                             'to {}.'.format(self.folder, value))
+        else:
+            self._fov_id = value
 
     @property
     def channels(self):
@@ -200,36 +249,6 @@ class MibiImage():
             raise ValueError(
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
-
-    def _convert_from_previous(self):
-        # pylint: disable=access-member-before-definition
-        """Convert old metadata format for backwards compatibility."""
-        if hasattr(self, 'point_name') and not self.fov_name:
-            warnings.warn('The "point_name" attribute is deprecated. '
-                          'Setting "fov_name" to {}.'.format(self.fov_name))
-            self.fov_name = self.__dict__.pop('point_name')
-            self._user_defined_attributes.remove('point_name')
-        if self.folder and not self.fov_id:
-            self.fov_id = self.folder.split('/')[0]
-            warnings.warn(
-                'The "fov_id" attribute is now required if "folder" is '
-                'specified. Setting "fov_id" to {}.'.format(self.fov_id))
-        if not self.folder and self.fov_id and self.fov_id.startswith('FOV'):
-            self.folder = self.fov_id
-            warnings.warn(
-                'The "folder" attribute is required if "fov_id" is specified. '
-                'Setting "folder" to {}.'.format(self.folder))
-
-    def _check_fov_id(self):
-        """Check that fov_id matches folder."""
-        if self.fov_id is None and self.folder is None:
-            return
-        try:
-            assert self.fov_id == self.folder.split('/')[0]
-        except AssertionError:
-            message = (f'The fov_id {self.fov_id} does not '
-                       f'match the folder {self.folder}.')
-            raise ValueError(message)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
