@@ -186,9 +186,6 @@ class MibiImage():
         if value:
             fov = value.split('/')[0]
             if not self.fov_id:
-                warnings.warn(
-                    'The "fov_id" attribute is now required if "folder" is '
-                    'specified. Setting "fov_id" to {}.'.format(fov))
                 self._fov_id = fov
             elif self.fov_id != fov:
                 raise ValueError('fov_id must match folder, but here '
@@ -204,9 +201,6 @@ class MibiImage():
     def fov_id(self, value):
         """Enforce consistency with folder."""
         if value and not self.folder:
-            warnings.warn(
-                'The "folder" attribute is required if "fov_id" is specified. '
-                'Setting "folder" to {}.'.format(value))
             self._folder = value
         elif self.folder and value != self.folder.split('/')[0]:
             raise ValueError('fov_id must match folder, but here '
