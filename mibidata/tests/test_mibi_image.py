@@ -109,11 +109,12 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image.channels = invalid_tuple_3
 
-    def test_convert_from_previous(self):
+    def test_backwards_compatibility_with_old_metadata(self):
         with self.assertWarns(UserWarning):
             image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **OLD_METADATA)
         self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
         self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
+        self.assertEqual(image.point_name, OLD_METADATA['point_name'])
         self.assertEqual(image._user_defined_attributes, ['point_name'])
 
     def test_check_fov_id(self):
@@ -192,18 +193,6 @@ class TestMibiImage(unittest.TestCase):
         metadata['fov_id'] = 'Point99'
         with self.assertRaises(ValueError):
             mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
-
-    def test_metadata_backwards_compatibility(self):
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **OLD_METADATA)
-        metadata = OLD_METADATA.copy()
-        metadata['date'] = datetime.datetime.strptime(metadata['date'],
-                                                      mi._DATETIME_FORMAT)
-        metadata['fov_name'] = metadata['point_name']
-        metadata['fov_id'] = metadata['folder'].split('/')[0]
-        metadata['description'] = None
-        self.assertEqual(image.metadata(), metadata)
-        # point_name is retained as user-defined
-        self.assertEqual(image._user_defined_attributes, ['point_name'])
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
