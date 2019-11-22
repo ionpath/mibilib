@@ -114,7 +114,7 @@ class TestMibiImage(unittest.TestCase):
             image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **OLD_METADATA)
         self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
         self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
-        self.assertEqual(len(image._user_defined_attributes), 0)
+        self.assertEqual(image._user_defined_attributes, ['point_name'])
 
     def test_check_fov_id(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
@@ -201,9 +201,9 @@ class TestMibiImage(unittest.TestCase):
         metadata['fov_name'] = metadata['point_name']
         metadata['fov_id'] = metadata['folder'].split('/')[0]
         metadata['description'] = None
-        del metadata['point_name']
         self.assertEqual(image.metadata(), metadata)
-        self.assertEqual(len(image._user_defined_attributes), 0)
+        # point_name is retained as user-defined
+        self.assertEqual(image._user_defined_attributes, ['point_name'])
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
