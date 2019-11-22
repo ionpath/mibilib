@@ -206,6 +206,7 @@ class TestWriteReadTiff(unittest.TestCase):
         metadata = tiff.info(self.filename)
         expected = METADATA.copy()
         expected.update({
+            'point_name': OLD_METADATA['point_name'],
             'conjugates': list(CHANNELS),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
@@ -222,10 +223,6 @@ class TestWriteReadTiff(unittest.TestCase):
         })
         del expected['description']
         del expected['version']
-        for key, val in metadata.items():
-            print(key)
-            if val != expected.get(key):
-                print(val, expected.get(key))
         self.assertEqual(metadata, expected)
 
     def test_convert_from_previous(self):
@@ -249,8 +246,6 @@ class TestWriteReadTiff(unittest.TestCase):
 
         tiff.write(self.filename, unordered_image)
         image = tiff.read(self.filename)
-        print(image.metadata())
-        print(self.image.metadata())
         self.assertEqual(image, self.image)
 
     def test_write_single_channel_tiffs(self):
