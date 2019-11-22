@@ -299,68 +299,99 @@ target).</li>
 <li><strong>kwargs</strong> – <p>A mapping of arguments that used to define the image
 metadata. A list of required keys follows; however, the
 user can define other metadata key-value pairs that will be added
-as attributes to the class instance in use.
-run: A string name of the run during which this image was acquired.
-date: The run date. It can either be a datetime object, or a string.</p>
-<blockquote>
-<div>If a string, it will be parsed according to the
-<cite>datetime_format`</cite>.</div></blockquote>
-<dl class="docutils">
-<dt>coordinates: A tuple of (x, y) stage coordinates at which the image</dt>
-<dd>was acquired; stage coordinates should be in microns.</dd>
+as attributes to the class instance in use.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>run: A string name of the run during which this image was</dt>
+<dd>acquired.</dd>
 </dl>
-<p>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.
-slide: A string or integer slide ID.
-fov_id: A string identifying the FOV within the run, i.e. ‘FOV1’ in</p>
-<blockquote>
-<div>MIBIcontrol or ‘Point1’ in earlier versions.</div></blockquote>
-<dl class="docutils">
-<dt>fov_name: A user-defined string name for the FOV as assigned before</dt>
-<dd>the run. In prior versions this was called ‘point_name’.</dd>
+</li>
+<li><dl class="first docutils">
+<dt>date: The run date. It can either be a datetime object,</dt>
+<dd>or a string. If a string, it will be parsed according to the
+<code class="docutils literal notranslate"><span class="pre">datetime_format</span></code>.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>coordinates: A tuple of (x, y) stage coordinates at which the</dt>
+<dd>image was acquired; stage coordinates should be in microns.</dd>
+</dl>
+</li>
+<li>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</li>
+<li>slide: A string or integer slide ID.</li>
+<li><dl class="first docutils">
+<dt>fov_id: A string identifying the FOV within the run,</dt>
+<dd>i.e. ‘FOV1’ in MIBIcontrol or ‘Point1’ in earlier versions.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fov_name: A user-defined string name for the FOV as assigned</dt>
+<dd>before the run. In prior versions this was called ‘point_name’.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>folder: The folder name for this image as determined by the</dt>
 <dd>acquisition software. For data generated from MIBIcontrol
 software, this will the same as the fov_id.</dd>
 </dl>
-<p>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.
-scans: A comma-separated list of image scan numbers.
-aperture: A string name of the aperture used during image</p>
-<blockquote>
-<div>acquisition.</div></blockquote>
-<p>instrument: A string identifier for the instrument used.
-tissue: A string name of the tissue type.
-panel: A string name of the panel used to stain the tissue.
-version: A string identifier for the software version used.
-datetime_format: The optional format of the date, if given as a</p>
-<blockquote>
-<div>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</div></blockquote>
-<p>mass_offset: Mass offset parameter used for mass calibration.
-mass_gain: Mass gain used for mass calibration.
-time_resolution: Parameter used for mass calibration.
-miscalibrated: Whether or not there was significant difference</p>
-<blockquote>
-<div>between peak locations after mass recalibration.</div></blockquote>
-<dl class="docutils">
-<dt>check_reg: Whether or not the maximum shift between depths is higher</dt>
-<dd>than a threshold.</dd>
+</li>
+<li>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</li>
+<li>scans: A comma-separated list of image scan numbers.</li>
+<li><dl class="first docutils">
+<dt>aperture: A string name of the aperture used during image</dt>
+<dd>acquisition.</dd>
+</dl>
+</li>
+<li>instrument: A string identifier for the instrument used.</li>
+<li>tissue: A string name of the tissue type.</li>
+<li>panel: A string name of the panel used to stain the tissue.</li>
+<li>version: A string identifier for the software version used.</li>
+<li><dl class="first docutils">
+<dt>datetime_format: The optional format of the date, if given as a</dt>
+<dd>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</dd>
+</dl>
+</li>
+<li>mass_offset: Mass offset parameter used for mass calibration.</li>
+<li>mass_gain: Mass gain used for mass calibration.</li>
+<li>time_resolution: Parameter used for mass calibration.</li>
+<li><dl class="first docutils">
+<dt>miscalibrated: Whether or not there was significant difference</dt>
+<dd>between peak locations after mass recalibration.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>check_reg: Whether or not the maximum shift between depths is</dt>
+<dd>higher than a threshold.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>filename: The name of the instrument file containing the run</dt>
 <dd>metadata.</dd>
-<dt>description: String describing any additional information about the</dt>
-<dd>image.</dd>
 </dl>
+</li>
+<li><dl class="first docutils">
+<dt>description: String describing any additional information about</dt>
+<dd>the image.</dd>
+</dl>
+</li>
+</ul>
 </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if
-- the shape of data does not match length of channels.
-- the channel names are not unique.
-- the masses (if included in channel tuples) are not unique.
-- the targets (if included in channel tuples) are not unique.
-- the fov_id doesn’t match the point in folder, unless the call</p>
-<blockquote class="last">
-<div><p>is using the old point name format, in which case, only a
-warning is shown.</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
+<ul class="last simple">
+<li>the shape of data does not match length of channels.</li>
+<li>the channel names are not unique.</li>
+<li>the masses (if included in channel tuples) are not unique.</li>
+<li>the targets (if included in channel tuples) are not unique.</li>
+<li><dl class="first docutils">
+<dt>the fov_id doesn’t match the point in folder, unless the call</dt>
+<dd>is using the old point name format, in which case, only a
+warning is shown.</dd>
+</dl>
+</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -386,55 +417,99 @@ target).</p>
 <dd><p>A mapping of arguments that used to define the image
 metadata. A list of required keys follows; however, the
 user can define other metadata key-value pairs that will be added
-as attributes to the class instance in use.
-run: A string name of the run during which this image was acquired.
-date: The run date. It can either be a datetime object, or a string.</p>
-<blockquote>
-<div>If a string, it will be parsed according to the
-<cite>datetime_format`</cite>.</div></blockquote>
-<dl class="docutils">
-<dt>coordinates: A tuple of (x, y) stage coordinates at which the image</dt>
-<dd>was acquired; stage coordinates should be in microns.</dd>
+as attributes to the class instance in use.</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>run: A string name of the run during which this image was</dt>
+<dd>acquired.</dd>
 </dl>
-<p>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.
-slide: A string or integer slide ID.
-fov_id: A string identifying the FOV within the run, i.e. ‘FOV1’ in</p>
-<blockquote>
-<div>MIBIcontrol or ‘Point1’ in earlier versions.</div></blockquote>
-<dl class="docutils">
-<dt>fov_name: A user-defined string name for the FOV as assigned before</dt>
-<dd>the run. In prior versions this was called ‘point_name’.</dd>
+</li>
+<li><dl class="first docutils">
+<dt>date: The run date. It can either be a datetime object,</dt>
+<dd>or a string. If a string, it will be parsed according to the
+<code class="docutils literal notranslate"><span class="pre">datetime_format</span></code>.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>coordinates: A tuple of (x, y) stage coordinates at which the</dt>
+<dd>image was acquired; stage coordinates should be in microns.</dd>
+</dl>
+</li>
+<li>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</li>
+<li>slide: A string or integer slide ID.</li>
+<li><dl class="first docutils">
+<dt>fov_id: A string identifying the FOV within the run,</dt>
+<dd>i.e. ‘FOV1’ in MIBIcontrol or ‘Point1’ in earlier versions.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fov_name: A user-defined string name for the FOV as assigned</dt>
+<dd>before the run. In prior versions this was called ‘point_name’.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>folder: The folder name for this image as determined by the</dt>
 <dd>acquisition software. For data generated from MIBIcontrol
 software, this will the same as the fov_id.</dd>
 </dl>
-<p>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.
-scans: A comma-separated list of image scan numbers.
-aperture: A string name of the aperture used during image</p>
-<blockquote>
-<div>acquisition.</div></blockquote>
-<p>instrument: A string identifier for the instrument used.
-tissue: A string name of the tissue type.
-panel: A string name of the panel used to stain the tissue.
-version: A string identifier for the software version used.
-datetime_format: The optional format of the date, if given as a</p>
-<blockquote>
-<div>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</div></blockquote>
-<p>mass_offset: Mass offset parameter used for mass calibration.
-mass_gain: Mass gain used for mass calibration.
-time_resolution: Parameter used for mass calibration.
-miscalibrated: Whether or not there was significant difference</p>
-<blockquote>
-<div>between peak locations after mass recalibration.</div></blockquote>
-<dl class="docutils">
-<dt>check_reg: Whether or not the maximum shift between depths is higher</dt>
-<dd>than a threshold.</dd>
+</li>
+<li>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</li>
+<li>scans: A comma-separated list of image scan numbers.</li>
+<li><dl class="first docutils">
+<dt>aperture: A string name of the aperture used during image</dt>
+<dd>acquisition.</dd>
+</dl>
+</li>
+<li>instrument: A string identifier for the instrument used.</li>
+<li>tissue: A string name of the tissue type.</li>
+<li>panel: A string name of the panel used to stain the tissue.</li>
+<li>version: A string identifier for the software version used.</li>
+<li><dl class="first docutils">
+<dt>datetime_format: The optional format of the date, if given as a</dt>
+<dd>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</dd>
+</dl>
+</li>
+<li>mass_offset: Mass offset parameter used for mass calibration.</li>
+<li>mass_gain: Mass gain used for mass calibration.</li>
+<li>time_resolution: Parameter used for mass calibration.</li>
+<li><dl class="first docutils">
+<dt>miscalibrated: Whether or not there was significant difference</dt>
+<dd>between peak locations after mass recalibration.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>check_reg: Whether or not the maximum shift between depths is</dt>
+<dd>higher than a threshold.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>filename: The name of the instrument file containing the run</dt>
 <dd>metadata.</dd>
-<dt>description: String describing any additional information about the</dt>
-<dd>image.</dd>
 </dl>
+</li>
+<li><dl class="first docutils">
+<dt>description: String describing any additional information about</dt>
+<dd>the image.</dd>
+</dl>
+</li>
+</ul>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="mibidata.mibi_image.MibiImage.point_name">
+<code class="descname">point_name</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.point_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns fov_name instead of deprecated point_name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mibidata.mibi_image.MibiImage.folder">
+<code class="descname">folder</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.folder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mibidata.mibi_image.MibiImage.fov_id">
+<code class="descname">fov_id</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.fov_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt>
