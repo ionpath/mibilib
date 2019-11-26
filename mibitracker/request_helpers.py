@@ -489,54 +489,52 @@ class MibiRequests():
             '/images/{}/conjugates/'.format(image_id),
             params={'paging': 'no'}).json()
 
-    def image_id(self, run_label, point_name):
-        """Gets the primary key of an image given the specified run and point
-            names.
+    def image_id(self, run_label, fov_id):
+        """Gets the primary key of an image given the specified run and FOV.
 
         Args:
             run_label: The label of the run the image belongs to. If no images
                 found using run label (which is the unique identifier of
                 each run), run name is checked instead (run name is not
                 guaranteed to be unique per run).
-            point_name: The name of the point. It should be in the format of
-                `Point(n)` where n is the point number.
+            fov_id: The FOV ID, in the format of ``FOV<n>`` or ``Point<n>``
+                for data generated with MIBIcontrol and MiniSIMS, respectively.
 
         Returns:
             An int id corresponding to the primary key of the image.
 
         Raises:
-            ValueError: Raised if no images match the specified run and point
-                names or if more than one image matches the specified run and
-                point names.
+            ValueError: Raised if no images match the specified run and FOV,
+                or if more than one image matches the specified run and FOV.
         """
         results = self.get(
             '/images/',
             params={
                 'run__label': run_label,
-                'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                'number': fov_id,
                 'paging': 'no'}
         ).json()
 
         len_results = len(results)
         if len_results == 0:
             warnings.warn(f'No images found matching run label: {run_label}, '
-                          f'point_name: {point_name}. Checking run name '
+                          f'fov_id: {fov_id}. Checking run name '
                           f'instead.')
             results = self.get(
                 '/images/',
                 params={
                     'run__name': run_label,
-                    'folder': '{}/RowNumber0/Depth_Profile0'.format(point_name),
+                    'number': fov_id,
                     'paging': 'no'}
             ).json()
 
         len_results = len(results)
         if len_results == 0:
             raise MibiTrackerError(
-                f'No images found matching run {run_label} {point_name}.')
+                f'No images found matching run {run_label} {fov_id}.')
         if len_results > 1:
             raise MibiTrackerError(
-                f'Multiple images match run {run_label} {point_name}.'
+                f'Multiple images match run {run_label} {fov_id}.'
             )
 
         return results[0]['id']
