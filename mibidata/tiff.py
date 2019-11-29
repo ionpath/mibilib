@@ -66,10 +66,10 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             the sed and optical options are ignored.
         dtype: Forces the image data saved as either float or uint16. Can
             specify `'float'` or `np.float` to force data to be saved as
-            floating point values or `'int'` or `np.uint16` to save as integer
-            values. Defaults to None, which saves data as its original type.
-            Note that forcing native float image data to uint16 could result
-            in a loss of precision as values are clipped.
+            floating point values or `'uint16'` or `np.uint16` to save as
+            unsigned 16-bit integer values. Defaults to None, which saves data
+            as its original type. Note that forcing native float image data to
+            uint16 could result in a loss of precision as values are clipped.
         write_float: Deprecated, will raise ArgumentError if specified. To
             specify the dtype of the saved image, please use the `dtype`
             argument instead.
@@ -78,8 +78,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         ValueError: Raised if the image is not a
             ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates,
             size, masses or targets are None, or if `dtype` is not one
-            of 'float', 'int', np.float, or np.uint16., or if `write_float` has
-            been specified.
+            of 'float', 'uint16', np.float, or np.uint16., or if `write_float`
+            has been specified.
     """
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibitof.mibi_image.MibiImage '
@@ -91,13 +91,13 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if write_float:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
-    if dtype and not dtype in ['float', 'int', np.float, np.uint16]:
+    if dtype and not dtype in ['float', 'uint16', np.float, np.uint16]:
         raise ValueError('Invalid dtype specification.')
     if not dtype:
         range_dtype = 'I' if\
             np.issubdtype(image.data.dtype, np.integer) else 'd'
     else:
-        range_dtype = 'I' if dtype in ['int', np.uint16] else 'd'
+        range_dtype = 'I' if dtype in ['uint16', np.uint16] else 'd'
 
     if ranges is None:
         dtype_conversion = int if range_dtype == 'I' else float

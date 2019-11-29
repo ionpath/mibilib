@@ -320,7 +320,7 @@ class TestWriteReadTiff(unittest.TestCase):
             image.data, self.float_image.data.astype(np.uint16))
 
         tiff.write(self.filename, self.int_image, multichannel=True,
-                   dtype='int')
+                   dtype='uint16')
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.uint16)
         np.testing.assert_equal(
@@ -334,7 +334,7 @@ class TestWriteReadTiff(unittest.TestCase):
             image.data, self.float_image.data.astype(np.uint16))
 
         tiff.write(self.filename, self.float_image, multichannel=True,
-                   dtype='int')
+                   dtype='uint16')
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.uint16)
         np.testing.assert_equal(
