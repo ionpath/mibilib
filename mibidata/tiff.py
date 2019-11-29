@@ -46,7 +46,7 @@ def _cm_to_micron(arg):
 
 # pylint: disable=too-many-branches,too-many-statements
 def write(filename, image, sed=None, optical=None, ranges=None,
-          multichannel=True, write_dtype=None):
+          multichannel=True, dtype=None, write_float=None):
     """Writes MIBI data to a multipage TIFF.
 
     Args:
@@ -64,18 +64,22 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         multichannel: Boolean for whether to create a single multi-channel TIFF,
             or a folder of single-channel TIFFs. Defaults to True; if False,
             the sed and optical options are ignored.
-        write_dtype: Forces the image data saved as either float or uint16. Can
+        dtype: Forces the image data saved as either float or uint16. Can
             specify `'float'` or `np.float` to force data to be saved as
             floating point values or `'int'` or `np.uint16` to save as integer
             values. Defaults to None, which saves data as its original type.
             Note that forcing native float image data to uint16 could result
             in a loss of precision as values are clipped.
+        write_float: Deprecated, will raise ArgumentError if specified. To
+            specify the dtype of the saved image, please use the `dtype`
+            argument instead.
 
     Raises:
         ValueError: Raised if the image is not a
             ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates,
-            size, masses or targets are None, or if `write_dtype` is not one
-            of 'float', 'int', np.float, or np.uint16.
+            size, masses or targets are None, or if `dtype` is not one
+            of 'float', 'int', np.float, or np.uint16., or if `write_float` has
+            been specified.
     """
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibitof.mibi_image.MibiImage '
@@ -84,13 +88,16 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         raise ValueError('Image coordinates and size must not be None.')
     if image.masses is None or image.targets is None:
         raise ValueError('Image channels must contain both masses and targets.')
-    if write_dtype and not write_dtype in ['float', 'int', np.float, np.uint16]:
+    if write_float:
+        raise ValueError('`write_float` has been deprecated. Please use the '
+                         '`dtype` argument instead.')
+    if dtype and not dtype in ['float', 'int', np.float, np.uint16]:
         raise ValueError('Invalid dtype specification.')
-    if not write_dtype:
+    if not dtype:
         range_dtype = 'I' if\
             np.issubdtype(image.data.dtype, np.integer) else 'd'
     else:
-        range_dtype = 'I' if write_dtype in ['int', np.uint16] else 'd'
+        range_dtype = 'I' if dtype in ['int', np.uint16] else 'd'
 
     if ranges is None:
         dtype_conversion = int if range_dtype == 'I' else float
