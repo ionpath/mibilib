@@ -268,7 +268,7 @@ class TestWriteReadTiff(unittest.TestCase):
             self.assertEqual(tif.data.dtype, np.float)
 
     def test_tiff_dtype_correct_arguments(self):
-        supported_dtypes = ['float', 'int', np.float, np.uint16]
+        supported_dtypes = ['float', 'uint16', np.float, np.uint16]
         for dtype in supported_dtypes:
             tiff.write(self.filename, self.float_image, multichannel=True,
                        dtype=dtype)
@@ -339,6 +339,15 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(image.data.dtype, np.uint16)
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.uint16))
+
+        lossy_image = mi.MibiImage(DATA + 0.001, CHANNELS, **METADATA)
+        with self.assertWarns(UserWarning):
+            tiff.write(self.filename, lossy_image, multichannel=True,
+                       dtype='uint16')
+        image = tiff.read(self.filename)
+        np.testing.assert_equal(
+            image.data, self.float_image.data.astype(np.uint16))
+
 
 
 if __name__ == '__main__':

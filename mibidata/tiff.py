@@ -75,11 +75,12 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             argument instead.
 
     Raises:
-        ValueError: Raised if the image is not a
-            ``mibitof.mibi_image.MibiImage`` instance, or if its coordinates,
-            size, masses or targets are None, or if `dtype` is not one
-            of 'float', 'uint16', np.float, or np.uint16., or if `write_float`
-            has been specified.
+        ValueError: Raised if
+
+            * The image is not a ``mibitof.mibi_image.MibiImage`` instance
+            * Ccoordinates, size, masses or targets are None
+            * `dtype` is not one of 'float', 'uint16', np.float, or np.uint16
+            * `write_float` has been specified.
     """
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibitof.mibi_image.MibiImage '
@@ -98,6 +99,12 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             np.issubdtype(image.data.dtype, np.integer) else 'd'
     else:
         range_dtype = 'I' if dtype in ['uint16', np.uint16] else 'd'
+
+    save_dtype = np.uint16 if range_dtype == 'I' else np.float
+    to_save = image.data.astype(save_dtype)
+    if not np.all(np.equal(to_save, image.data)):
+        warnings.warn('Loss of precision saving data of type '
+                      f'{image.data.dtype} as {save_dtype}')
 
     if ranges is None:
         dtype_conversion = int if range_dtype == 'I' else float
