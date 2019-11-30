@@ -52,7 +52,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     Args:
         filename: The path to the target file if multi-channel, or the path to
             a folder if single-channel.
-        image: A ``mibitof.mibi_image.MibiImage`` instance.
+        image: A :class:`mibidata.mibi_image.MibiImage` instance.
         sed: Optional, an array of the SED image data. This is assumed to be
             grayscale even if 3-dimensional, in which case only one channel
             will be used.
@@ -65,25 +65,27 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             or a folder of single-channel TIFFs. Defaults to True; if False,
             the sed and optical options are ignored.
         dtype: Forces the image data saved as either float or uint16. Can
-            specify `'float'` or `np.float` to force data to be saved as
-            floating point values or `'uint16'` or `np.uint16` to save as
+            specify ``'float'`` or ``np.float`` to force data to be saved as
+            floating point values or ``'uint16'`` or ``np.uint16`` to save as
             unsigned 16-bit integer values. Defaults to None, which saves data
             as its original type. Note that forcing native float image data to
             uint16 could result in a loss of precision as values are clipped.
-        write_float: Deprecated, will raise ArgumentError if specified. To
+        write_float: Deprecated, will raise ValueError if specified. To
             specify the dtype of the saved image, please use the `dtype`
             argument instead.
 
     Raises:
         ValueError: Raised if
 
-            * The image is not a ``mibitof.mibi_image.MibiImage`` instance
-            * Ccoordinates, size, masses or targets are None
-            * `dtype` is not one of 'float', 'uint16', np.float, or np.uint16
+            * The image is not a :class:`mibidata.mibi_image.MibiImage` instance
+            * The :class:`mibidata.mibi_image.MibiImage` ccoordinates, size,
+              masses or targets are None
+            * `dtype` is not one of ``'float'``, ``'uint16'``, ``np.float``,
+              or ``np.uint16``
             * `write_float` has been specified.
     """
     if not isinstance(image, mi.MibiImage):
-        raise ValueError('image must be a mibitof.mibi_image.MibiImage '
+        raise ValueError('image must be a mibidata.mibi_image.MibiImage '
                          'instance.')
     if image.coordinates is None or image.size is None:
         raise ValueError('Image coordinates and size must not be None.')
@@ -224,9 +226,10 @@ def read(file, sims=True, sed=False, optical=False, label=False):
     Returns: A tuple of the image types set to True in the parameters, in the
         order SIMS, SED, Optical, Label (but including only those types
         specified). The SIMS data will be returned as a
-        ``mibitof.mibi_image.MibiImage`` instance; the other image types will be
-        returned as numpy arrays. If an image type is selected to be returned
-        but is not present in the image, it will be returned as None.
+        :class:`mibidata.mibi_image.MibiImage` instance; the other image
+        types will be returned as numpy arrays. If an image type is selected to
+        be returned  but is not present in the image, it will be returned as
+        None.
 
     Raises:
         ValueError: Raised if the input file is not of the IonpathMIBI
@@ -345,7 +348,7 @@ def info(filename):
 
     Returns:
         A dictionary of metadata as could be supplied as kwargs to
-        ``mibitof.mibi_image.MibiImage``, except with a ``channels`` key
+        :class:`mibidata.mibi_image.MibiImage`, except with a ``channels`` key
         whose value is a list of (mass, target) tuples.
     """
     metadata = {}
