@@ -153,13 +153,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 max_value = (341, range_dtype, 1, ranges[i][1])
                 page_tags = coordinates + [page_name, min_value, max_value]
 
-                if range_dtype == 'I':
-                    to_save = image.data[:, :, i].astype(np.uint16)
-                else:
-                    to_save = image.data[:, :, i].astype(np.float)
-
                 infile.save(
-                    to_save, compress=6, resolution=resolution,
+                    to_save[:, :, i], compress=6, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date)
             if sed is not None:
                 if sed.ndim > 2:
@@ -207,13 +202,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             with TiffWriter(target_filename,
                             software=SOFTWARE_VERSION) as infile:
 
-                if range_dtype == 'I':
-                    to_save = image.data[:, :, i].astype(np.uint16)
-                else:
-                    to_save = image.data[:, :, i].astype(np.float)
-
                 infile.save(
-                    to_save, compress=6, resolution=resolution,
+                    to_save[:, :, i], compress=6, resolution=resolution,
                     metadata=metadata, datetime=image.date,
                     extratags=page_tags)
 
