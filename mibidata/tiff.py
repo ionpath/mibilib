@@ -96,17 +96,24 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                          '`dtype` argument instead.')
     if dtype and not dtype in ['float', 'uint16', np.float32, np.uint16]:
         raise ValueError('Invalid dtype specification.')
-    if not dtype:
-        range_dtype = 'I' if\
-            np.issubdtype(image.data.dtype, np.integer) else 'd'
-    else:
-        range_dtype = 'I' if dtype in ['uint16', np.uint16] else 'd'
 
-    save_dtype = np.uint16 if range_dtype == 'I' else np.float32
+    if dtype in ['float', np.float32]:
+        save_dtype = np.float32
+        range_dtype = 'd'
+    elif dtype in ['uint16', np.uint16]:
+        save_dtype = np.uint16
+        range_dtype = 'I'
+    elif np.issubdtype(image.data.dtype, np.floating):
+        save_dtype = np.float32
+        range_dtype = 'd'
+    else:
+        save_dtype = np.uint16
+        range_dtype = 'I'
+
     to_save = image.data.astype(save_dtype)
     if not np.all(np.equal(to_save, image.data)):
-        warnings.warn('Loss of precision saving data of type '
-                      f'{image.data.dtype} as {save_dtype}')
+        raise ValueError('Cannot convert data from '
+                         f'{image.data.dtype} to {save_dtype}')
 
     if ranges is None:
         dtype_conversion = int if range_dtype == 'I' else float

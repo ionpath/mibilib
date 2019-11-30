@@ -348,12 +348,9 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def test_write_float_as_uint16_warns(self):
         lossy_image = mi.MibiImage(DATA + 0.001, CHANNELS, **METADATA)
-        with self.assertWarns(UserWarning):
+        with self.assertRaises(ValueError):
             tiff.write(self.filename, lossy_image, multichannel=True,
                        dtype='uint16')
-        image = tiff.read(self.filename)
-        np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.uint16))
 
 
 if __name__ == '__main__':
