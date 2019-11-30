@@ -268,12 +268,12 @@ class TestWriteReadTiff(unittest.TestCase):
             self.assertEqual(tif.data.dtype, np.float32)
 
     def test_tiff_dtype_correct_arguments(self):
-        supported_dtypes = ['float', 'uint16', np.float32, np.uint16]
+        supported_dtypes = [np.float32, np.uint16]
         for dtype in supported_dtypes:
             tiff.write(self.filename, self.float_image, multichannel=True,
                        dtype=dtype)
 
-        unsupported_types = ['abcdef', np.str, np.bool]
+        unsupported_types = ['abcdef', np.str, np.bool, np.uint8, np.float64]
         for dtype in unsupported_types:
             with self.assertRaises(ValueError):
                 tiff.write(self.filename, self.float_image, multichannel=True,
@@ -284,22 +284,14 @@ class TestWriteReadTiff(unittest.TestCase):
             tiff.write(self.filename, self.int_image, write_float=True)
             tiff.write(self.filename, self.float_image, write_float=False)
 
-    def test_write_float_from_float_tiff_dtype_none(self):
+    def test_write_float32_from_float32_tiff_dtype_none(self):
         tiff.write(self.filename, self.float_image, multichannel=True)
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.float32))
 
-    def test_write_float_from_float_dtype_float(self):
-        tiff.write(self.filename, self.float_image, multichannel=True,
-                   dtype='float')
-        image = tiff.read(self.filename)
-        self.assertEqual(image.data.dtype, np.float32)
-        np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.float32))
-
-    def test_write_float_from_float_dtype_np_float(self):
+    def test_write_float32_from_float32_dtype_np_float32(self):
         tiff.write(self.filename, self.float_image, multichannel=True,
                    dtype=np.float32)
         image = tiff.read(self.filename)
@@ -307,30 +299,22 @@ class TestWriteReadTiff(unittest.TestCase):
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.float32))
 
-    def test_write_float_from_int_dtype_float(self):
+    def test_write_float32_from_int_dtype_np_float32(self):
         tiff.write(self.filename, self.int_image, multichannel=True,
-                   dtype='float')
+                   dtype=np.float32)
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.float32))
 
-    def test_write_int_from_int_dtype_none(self):
+    def test_write_uint16_from_uint16_dtype_none(self):
         tiff.write(self.filename, self.int_image, multichannel=True)
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.uint16)
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.uint16))
 
-    def test_write_int_from_int_dtype_uint16(self):
-        tiff.write(self.filename, self.int_image, multichannel=True,
-                   dtype='uint16')
-        image = tiff.read(self.filename)
-        self.assertEqual(image.data.dtype, np.uint16)
-        np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.uint16))
-
-    def test_write_int_from_int_dtype_np_uint16(self):
+    def test_write_uint16_from_uint16_dtype_np_uint16(self):
         tiff.write(self.filename, self.int_image, multichannel=True,
                    dtype=np.uint16)
         image = tiff.read(self.filename)
@@ -338,19 +322,36 @@ class TestWriteReadTiff(unittest.TestCase):
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.uint16))
 
-    def test_write_int_from_float_dtype_uint16(self):
+    def test_write_uint16_from_float32_dtype_np_uint16(self):
         tiff.write(self.filename, self.float_image, multichannel=True,
-                   dtype='uint16')
+                   dtype=np.uint16)
         image = tiff.read(self.filename)
         self.assertEqual(image.data.dtype, np.uint16)
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.uint16))
 
-    def test_write_float_as_uint16_warns(self):
+    def test_write_float32_as_uint16_fails(self):
         lossy_image = mi.MibiImage(DATA + 0.001, CHANNELS, **METADATA)
         with self.assertRaises(ValueError):
             tiff.write(self.filename, lossy_image, multichannel=True,
-                       dtype='uint16')
+                       dtype=np.uint16)
+
+    def test_write_float32_from_float64(self):
+        float64_image = mi.MibiImage(
+            DATA.astype(np.float64), CHANNELS, **METADATA)
+        tiff.write(self.filename, float64_image, multichannel=True)
+        image = tiff.read(self.filename)
+        np.testing.assert_equal(image.data, DATA)
+        self.assertEqual(image.data.dtype, np.float32)
+
+    def test_write_uint16_from_uint8(self):
+        uint8_image = mi.MibiImage(
+            np.random.randint(0, 256, (32, 32, 5), dtype=np.uint8),
+            CHANNELS, **METADATA)
+        tiff.write(self.filename, uint8_image, multichannel=True)
+        image = tiff.read(self.filename)
+        np.testing.assert_equal(image.data, uint8_image.data.astype(np.uint16))
+        self.assertEqual(image.data.dtype, np.uint16)
 
 
 if __name__ == '__main__':
