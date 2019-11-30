@@ -91,7 +91,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         raise ValueError('Image coordinates and size must not be None.')
     if image.masses is None or image.targets is None:
         raise ValueError('Image channels must contain both masses and targets.')
-    if write_float:
+    if write_float is not None:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
     if dtype and not dtype in [np.float32, np.uint16]:

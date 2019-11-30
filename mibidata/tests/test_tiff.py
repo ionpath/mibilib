@@ -282,6 +282,7 @@ class TestWriteReadTiff(unittest.TestCase):
     def test_write_float_is_deprecated(self):
         with self.assertRaises(ValueError):
             tiff.write(self.filename, self.int_image, write_float=True)
+        with self.assertRaises(ValueError):
             tiff.write(self.filename, self.float_image, write_float=False)
 
     def test_write_float32_from_float32_tiff_dtype_none(self):
