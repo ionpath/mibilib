@@ -64,11 +64,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         multichannel: Boolean for whether to create a single multi-channel TIFF,
             or a folder of single-channel TIFFs. Defaults to True; if False,
             the sed and optical options are ignored.
-        dtype: Forces the image data saved as either float or uint16. Can
-            specify or ``np.float32`` to force data to be saved as floating
-            point values or ``np.uint16`` to save as unsigned 16-bit integer
-            values. Defaults to None, which saves data as its original type, if
-            the original type can converted without a loss of data.
+        dtype: dtype: One of (``np.float32``, ``np.uint16``) to force the dtype
+            of the saved image data. Defaults to ``None``, which chooses the
+            format based on the data's input type, and will convert to
+            ``np.float32`` or ``np.uint16`` from other float or int types,
+            respectively, if it can do so without a loss of data.
         write_float: Deprecated, will raise ValueError if specified. To
             specify the dtype of the saved image, please use the `dtype`
             argument instead.
@@ -76,10 +76,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     Raises:
         ValueError: Raised if
 
-            * The image is not a :class:`mibidata.mibi_image.MibiImage` instance
+            * The image is not a :class:`mibidata.mibi_image.MibiImage`
+              instance.
             * The :class:`mibidata.mibi_image.MibiImage` coordinates, size,
-              masses or targets are None
-            * `dtype` is not one of ``np.float32`` or ``np.uint16``
+              masses or targets are None.
+            * `dtype` is not one of ``np.float32`` or ``np.uint16``.
             * `write_float` has been specified.
             * Converting the native :class:`mibidata.mibi_image.MibiImage` dtype
               to the specified or inferred ``dtype`` results in a loss of data.
