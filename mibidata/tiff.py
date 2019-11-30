@@ -117,8 +117,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                          f'{image.data.dtype} to {save_dtype}')
 
     if ranges is None:
-        dtype_conversion = int if range_dtype == 'I' else float
-        ranges = [(0, dtype_conversion(m)) for m in image.data.max(axis=(0, 1))]
+        ranges = [(0, m) for m in to_save.max(axis=(0, 1))]
 
     coordinates = [
         (286, '2i', 1, _micron_to_cm(image.coordinates[0])),  # x-position
