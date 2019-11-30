@@ -77,7 +77,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         ValueError: Raised if
 
             * The image is not a :class:`mibidata.mibi_image.MibiImage` instance
-            * The :class:`mibidata.mibi_image.MibiImage` ccoordinates, size,
+            * The :class:`mibidata.mibi_image.MibiImage` coordinates, size,
               masses or targets are None
             * `dtype` is not one of ``np.float32`` or ``np.uint16``
             * `write_float` has been specified.
