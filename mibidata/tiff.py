@@ -65,7 +65,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             or a folder of single-channel TIFFs. Defaults to True; if False,
             the sed and optical options are ignored.
         dtype: Forces the image data saved as either float or uint16. Can
-            specify ``'float'`` or ``np.float`` to force data to be saved as
+            specify ``'float'`` or ``np.float32`` to force data to be saved as
             floating point values or ``'uint16'`` or ``np.uint16`` to save as
             unsigned 16-bit integer values. Defaults to None, which saves data
             as its original type. Note that forcing native float image data to
@@ -80,7 +80,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             * The image is not a :class:`mibidata.mibi_image.MibiImage` instance
             * The :class:`mibidata.mibi_image.MibiImage` ccoordinates, size,
               masses or targets are None
-            * `dtype` is not one of ``'float'``, ``'uint16'``, ``np.float``,
+            * `dtype` is not one of ``'float'``, ``'uint16'``, ``np.float32``,
               or ``np.uint16``
             * `write_float` has been specified.
     """
@@ -94,7 +94,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if write_float:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
-    if dtype and not dtype in ['float', 'uint16', np.float, np.uint16]:
+    if dtype and not dtype in ['float', 'uint16', np.float32, np.uint16]:
         raise ValueError('Invalid dtype specification.')
     if not dtype:
         range_dtype = 'I' if\
@@ -102,7 +102,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     else:
         range_dtype = 'I' if dtype in ['uint16', np.uint16] else 'd'
 
-    save_dtype = np.uint16 if range_dtype == 'I' else np.float
+    save_dtype = np.uint16 if range_dtype == 'I' else np.float32
     to_save = image.data.astype(save_dtype)
     if not np.all(np.equal(to_save, image.data)):
         warnings.warn('Loss of precision saving data of type '

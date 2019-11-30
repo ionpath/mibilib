@@ -16,7 +16,7 @@ from skimage.external.tifffile import TiffFile
 from mibidata import mibi_image as mi
 from mibidata import tiff, util
 
-DATA = np.arange(500).reshape(10, 10, 5).astype(np.float)
+DATA = np.arange(500).reshape(10, 10, 5).astype(np.float32)
 SED = np.arange(100).reshape(10, 10)
 CAROUSEL = np.random.randint(0, 255, (4096, 4096, 3), np.uint8)
 X_COORD, Y_COORD = tiff._BOTTOM_LABEL_COORDINATES
@@ -90,7 +90,7 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertIsNone(sed)
         self.assertIsNone(optical)
         self.assertIsNone(label)
-        self.assertEqual(image.data.dtype, np.float)
+        self.assertEqual(image.data.dtype, np.float32)
 
     def test_default_ranges(self):
         tiff.write(self.filename, self.float_image)
@@ -265,10 +265,10 @@ class TestWriteReadTiff(unittest.TestCase):
 
             np.testing.assert_equal(np.squeeze(tif.data), DATA[:, :, i])
             self.assertTupleEqual(tif.channels, (CHANNELS[i], ))
-            self.assertEqual(tif.data.dtype, np.float)
+            self.assertEqual(tif.data.dtype, np.float32)
 
     def test_tiff_dtype_correct_arguments(self):
-        supported_dtypes = ['float', 'uint16', np.float, np.uint16]
+        supported_dtypes = ['float', 'uint16', np.float32, np.uint16]
         for dtype in supported_dtypes:
             tiff.write(self.filename, self.float_image, multichannel=True,
                        dtype=dtype)
@@ -287,33 +287,33 @@ class TestWriteReadTiff(unittest.TestCase):
     def test_write_float_from_float_tiff_dtype_none(self):
         tiff.write(self.filename, self.float_image, multichannel=True)
         image = tiff.read(self.filename)
-        self.assertEqual(image.data.dtype, np.float)
+        self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.float))
+            image.data, self.float_image.data.astype(np.float32))
 
     def test_write_float_from_float_dtype_float(self):
         tiff.write(self.filename, self.float_image, multichannel=True,
                    dtype='float')
         image = tiff.read(self.filename)
-        self.assertEqual(image.data.dtype, np.float)
+        self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.float))
+            image.data, self.float_image.data.astype(np.float32))
 
     def test_write_float_from_float_dtype_np_float(self):
         tiff.write(self.filename, self.float_image, multichannel=True,
-                   dtype=np.float)
+                   dtype=np.float32)
         image = tiff.read(self.filename)
-        self.assertEqual(image.data.dtype, np.float)
+        self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.float))
+            image.data, self.float_image.data.astype(np.float32))
 
     def test_write_float_from_int_dtype_float(self):
         tiff.write(self.filename, self.int_image, multichannel=True,
                    dtype='float')
         image = tiff.read(self.filename)
-        self.assertEqual(image.data.dtype, np.float)
+        self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
-            image.data, self.float_image.data.astype(np.float))
+            image.data, self.float_image.data.astype(np.float32))
 
     def test_write_int_from_int_dtype_none(self):
         tiff.write(self.filename, self.int_image, multichannel=True)
