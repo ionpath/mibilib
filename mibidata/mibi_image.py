@@ -19,7 +19,12 @@ SPECIFIED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
                                  'time_resolution', 'miscalibrated',
                                  'check_reg', 'filename', 'description',
                                  'version')
-
+APERTURE_MAP = {
+    '1mm': u'A',
+    '300um': u'B',
+    '100um': u'C',
+    '30um': u'D'
+}
 
 class MibiImage():
     """A multiplexed image with labeled channels and metadata.
@@ -53,7 +58,7 @@ class MibiImage():
                 software, this will the same as the fov_id.
             * dwell: A float pixel dwell time in :math:`ms`.
             * scans: A comma-separated list of image scan numbers.
-            * aperture: A string name of the aperture used during image
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width used during image
                 acquisition.
             * instrument: A string identifier for the instrument used.
             * tissue: A string name of the tissue type.
@@ -113,7 +118,7 @@ class MibiImage():
                 software, this will the same as the fov_id.
             * dwell: A float pixel dwell time in :math:`ms`.
             * scans: A comma-separated list of image scan numbers.
-            * aperture: A string name of the aperture used during image
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width used during image
                 acquisition.
             * instrument: A string identifier for the instrument used.
             * tissue: A string name of the tissue type.
@@ -154,7 +159,10 @@ class MibiImage():
             self.date = date
 
         for attr in SPECIFIED_METADATA_ATTRIBUTES[1:]:
-            setattr(self, attr, kwargs.pop(attr, None))
+            val = kwargs.pop(attr, None)
+            if attr == 'aperture' and val is not None and val not in APERTURE_MAP.values():
+                raise ValueError('Invalid aperture code \'{}\', must use {} for {}, respectively'.format(val, ', '.join(list(APERTURE_MAP.values())), ', '.join(list(APERTURE_MAP.keys()))))
+            setattr(self, attr, val)
 
         # empty list for storing user-defined attribute names
         self._user_defined_attributes = []
