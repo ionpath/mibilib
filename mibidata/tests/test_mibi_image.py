@@ -127,6 +127,20 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image.fov_id = None
 
+    def test_check_fov_id_without_folder(self):
+        metadata = METADATA.copy()
+        metadata.pop('folder')
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
+        self.assertEqual(image.fov_id, 'Point1');
+        self.assertEqual(image.folder, 'Point1');
+
+    def test_check_folder_without_fov_id(self):
+        metadata = METADATA.copy()
+        metadata.pop('fov_id')
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
+        self.assertEqual(image.fov_id, 'Point1');
+        self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0');
+
     def test_equality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
         second = mi.MibiImage(TEST_DATA.copy(), STRING_LABELS)

@@ -8,6 +8,7 @@ import warnings
 
 import numpy as np
 from skimage import io as skio, transform
+import traceback
 
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
@@ -154,7 +155,14 @@ class MibiImage():
             self.date = date
 
         for attr in SPECIFIED_METADATA_ATTRIBUTES[1:]:
-            setattr(self, attr, kwargs.pop(attr, None))
+            if attr == 'folder':
+                if 'folder' in kwargs:
+                    self.folder = kwargs.pop(attr)
+            elif attr == 'fov_id':
+                if 'fov_id' in kwargs:
+                    self.fov_id = kwargs.pop(attr)
+            else:
+                setattr(self, attr, kwargs.pop(attr, None))
 
         # empty list for storing user-defined attribute names
         self._user_defined_attributes = []
