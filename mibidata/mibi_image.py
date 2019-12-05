@@ -8,7 +8,6 @@ import warnings
 
 import numpy as np
 from skimage import io as skio, transform
-import traceback
 
 # The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
