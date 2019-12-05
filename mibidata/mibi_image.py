@@ -154,14 +154,7 @@ class MibiImage():
             self.date = date
 
         for attr in SPECIFIED_METADATA_ATTRIBUTES[1:]:
-            if attr == 'folder':
-                if 'folder' in kwargs:
-                    self.folder = kwargs.pop(attr)
-            elif attr == 'fov_id':
-                if 'fov_id' in kwargs:
-                    self.fov_id = kwargs.pop(attr)
-            else:
-                setattr(self, attr, kwargs.pop(attr, None))
+            setattr(self, attr, kwargs.pop(attr, None))
 
         # empty list for storing user-defined attribute names
         self._user_defined_attributes = []
@@ -196,9 +189,9 @@ class MibiImage():
                 self._fov_id = fov
             elif self.fov_id != fov:
                 raise ValueError('fov_id must match folder, but here '
-                                 'folder={} and you are trying to set fov_id '
-                                 'to {}.'.format(value, self.fov_id))
-        self._folder = value
+                                 'fov_id={} and you are trying to set folder '
+                                 'to {}.'.format(self.fov_id, value))
+            self._folder = value
 
     @property
     def fov_id(self):
@@ -207,9 +200,9 @@ class MibiImage():
     @fov_id.setter
     def fov_id(self, value):
         """Enforce consistency with folder."""
-        if value and not self.folder:
+        if not self.folder:
             self._folder = value
-        elif self.folder and value != self.folder.split('/')[0]:
+        elif value != self.folder.split('/')[0]:
             raise ValueError('fov_id must match folder, but here '
                              'folder={} and you are trying to set fov_id '
                              'to {}.'.format(self.folder, value))
