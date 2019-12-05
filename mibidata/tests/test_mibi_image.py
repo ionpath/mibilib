@@ -128,18 +128,15 @@ class TestMibiImage(unittest.TestCase):
             image.fov_id = None
 
     def test_check_fov_id_without_folder(self):
-        metadata = METADATA.copy()
-        metadata.pop('folder')
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
-        self.assertEqual(image.fov_id, 'Point1');
-        self.assertEqual(image.folder, None); # We allow folder to not be provided in the constructor kwargs, it is set to None in this case.
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, fov_id='FOV1')
+        self.assertEqual(image.fov_id, 'FOV1')
+        self.assertEqual(image.folder, 'FOV1')
 
     def test_check_folder_without_fov_id(self):
-        metadata = METADATA.copy()
-        metadata.pop('fov_id')
-        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
-        self.assertEqual(image.fov_id, 'Point1'); 
-        self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0'); # If folder is provided and fov_id is not, it is inferred from the top level directory.
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                             folder='Point1/RowNumber0/Depth_Profile0')
+        self.assertEqual(image.fov_id, 'Point1')
+        self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0')
 
     def test_equality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
