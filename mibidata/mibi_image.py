@@ -159,10 +159,7 @@ class MibiImage():
             self.date = date
 
         for attr in SPECIFIED_METADATA_ATTRIBUTES[1:]:
-            val = kwargs.pop(attr, None)
-            if attr == 'aperture' and val is not None and val not in APERTURE_MAP.values():
-                raise ValueError('Invalid aperture code \'{}\', must use {} for {}, respectively'.format(val, ', '.join(list(APERTURE_MAP.values())), ', '.join(list(APERTURE_MAP.keys()))))
-            setattr(self, attr, val)
+            setattr(self, attr, kwargs.pop(attr, None))
 
         # empty list for storing user-defined attribute names
         self._user_defined_attributes = []
@@ -215,6 +212,17 @@ class MibiImage():
                              'folder={} and you are trying to set fov_id '
                              'to {}.'.format(self.folder, value))
         self._fov_id = value
+
+    @aperture.setter
+    def aperture(self, value):
+        if value is not None and value not in APERTURE_MAP.values():
+            raise ValueError('Invalid aperture code \'{}\', must use {} for {}, respectively'.format(value, ', '.join(list(APERTURE_MAP.values())), ', '.join(list(APERTURE_MAP.keys()))))
+        else:
+            self._aperture = value
+
+    @property
+    def aperture(self):
+        return self._aperture
 
     @property
     def channels(self):
