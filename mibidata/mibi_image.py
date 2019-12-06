@@ -230,8 +230,8 @@ class MibiImage():
     def aperture(self, value):
         if value is not None and value not in APERTURE_MAP.values():
             raise ValueError(
-                'Invalid aperture code \'{}\', must use values \
-                    from the following map: {}'.format(value, APERTURE_MAP)
+                'Invalid aperture code \'{}\', must use values'
+                'from the following map: {}'.format(value, APERTURE_MAP)
             )
         self._aperture = value
 
