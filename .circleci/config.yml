@@ -114,3 +114,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - build:
+          requires:
+            - tag_test
