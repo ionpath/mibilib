@@ -159,6 +159,7 @@ class MibiImage():
         # initialize required metadata
         self._folder = None
         self._fov_id = None
+        self._aperture = None
         date = kwargs.pop('date', None)
         datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
         try:
@@ -232,8 +233,7 @@ class MibiImage():
                 'Invalid aperture code \'{}\', must use values \
                     from the following map: {}'.format(value, APERTURE_MAP)
             )
-        else:
-            self._aperture = value
+        self._aperture = value
 
     @property
     def channels(self):
