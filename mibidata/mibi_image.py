@@ -66,8 +66,8 @@ class MibiImage():
                 software, this will the same as the fov_id.
             * dwell: A float pixel dwell time in :math:`ms`.
             * scans: A comma-separated list of image scan numbers.
-            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width used during image
-                acquisition.
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width
+                used during image acquisition.
             * instrument: A string identifier for the instrument used.
             * tissue: A string name of the tissue type.
             * panel: A string name of the panel used to stain the tissue.
@@ -126,8 +126,8 @@ class MibiImage():
                 software, this will the same as the fov_id.
             * dwell: A float pixel dwell time in :math:`ms`.
             * scans: A comma-separated list of image scan numbers.
-            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width used during image
-                acquisition.
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width
+                used during image acquisition.
             * instrument: A string identifier for the instrument used.
             * tissue: A string name of the tissue type.
             * panel: A string name of the panel used to stain the tissue.
@@ -228,7 +228,10 @@ class MibiImage():
     @aperture.setter
     def aperture(self, value):
         if value is not None and value not in APERTURE_MAP.values():
-            raise ValueError('Invalid aperture code \'{}\', must use {} for {}, respectively'.format(value, ', '.join(list(APERTURE_MAP.values())), ', '.join(list(APERTURE_MAP.keys()))))
+            raise ValueError(
+                'Invalid aperture code \'{}\', must use values \
+                    from the following map: {}'.format(value, APERTURE_MAP)
+            )
         else:
             self._aperture = value
 
