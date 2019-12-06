@@ -26,7 +26,7 @@ METADATA = {
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
     'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
-    'dwell': 4, 'scans': '0,5', 'aperture': '300um',
+    'dwell': 4, 'scans': '0,5', 'aperture': 'B',
     'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
     'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
@@ -39,7 +39,7 @@ OLD_METADATA = {
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
     'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
-    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'aperture': 'B', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
     'check_reg': False, 'filename': '20180703_1234_test'
@@ -126,6 +126,17 @@ class TestMibiImage(unittest.TestCase):
             image.fov_id = 'Point99'
         with self.assertRaises(ValueError):
             image.fov_id = None
+
+    def test_check_fov_id_without_folder(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, fov_id='FOV1')
+        self.assertEqual(image.fov_id, 'FOV1')
+        self.assertEqual(image.folder, 'FOV1')
+
+    def test_check_folder_without_fov_id(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                             folder='Point1/RowNumber0/Depth_Profile0')
+        self.assertEqual(image.fov_id, 'Point1')
+        self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0')
 
     def test_equality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
