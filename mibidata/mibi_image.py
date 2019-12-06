@@ -19,11 +19,19 @@ SPECIFIED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
                                  'time_resolution', 'miscalibrated',
                                  'check_reg', 'filename', 'description',
                                  'version')
+
+
+
+APERTURE_1MM = u'A'
+APERTURE_300UM = u'B'
+APERTURE_100UM = u'C'
+APERTURE_30UM = u'D'
+
 APERTURE_MAP = {
-    '1mm': u'A',
-    '300um': u'B',
-    '100um': u'C',
-    '30um': u'D'
+    u'1 mm': APERTURE_1MM,
+    u'300 \u03BCm': APERTURE_300UM,
+    u'100 \u03BCm': APERTURE_100UM,
+    u'30 \u03BCm': APERTURE_30UM,
 }
 
 class MibiImage():
