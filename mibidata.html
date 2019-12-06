@@ -1046,7 +1046,7 @@ region.</dd>
 <p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.tiff.write">
-<code class="descclassname">mibidata.tiff.</code><code class="descname">write</code><span class="sig-paren">(</span><em>filename</em>, <em>image</em>, <em>sed=None</em>, <em>optical=None</em>, <em>ranges=None</em>, <em>multichannel=True</em>, <em>write_float=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mibidata.tiff.</code><code class="descname">write</code><span class="sig-paren">(</span><em>filename</em>, <em>image</em>, <em>sed=None</em>, <em>optical=None</em>, <em>ranges=None</em>, <em>multichannel=True</em>, <em>dtype=None</em>, <em>write_float=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes MIBI data to a multipage TIFF.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1055,7 +1055,7 @@ region.</dd>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filename</strong> – The path to the target file if multi-channel, or the path to
 a folder if single-channel.</li>
-<li><strong>image</strong> – A <code class="docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance.</li>
+<li><strong>image</strong> – A <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance.</li>
 <li><strong>sed</strong> – Optional, an array of the SED image data. This is assumed to be
 grayscale even if 3-dimensional, in which case only one channel
 will be used.</li>
@@ -1067,17 +1067,28 @@ software to calibrate the display.</li>
 <li><strong>multichannel</strong> – Boolean for whether to create a single multi-channel TIFF,
 or a folder of single-channel TIFFs. Defaults to True; if False,
 the sed and optical options are ignored.</li>
-<li><strong>write_float</strong> – If True, saves the image data as float32 values (for
-opening properly in certain software such as Halo). Defaults to
-False which will save the image data as uint16. Note: setting
-write_float to True does not normalize or scale the data before
-saving, however saves the integer counts as floating point numbers.</li>
+<li><strong>dtype</strong> – dtype: One of (<code class="docutils literal notranslate"><span class="pre">np.float32</span></code>, <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code>) to force the dtype
+of the saved image data. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>, which chooses the
+format based on the data’s input type, and will convert to
+<code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code> from other float or int types,
+respectively, if it can do so without a loss of data.</li>
+<li><strong>write_float</strong> – Deprecated, will raise ValueError if specified. To
+specify the dtype of the saved image, please use the <cite>dtype</cite>
+argument instead.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the image is not a
-<code class="docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance, or if its coordinates,
-size, masses or targets are None.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
+<ul class="last simple">
+<li>The image is not a <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a>
+instance.</li>
+<li>The <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> coordinates, size,
+masses or targets are None.</li>
+<li><cite>dtype</cite> is not one of <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code>.</li>
+<li><cite>write_float</cite> has been specified.</li>
+<li>Converting the native <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> dtype
+to the specified or inferred <code class="docutils literal notranslate"><span class="pre">dtype</span></code> results in a loss of data.</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -1110,9 +1121,10 @@ False.</li>
 <dt>Returns: A tuple of the image types set to True in the parameters, in the</dt>
 <dd>order SIMS, SED, Optical, Label (but including only those types
 specified). The SIMS data will be returned as a
-<code class="docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance; the other image types will be
-returned as numpy arrays. If an image type is selected to be returned
-but is not present in the image, it will be returned as None.</dd>
+<a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance; the other image
+types will be returned as numpy arrays. If an image type is selected to
+be returned  but is not present in the image, it will be returned as
+None.</dd>
 </dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1136,7 +1148,7 @@ format, or if no image type selected to be returned.</td>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – The path to the TIFF.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary of metadata as could be supplied as kwargs to
-<code class="docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code>, except with a <code class="docutils literal notranslate"><span class="pre">channels</span></code> key
+<a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a>, except with a <code class="docutils literal notranslate"><span class="pre">channels</span></code> key
 whose value is a list of (mass, target) tuples.</td>
 </tr>
 </tbody>
