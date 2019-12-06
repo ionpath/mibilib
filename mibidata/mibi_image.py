@@ -221,16 +221,16 @@ class MibiImage():
                              'to {}.'.format(self.folder, value))
         self._fov_id = value
 
+    @property
+    def aperture(self):
+        return self._aperture
+
     @aperture.setter
     def aperture(self, value):
         if value is not None and value not in APERTURE_MAP.values():
             raise ValueError('Invalid aperture code \'{}\', must use {} for {}, respectively'.format(value, ', '.join(list(APERTURE_MAP.values())), ', '.join(list(APERTURE_MAP.keys()))))
         else:
             self._aperture = value
-
-    @property
-    def aperture(self):
-        return self._aperture
 
     @property
     def channels(self):
