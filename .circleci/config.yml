@@ -87,13 +87,30 @@ jobs:
           root: ~/mibitracker-client
           paths:
             - docs
+  tag_test:
+    working_directory: ~/mibitracker-client
+    docker:
+      - image: circleci/python:3.7 # container for the build job
 
+    steps:
+      - checkout:
+          path: ~/mibitracker-client
+      - run:
+          name: Check if tag and setup.py are consistent
+          command: |
+            python check_tag.py
 workflows:
   version: 2
-  run:
+  untagged-build:
     jobs:
       - build:
           filters:
             branches:
               ignore:
                 - gh-pages
+  tagged-build:
+    jobs:
+      - tag_test:
+          filters:
+            tags:
+              only: /^v.*/
