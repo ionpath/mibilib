@@ -34,6 +34,13 @@ APERTURE_MAP = {
     u'30 \u03BCm': APERTURE_30UM,
 }
 
+_DEPRECATED_APERTURE_MAP = {
+    '1mm': APERTURE_1MM,
+    '300um': APERTURE_300UM,
+    '100um': APERTURE_100UM,
+    '30um': APERTURE_30UM,
+}
+
 class MibiImage():
     """A multiplexed image with labeled channels and metadata.
 
@@ -229,10 +236,20 @@ class MibiImage():
     @aperture.setter
     def aperture(self, value):
         if value is not None and value not in APERTURE_MAP.values():
-            raise ValueError(
-                'Invalid aperture code \'{}\', must use values'
-                'from the following map: {}'.format(value, APERTURE_MAP)
-            )
+            if value in _DEPRECATED_APERTURE_MAP:
+                warnings.warn(
+                    'Deprecated aperture code \'{}\', converting to \'{}\'. In '
+                    'a future version, values from the following map will be '
+                    'required: {}'.format(value,
+                                          _DEPRECATED_APERTURE_MAP[value],
+                                          APERTURE_MAP)
+                )
+                value = _DEPRECATED_APERTURE_MAP[value]
+            else:
+                raise ValueError(
+                    'Invalid aperture code \'{}\', must use values'
+                    'from the following map: {}'.format(value, APERTURE_MAP)
+                )
         self._aperture = value
 
     @property
