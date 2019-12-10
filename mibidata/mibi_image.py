@@ -237,7 +237,10 @@ class MibiImage():
     def aperture(self, value):
         if value is not None and value not in APERTURE_MAP.values():
             try:
-                self._aperture = {**_DEPRECATED_APERTURE_MAP, **APERTURE_MAP}[value]
+                self._aperture = {
+                    **_DEPRECATED_APERTURE_MAP,
+                    **APERTURE_MAP
+                }[value]
                 warnings.warn(
                     'Deprecated aperture code \'{}\', converting to \'{}\'. In '
                     'a future version, values from the following map will be '
