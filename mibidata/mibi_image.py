@@ -237,7 +237,7 @@ class MibiImage():
     def aperture(self, value):
         if value in APERTURE_MAP.values() or value is None:
             # Allow valid aperture codes or None
-            self._aperture = value;
+            self._aperture = value
         else:
             # Convert known string aperture parameters, if possible
             try:
