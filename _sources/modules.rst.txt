@@ -4,5 +4,6 @@ mibitracker-client
 .. toctree::
    :maxdepth: 4
 
+   check_tag
    mibidata
    mibitracker

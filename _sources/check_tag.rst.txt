@@ -1,0 +1,7 @@
+check\_tag module
+=================
+
+.. automodule:: check_tag
+    :members:
+    :undoc-members:
+    :show-inheritance:

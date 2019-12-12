@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mibitracker-client &#8212; IONpath MIBItracker Client 0.0.1 documentation</title>
+    <title>check_tag module &#8212; IONpath MIBItracker Client 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -33,34 +33,31 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="mibitracker-client">
-<h1>mibitracker-client<a class="headerlink" href="#mibitracker-client" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="check_tag.html">check_tag module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mibidata.html">mibidata package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.color">mibidata.color module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.combine_tiffs">mibidata.combine_tiffs module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.mibi_image">mibidata.mibi_image module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.panels">mibidata.panels module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.pseudodepths">mibidata.pseudodepths module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.runs">mibidata.runs module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.segmentation">mibidata.segmentation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.tiff">mibidata.tiff module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.util">mibidata.util module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="mibitracker.html">mibitracker package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker.mibitracker_exceptions">mibitracker.mibitracker_exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker.request_helpers">mibitracker.request_helpers module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
+  <div class="section" id="module-check_tag">
+<span id="check-tag-module"></span><h1>check_tag module<a class="headerlink" href="#module-check_tag" title="Permalink to this headline">¶</a></h1>
+<p>This file contains functions that checks if tag in git and in
+setup.py are same. If they are not an exception is raised.</p>
+<dl class="function">
+<dt id="check_tag.check_tag">
+<code class="descclassname">check_tag.</code><code class="descname">check_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#check_tag.check_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function checks if tag in git and in setup.py are same and
+returns a boolean</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="check_tag.get_latest_tag">
+<code class="descclassname">check_tag.</code><code class="descname">get_latest_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#check_tag.get_latest_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets the tag from git and formats it as a string
+for later use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="check_tag.get_tag_in_setuppy">
+<code class="descclassname">check_tag.</code><code class="descname">get_tag_in_setuppy</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#check_tag.get_tag_in_setuppy" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets the tag from setup.py and formats it as a
+string for later use.</p>
+</dd></dl>
+
 </div>
 
 
@@ -120,7 +117,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/modules.rst.txt"
+      <a href="_sources/check_tag.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
