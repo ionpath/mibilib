@@ -21,6 +21,26 @@ SPECIFIED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
                                  'version')
 
 
+
+APERTURE_1MM = u'A'
+APERTURE_300UM = u'B'
+APERTURE_100UM = u'C'
+APERTURE_30UM = u'D'
+
+APERTURE_MAP = {
+    u'1 mm': APERTURE_1MM,
+    u'300 \u03BCm': APERTURE_300UM,
+    u'100 \u03BCm': APERTURE_100UM,
+    u'30 \u03BCm': APERTURE_30UM,
+}
+
+_DEPRECATED_APERTURE_MAP = {
+    '1mm': APERTURE_1MM,
+    '300um': APERTURE_300UM,
+    '100um': APERTURE_100UM,
+    '30um': APERTURE_30UM,
+}
+
 class MibiImage():
     """A multiplexed image with labeled channels and metadata.
 
@@ -53,8 +73,8 @@ class MibiImage():
                 software, this will the same as the fov_id.
             * dwell: A float pixel dwell time in :math:`ms`.
             * scans: A comma-separated list of image scan numbers.
-            * aperture: A string name of the aperture used during image
-                acquisition.
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width
+                used during image acquisition.
             * instrument: A string identifier for the instrument used.
             * tissue: A string name of the tissue type.
             * panel: A string name of the panel used to stain the tissue.
@@ -113,8 +133,8 @@ class MibiImage():
                 software, this will the same as the fov_id.
             * dwell: A float pixel dwell time in :math:`ms`.
             * scans: A comma-separated list of image scan numbers.
-            * aperture: A string name of the aperture used during image
-                acquisition.
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width
+                used during image acquisition.
             * instrument: A string identifier for the instrument used.
             * tissue: A string name of the tissue type.
             * panel: A string name of the panel used to stain the tissue.
@@ -146,6 +166,7 @@ class MibiImage():
         # initialize required metadata
         self._folder = None
         self._fov_id = None
+        self._aperture = None
         date = kwargs.pop('date', None)
         datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
         try:
@@ -189,9 +210,9 @@ class MibiImage():
                 self._fov_id = fov
             elif self.fov_id != fov:
                 raise ValueError('fov_id must match folder, but here '
-                                 'folder={} and you are trying to set fov_id '
-                                 'to {}.'.format(value, self.fov_id))
-        self._folder = value
+                                 'fov_id={} and you are trying to set folder '
+                                 'to {}.'.format(self.fov_id, value))
+            self._folder = value
 
     @property
     def fov_id(self):
@@ -200,13 +221,42 @@ class MibiImage():
     @fov_id.setter
     def fov_id(self, value):
         """Enforce consistency with folder."""
-        if value and not self.folder:
+        if not self.folder:
             self._folder = value
-        elif self.folder and value != self.folder.split('/')[0]:
+        elif value != self.folder.split('/')[0]:
             raise ValueError('fov_id must match folder, but here '
                              'folder={} and you are trying to set fov_id '
                              'to {}.'.format(self.folder, value))
         self._fov_id = value
+
+    @property
+    def aperture(self):
+        return self._aperture
+
+    @aperture.setter
+    def aperture(self, value):
+        if value in APERTURE_MAP.values() or value is None:
+            # Allow valid aperture codes or None
+            self._aperture = value
+        else:
+            # Convert known string aperture parameters, if possible
+            try:
+                self._aperture = {
+                    **_DEPRECATED_APERTURE_MAP,
+                    **APERTURE_MAP
+                }[value]
+                warnings.warn(
+                    'Deprecated aperture code \'{}\', converting to \'{}\'. In '
+                    'a future version, values from the following map will be '
+                    'required: {}'.format(value,
+                                          _DEPRECATED_APERTURE_MAP[value],
+                                          APERTURE_MAP)
+                )
+            except KeyError:
+                raise ValueError(
+                    'Invalid aperture code \'{}\', must use values'
+                    'from the following map: {}'.format(value, APERTURE_MAP)
+                )
 
     @property
     def channels(self):
