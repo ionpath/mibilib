@@ -325,17 +325,17 @@ class MibiImage():
         else:
             # Convert known string aperture parameters, if possible
             try:
-                aperture = {
+                unified_map = {
                     **_DEPRECATED_APERTURE_MAP,
                     **APERTURE_MAP
-                }[value]
+                }
+                aperture = unified_map[value]
                 warnings.warn(
                     'Deprecated aperture code \'{}\', converting to \'{}\'. In '
                     'a future version, values from the following map will be '
                     'required: {}'.format(value,
-                                          _DEPRECATED_APERTURE_MAP[value],
-                                          APERTURE_MAP)
-                )
+                                          unified_map[value],
+                                          APERTURE_MAP))
             except KeyError:
                 raise ValueError(
                     'Invalid aperture code \'{}\', must use values'

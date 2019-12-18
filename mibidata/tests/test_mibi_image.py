@@ -138,6 +138,15 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image.fov_id, 'Point1')
         self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0')
 
+
+    def test_convert_from_non_encoded_new_aperture(self):
+        with warnings.catch_warnings(record=True) as w:
+            image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                                 aperture=u'300 \u03bcm')
+        self.assertTrue(
+            str(w[-1].message).startswith('Deprecated aperture code'))
+        self.assertEqual(image.aperture, 'B')
+
     def test_convert_from_deprecated_aperture(self):
         with warnings.catch_warnings(record=True) as w:
             image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
