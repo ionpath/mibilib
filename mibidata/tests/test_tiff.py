@@ -229,10 +229,15 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(metadata, expected)
 
     def test_read_old_mibiscope_metadata(self):
-        tiff.write(self.filename, self.image_old_metadata)
+        tiff.write(self.filename, self.image_old_mibiscope_metadata)
         metadata = tiff.info(self.filename)
         expected = OLD_MIBISCOPE_METADATA.copy()
-        expected.update({'aperture': 'B'})
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'aperture': 'B',
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+        })
         self.assertEqual(metadata, expected)
 
     def test_open_file_with_old_metadata(self):
@@ -240,7 +245,7 @@ class TestWriteReadTiff(unittest.TestCase):
         expected = METADATA.copy()
         expected.update({
             'conjugates': list(CHANNELS),
-            'aperture': '300um',
+            'aperture': 'B',
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
         })
