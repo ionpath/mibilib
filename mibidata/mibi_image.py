@@ -312,8 +312,11 @@ class MibiImage():
         Args:
             value: A string representing an aperture code.
         Returns:
-            an aperture code (e.g. 'A' or 'B') matching aperture width
+            An aperture code (e.g. 'A' or 'B') matching aperture width
             used during image acquisition.
+        Raises:
+            Value error raise if the value parameter cannot be mapped to an
+            aperture code.
         """
         aperture = None
         if value in APERTURE_MAP.values() or value is None:
