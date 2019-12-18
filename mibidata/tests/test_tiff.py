@@ -55,7 +55,8 @@ OLD_MIBISCOPE_METADATA = {
     'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
     'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
-    'check_reg': False, 'filename': '20180703_1234_test'
+    'check_reg': False, 'filename': '20180703_1234_test',
+    'description': 'test image',
 }
 OLD_TIFF_FILE = os.path.join(os.path.dirname(__file__), 'data', 'v0.1.tiff')
 

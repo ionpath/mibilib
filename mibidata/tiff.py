@@ -288,19 +288,6 @@ def _page_description(page):
     return json.loads(
         page.tags['image_description'].value.decode(ENCODING))
 
-def _process_page(page):
-    metadata = {}
-    channels = []
-    description = _page_description(page)
-    image_type = description['image.type'].lower()
-    if image_type == 'sims':
-        channels.append((description['channel.mass'],
-                         description['channel.target']))
-        #  Get metadata on first SIMS page only
-        if not metadata:
-            metadata.update(_page_metadata(page, description))
-    return metadata, channels
-
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
     assert page.tags['resolution_unit'].value == 3
@@ -378,6 +365,13 @@ def info(filename):
     with TiffFile(filename) as tif:
         _check_software(tif)
         for page in tif.pages:
-            metadata, channels = _process_page(page)
+            description = _page_description(page)
+            image_type = description['image.type'].lower()
+            if image_type == 'sims':
+                channels.append((description['channel.mass'],
+                                 description['channel.target']))
+                #  Get metadata on first SIMS page only
+                if not metadata:
+                    metadata.update(_page_metadata(page, description))
         metadata['conjugates'] = channels
         return metadata
