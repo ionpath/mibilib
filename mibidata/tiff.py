@@ -227,7 +227,7 @@ def read(file, sims=True, sed=False, optical=False, label=False):
         sed: Boolean for whether to return the SED data. Defaults to False.
         optical: Boolean for whether to return the optical image. Defaults to
             False.
-        label: Boolean for whether to return the slide label image. Defauls to
+        label: Boolean for whether to return the slide label image. Defaults to
             False.
 
     Returns: A tuple of the image types set to True in the parameters, in the
@@ -288,6 +288,18 @@ def _page_description(page):
     return json.loads(
         page.tags['image_description'].value.decode(ENCODING))
 
+def _process_page(page):
+    metadata = {}
+    channels = []
+    description = _page_description(page)
+    image_type = description['image.type'].lower()
+    if image_type == 'sims':
+        channels.append((description['channel.mass'],
+                         description['channel.target']))
+        #  Get metadata on first SIMS page only
+        if not metadata:
+            metadata.update(_page_metadata(page, description))
+    return metadata, channels
 
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
@@ -363,13 +375,6 @@ def info(filename):
     with TiffFile(filename) as tif:
         _check_software(tif)
         for page in tif.pages:
-            description = _page_description(page)
-            image_type = description['image.type'].lower()
-            if image_type == 'sims':
-                channels.append((description['channel.mass'],
-                                 description['channel.target']))
-                #  Get metadata on first SIMS page only
-                if not metadata:
-                    metadata.update(_page_metadata(page, description))
+            metadata, channels = _process_page(page)
         metadata['conjugates'] = channels
         return metadata
