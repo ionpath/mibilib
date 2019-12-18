@@ -235,28 +235,7 @@ class MibiImage():
 
     @aperture.setter
     def aperture(self, value):
-        if value in APERTURE_MAP.values() or value is None:
-            # Allow valid aperture codes or None
-            self._aperture = value
-        else:
-            # Convert known string aperture parameters, if possible
-            try:
-                self._aperture = {
-                    **_DEPRECATED_APERTURE_MAP,
-                    **APERTURE_MAP
-                }[value]
-                warnings.warn(
-                    'Deprecated aperture code \'{}\', converting to \'{}\'. In '
-                    'a future version, values from the following map will be '
-                    'required: {}'.format(value,
-                                          _DEPRECATED_APERTURE_MAP[value],
-                                          APERTURE_MAP)
-                )
-            except KeyError:
-                raise ValueError(
-                    'Invalid aperture code \'{}\', must use values'
-                    'from the following map: {}'.format(value, APERTURE_MAP)
-                )
+        self._aperture = MibiImage.validate_aperture(value)
 
     @property
     def channels(self):
@@ -326,6 +305,33 @@ class MibiImage():
         s += ', '.join(f'{key}: {val}' for key, val in self.metadata().items())
         s += '}'
         return s
+
+    @staticmethod
+    def validate_aperture(value):
+        aperture = None
+        if value in APERTURE_MAP.values() or value is None:
+            # Allow valid aperture codes or None
+            aperture = value
+        else:
+            # Convert known string aperture parameters, if possible
+            try:
+                aperture = {
+                    **_DEPRECATED_APERTURE_MAP,
+                    **APERTURE_MAP
+                }[value]
+                warnings.warn(
+                    'Deprecated aperture code \'{}\', converting to \'{}\'. In '
+                    'a future version, values from the following map will be '
+                    'required: {}'.format(value,
+                                          _DEPRECATED_APERTURE_MAP[value],
+                                          APERTURE_MAP)
+                )
+            except KeyError:
+                raise ValueError(
+                    'Invalid aperture code \'{}\', must use values'
+                    'from the following map: {}'.format(value, APERTURE_MAP)
+                )
+        return aperture
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
