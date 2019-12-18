@@ -235,7 +235,7 @@ class MibiImage():
 
     @aperture.setter
     def aperture(self, value):
-        self._aperture = MibiImage.validate_aperture(value)
+        self._aperture = self.parse_aperture(value)
 
     @property
     def channels(self):
@@ -307,7 +307,14 @@ class MibiImage():
         return s
 
     @staticmethod
-    def validate_aperture(value):
+    def parse_aperture(value):
+        """
+        Args:
+            value: A string representing an aperture code.
+        Returns:
+            an aperture code (e.g. 'A' or 'B') matching aperture width
+            used during image acquisition.
+        """
         aperture = None
         if value in APERTURE_MAP.values() or value is None:
             # Allow valid aperture codes or None

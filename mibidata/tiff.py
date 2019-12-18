@@ -345,7 +345,7 @@ def _convert_from_previous(description):
             'The "folder" attribute is required if "fov_id" is specified. '
             'Setting "folder" to {}.'.format(description['mibi.folder']))
     if description.get('mibi.aperture'):
-        description['mibi.aperture'] = mi.MibiImage.validate_aperture(
+        description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
 
 
