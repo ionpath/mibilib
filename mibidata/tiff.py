@@ -227,7 +227,7 @@ def read(file, sims=True, sed=False, optical=False, label=False):
         sed: Boolean for whether to return the SED data. Defaults to False.
         optical: Boolean for whether to return the optical image. Defaults to
             False.
-        label: Boolean for whether to return the slide label image. Defauls to
+        label: Boolean for whether to return the slide label image. Defaults to
             False.
 
     Returns: A tuple of the image types set to True in the parameters, in the
@@ -288,7 +288,6 @@ def _page_description(page):
     return json.loads(
         page.tags['image_description'].value.decode(ENCODING))
 
-
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
     assert page.tags['resolution_unit'].value == 3
@@ -345,6 +344,9 @@ def _convert_from_previous(description):
         warnings.warn(
             'The "folder" attribute is required if "fov_id" is specified. '
             'Setting "folder" to {}.'.format(description['mibi.folder']))
+    if description.get('mibi.aperture'):
+        description['mibi.aperture'] = mi.MibiImage.parse_aperture(
+            description['mibi.aperture'])
 
 
 def info(filename):

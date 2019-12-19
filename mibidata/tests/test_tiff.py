@@ -47,6 +47,17 @@ OLD_METADATA = {
     'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
     'check_reg': False, 'filename': '20180703_1234_test'
 }
+OLD_MIBISCOPE_METADATA = {
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
+    'fov_id': 'fov-1', 'fov_name': 'fov-1', 'dwell': 4, 'scans': '0,5',
+    'folder': 'fov-1',
+    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
+    'check_reg': False, 'filename': '20180703_1234_test',
+    'description': 'test image',
+}
 OLD_TIFF_FILE = os.path.join(os.path.dirname(__file__), 'data', 'v0.1.tiff')
 
 
@@ -70,6 +81,8 @@ class TestWriteReadTiff(unittest.TestCase):
                                                         **USER_DEFINED_METADATA)
         self.image_old_metadata = mi.MibiImage(
             DATA, CHANNELS, **OLD_METADATA)
+        self.image_old_mibiscope_metadata = mi.MibiImage(
+            DATA, CHANNELS, **OLD_MIBISCOPE_METADATA)
         self.folder = tempfile.mkdtemp()
         self.filename = os.path.join(self.folder, 'test.tiff')
         self.maxDiff = None
@@ -216,12 +229,24 @@ class TestWriteReadTiff(unittest.TestCase):
             'description': None, 'version': None})
         self.assertEqual(metadata, expected)
 
+    def test_read_old_mibiscope_metadata(self):
+        tiff.write(self.filename, self.image_old_mibiscope_metadata)
+        metadata = tiff.info(self.filename)
+        expected = OLD_MIBISCOPE_METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS),
+            'aperture': 'B',
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S'),
+        })
+        self.assertEqual(metadata, expected)
+
     def test_open_file_with_old_metadata(self):
         metadata = tiff.info(OLD_TIFF_FILE)
         expected = METADATA.copy()
         expected.update({
             'conjugates': list(CHANNELS),
-            'aperture': '300um',
+            'aperture': 'B',
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S'),
         })
