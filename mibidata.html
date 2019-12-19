@@ -548,6 +548,30 @@ software, this will the same as the fov_id.</dd>
 <dd><p>Equivalent to <a class="reference internal" href="#mibidata.mibi_image.MibiImage.slice_data" title="mibidata.mibi_image.MibiImage.slice_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">slice_data()</span></code></a>.</p>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="mibidata.mibi_image.MibiImage.parse_aperture">
+<em class="property">static </em><code class="descname">parse_aperture</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.parse_aperture" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> – A string representing an aperture code.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An aperture code (e.g. ‘A’ or ‘B’) matching aperture width
+used during image acquisition.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li>ValueError raised if the value parameter cannot be mapped to an</li>
+<li>aperture code.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="mibidata.mibi_image.MibiImage.metadata">
 <code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.metadata" title="Permalink to this definition">¶</a></dt>
@@ -1110,7 +1134,7 @@ True.</li>
 <li><strong>sed</strong> – Boolean for whether to return the SED data. Defaults to False.</li>
 <li><strong>optical</strong> – Boolean for whether to return the optical image. Defaults to
 False.</li>
-<li><strong>label</strong> – Boolean for whether to return the slide label image. Defauls to
+<li><strong>label</strong> – Boolean for whether to return the slide label image. Defaults to
 False.</li>
 </ul>
 </td>
