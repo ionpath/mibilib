@@ -99,7 +99,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if image.fov_name is None:
         raise ValueError('Image name must not be None.')
     if image.run is None:
-        raise ValueError('Image run must not be None'.)
+        raise ValueError('Image run must not be None.')
     if image.folder is None:
         raise ValueError('Image folder must not be None.')
     if image.dwell is None:
