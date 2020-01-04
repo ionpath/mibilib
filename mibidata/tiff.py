@@ -31,7 +31,7 @@ _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
 ENCODING = 'utf-8'
 
-REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder', 
+REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder',
                                 'dwell', 'scans', 'mass_gain', 'mass_offset',
                                 'time_resolution', 'coordinates')
 
