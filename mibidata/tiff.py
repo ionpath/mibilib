@@ -31,9 +31,9 @@ _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
 ENCODING = 'utf-8'
 
-REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder',
-                                'dwell', 'scans', 'mass_gain', 'mass_offset',
-                                'time_resolution', 'coordinates')
+REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder', 'dwell',
+                                'scans', 'mass_gain', 'mass_offset', 'time_resolution',
+                                'coordinates', 'size', 'masses', 'targets')
 
 def _micron_to_cm(arg):
     """Converts microns (1cm = 1e4 microns) to a fraction tuple in cm."""
@@ -92,28 +92,22 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibidata.mibi_image.MibiImage '
                          'instance.')
-    if image.coordinates is None or image.size is None:
-        raise ValueError('Image coordinates and size must not be None.')
-    if image.fov_id is None:
-        raise ValueError('Image fov_id must not be None.')
-    if image.fov_name is None:
-        raise ValueError('Image name must not be None.')
-    if image.run is None:
-        raise ValueError('Image run must not be None.')
-    if image.folder is None:
-        raise ValueError('Image folder must not be None.')
-    if image.dwell is None:
-        raise ValueError('Image dwell must not be None.')
-    if image.scans is None:
-        raise ValueError('Image scans must not be None.')
-    if image.mass_gain is None:
-        raise ValueError('Image mass_gain must not be None.')
-    if image.mass_offset is None:
-        raise ValueError('Image mass_offset must not be None.')
-    if image.time_resolution is None:
-        raise ValueError('Image time_resolution must not be None.')
-    if image.masses is None or image.targets is None:
-        raise ValueError('Image channels must contain both masses and targets.')
+    missing_required_metadata = []
+    for meta_attr in REQUIRED_METADATA_ATTRIBUTES:
+        if getattr(image, meta_attr) is None:
+            missing_required_metadata.append(meta_attr)
+    if len(missing_required_metadata) > 0:
+        if len(missing_required_metadata) == 1:
+            raise ValueError(missing_required_metadata[0] + ' is required and may not be None.')
+        else:
+            missing_fields = ''
+            for i, meta_attr in enumerate(missing_required_metadata):
+                if i == len(missing_required_metadata) - 1:
+                    missing_fields += meta_attr + ' '
+                else:
+                    missing_fields += meta_attr + ', '
+            raise ValueError(missing_fields + 'are required and may not be None.')
+    
     if write_float is not None:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
