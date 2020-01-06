@@ -31,9 +31,10 @@ _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
 ENCODING = 'utf-8'
 
-REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder', 'dwell',
-                                'scans', 'mass_gain', 'mass_offset', 'time_resolution',
-                                'coordinates', 'size', 'masses', 'targets')
+REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder',
+                                'dwell', 'scans', 'mass_gain', 'mass_offset',
+                                'time_resolution', 'coordinates', 'size', 
+                                'masses', 'targets')
 
 def _micron_to_cm(arg):
     """Converts microns (1cm = 1e4 microns) to a fraction tuple in cm."""
@@ -96,18 +97,20 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     for meta_attr in REQUIRED_METADATA_ATTRIBUTES:
         if getattr(image, meta_attr) is None:
             missing_required_metadata.append(meta_attr)
-    if len(missing_required_metadata) > 0:
+    if missing_required_metadata:
         if len(missing_required_metadata) == 1:
-            raise ValueError(missing_required_metadata[0] + ' is required and may not be None.')
+            missing_metadata_error = f'{missing_required_metadata[0]} is '
+                                     f'required and may not be None.'
         else:
             missing_fields = ''
             for i, meta_attr in enumerate(missing_required_metadata):
                 if i == len(missing_required_metadata) - 1:
-                    missing_fields += meta_attr + ' '
+                    missing_fields += f'{meta_attr} '
                 else:
-                    missing_fields += meta_attr + ', '
-            raise ValueError(missing_fields + 'are required and may not be None.')
-    
+                    missing_fields += f'{meta_attr}, '
+            missing_metadata_error = f'{missing_fields} are required'
+                                     f' and may not be None.'
+        raise ValueError(missing_metadata_error)
     if write_float is not None:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
