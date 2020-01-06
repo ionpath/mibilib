@@ -94,15 +94,16 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         raise ValueError('image must be a mibidata.mibi_image.MibiImage '
                          'instance.')
     missing_required_metadata = [m for m in REQUIRED_METADATA_ATTRIBUTES
-                                 if not getattr(image, meta_attr)]
+                                 if not getattr(image, m)]
     if missing_required_metadata:
         if len(missing_required_metadata) == 1:
             missing_metadata_error = (f'{missing_required_metadata[0]} is '
                                       f'required and may not be None.')
-        else:    
-            missing_metadata_error = (f'{', '.join(missing_required_metadata)}'
+        else:
+            missing_metadata_error = (f'{", ".join(missing_required_metadata)}'
                                       f' are required and may not be None.')
         raise ValueError(missing_metadata_error)
+
     if write_float is not None:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
