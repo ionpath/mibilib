@@ -31,6 +31,10 @@ _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
 ENCODING = 'utf-8'
 
+REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder',
+                                'dwell', 'scans', 'mass_gain', 'mass_offset',
+                                'time_resolution', 'coordinates', 'size',
+                                'masses', 'targets')
 
 def _micron_to_cm(arg):
     """Converts microns (1cm = 1e4 microns) to a fraction tuple in cm."""
@@ -79,7 +83,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             * The image is not a :class:`mibidata.mibi_image.MibiImage`
               instance.
             * The :class:`mibidata.mibi_image.MibiImage` coordinates, size,
-              masses or targets are None.
+              fov_id, fov_name, run, folder, dwell, scans, mass_gain,
+              mass_offset, time_resolution, masses or targets are None.
             * `dtype` is not one of ``np.float32`` or ``np.uint16``.
             * `write_float` has been specified.
             * Converting the native :class:`mibidata.mibi_image.MibiImage` dtype
@@ -88,10 +93,17 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibidata.mibi_image.MibiImage '
                          'instance.')
-    if image.coordinates is None or image.size is None:
-        raise ValueError('Image coordinates and size must not be None.')
-    if image.masses is None or image.targets is None:
-        raise ValueError('Image channels must contain both masses and targets.')
+    missing_required_metadata = [m for m in REQUIRED_METADATA_ATTRIBUTES
+                                 if not getattr(image, m)]
+    if missing_required_metadata:
+        if len(missing_required_metadata) == 1:
+            missing_metadata_error = (f'{missing_required_metadata[0]} is '
+                                      f'required and may not be None.')
+        else:
+            missing_metadata_error = (f'{", ".join(missing_required_metadata)}'
+                                      f' are required and may not be None.')
+        raise ValueError(missing_metadata_error)
+
     if write_float is not None:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
