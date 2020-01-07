@@ -266,15 +266,10 @@ def read(file, sims=True, sed=False, optical=False, label=False):
     with TiffFile(file) as tif:
         _check_software(tif)
         for page in tif.pages:
-            description = _page_description(page)
-            image_type = description['image.type'].lower()
+            description, image_type = _page_description(page)
             if sims and image_type == 'sims':
-                channels.append((description['channel.mass'],
-                                 description['channel.target']))
+                _get_page_data(page, description, metadata, channels)
                 sims_data.append(page.asarray())
-                # Get metadata on first SIMS page only
-                if not metadata:
-                    metadata.update(_page_metadata(page, description))
             elif return_types.get(image_type):
                 to_return[image_type] = page.asarray()
     if sims:
@@ -296,9 +291,13 @@ def _check_software(file):
 
 
 def _page_description(page):
-    """Loads and decodes the JSON description in a TIF page."""
-    return json.loads(
+    """Loads and decodes the JSON description and image type in a
+       TIFF page.
+    """
+    description = json.loads(
         page.tags['image_description'].value.decode(ENCODING))
+    image_type = description['image.type'].lower()
+    return description, image_type
 
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
@@ -360,6 +359,20 @@ def _convert_from_previous(description):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
 
+def _get_page_data(page, description, metadata, channels):
+    """Adds to metadata and channel info for single TIFF page.
+
+    Args:
+        page: Single page in TIFF file.
+        description: Decoded JSON description.
+        metadata: Dictionary of metadata for entire TIFF file to add to.
+        channels: List of channels for entire TIFF file to add to.
+    """
+    channels.append((description['channel.mass'],
+                     description['channel.target']))
+    # Get metadata on first SIMS page only
+    if not metadata:
+        metadata.update(_page_metadata(page, description))
 
 def info(filename):
     """Gets the SIMS pages' metadata from a MibiTiff file.
@@ -377,13 +390,8 @@ def info(filename):
     with TiffFile(filename) as tif:
         _check_software(tif)
         for page in tif.pages:
-            description = _page_description(page)
-            image_type = description['image.type'].lower()
+            description, image_type = _page_description(page)
             if image_type == 'sims':
-                channels.append((description['channel.mass'],
-                                 description['channel.target']))
-                #  Get metadata on first SIMS page only
-                if not metadata:
-                    metadata.update(_page_metadata(page, description))
+                _get_page_data(page, description, metadata, channels)
         metadata['conjugates'] = channels
         return metadata
