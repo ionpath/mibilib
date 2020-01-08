@@ -222,11 +222,12 @@ class MibiImage():
                 setattr(self, attr, None)
             elif hasattr(self, attr):
                 delattr(self, attr)
+                self._user_defined_attributes.remove(attr)
             else:
                 _no_attr.append(attr)
         if _required_rem:
             warnings.warn(f'{", ".join(_required_rem)} are required and '
-                          f'were not removed.')
+                          f'were not removed. Attributes were set to None.')
         if _no_attr:
             warnings.warn(f'{", ".join(_no_attr)} are not attributes of '
                           f'this instance.')
