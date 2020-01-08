@@ -225,11 +225,11 @@ class MibiImage():
             else:
                 _no_attr.append(attr)
         if _required_rem:
-            raise ValueError(f'{", ".join(_required_rem)} are required and '
-                             f'cannot be removed.')
+            warnings.warn(f'{", ".join(_required_rem)} are required and '
+                          f'were not removed.')
         if _no_attr:
-            raise ValueError(f'{", ".join(_no_attr)} are not attributes of '
-                             f'this instance.')
+            warnings.warn(f'{", ".join(_no_attr)} are not attributes of '
+                          f'this instance.')
 
 
     @property
