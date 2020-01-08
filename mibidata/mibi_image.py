@@ -185,6 +185,53 @@ class MibiImage():
             setattr(self, k, v)
             self._user_defined_attributes.append(k)
 
+    def add_attr(self, **kwargs):
+        """Adds metadata key-value pairs as attributes to
+           the class instance in use. If attribute already exists
+           for the current instance, updates value of attribute.
+
+        Args:
+            kwargs: A mapping of arguments for a user to add multiple
+                    attributes with their respecitve
+                    values.
+        """
+        date = kwargs.pop('date', self.date)
+        datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
+        try:
+            self.date = datetime.datetime.strptime(date, datetime_format)
+        except TypeError:  # Given as datetime obj already, or None.
+            self.date = date
+        for key, value in kwargs.items():
+            if key not in SPECIFIED_METADATA_ATTRIBUTES:
+                self._user_defined_attributes.append(key)
+            setattr(self, key, value)
+
+    def remove_attr(self, attributes):
+        """Removes user-defined attributes from the class instance in use.
+           If a user specifies a required attribute to be deleted, sets
+           attr to None.
+
+        Args:
+            attributes: A list of user-defined attributes for deletion.
+        """
+        _required_attr = SPECIFIED_METADATA_ATTRIBUTES
+        _required_rem = []
+        _no_attr = []
+        for attr in attributes:
+            if attr in _required_attr:
+                setattr(self, attr, None)
+            elif hasattr(self, attr):
+                delattr(self, attr)
+            else:
+                _no_attr.append(attr)
+        if _required_rem:
+            raise ValueError(f'{", ".join(_required_rem)} are required and '
+                             f'cannot be removed.')
+        if _no_attr:
+            raise ValueError(f'{", ".join(_no_attr)} are not attributes of '
+                             f'this instance.')
+
+
     @property
     def point_name(self):
         """Returns fov_name instead of deprecated point_name."""
