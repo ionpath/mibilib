@@ -334,23 +334,26 @@ class MibiImage():
 
     @staticmethod
     def match_fov_folder(value, field, value_name, field_name):
-    """Enforces consistency between fov_id and folder.
+        """Enforces consistency between fov_id and folder.
 
-    Args:
-        value: Value to match with.
-        field: Field that needs to be updated to value.
-        value_name: String representing whether matching folder or fov_id field.
-        field_name: String representing whether updating folder or fov_id field.
-    """
+        Args:
+            value: Value to match with.
+            field: Field that needs to be updated to value.
+            value_name: String representing whether matching folder
+                        or fov_id field.
+            field_name: String representing whether updating folder
+                        or fov_id field.
+        """
         if field_name == 'fov_id':
             value = value.split('/')[0]
         if not field:
-            warnings.warn('The "{field_name}" attribute is required if "{value_name}" is specified. '
-                      'Setting "{field_name}" to {value}.')
+            warnings.warn(
+                f'The "{field_name}" attribute is required if "{value_name}" '
+                f'is specified. Setting "{field_name}" to {value}.')
         elif field != value:
             warnings.warn(
-            'The attribute "{field_name}" must match "{value_name}". '
-            'Changing "{field_name}" from {} to {}.'.format(field, value))
+                f'The attribute "{field_name}" must match "{value_name}". '
+                f'Changing "{field_name}" from {field} to {value}.')
         field = value
 
     def metadata(self):
