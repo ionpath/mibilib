@@ -342,19 +342,15 @@ def _convert_from_previous(description):
     if not description.get('mibi.fov_name') and description.get(
             'mibi.description'):
         description['mibi.fov_name'] = description.pop('mibi.description')
-    # TODO: Clean up repetition between this and the same MibiImage method
-    if description.get('mibi.folder') and not description.get('mibi.fov_id'):
-        description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
-        warnings.warn(
-            'The "fov_id" attribute is now required if "folder" is '
-            'specified. Setting "fov_id" to {}.'.format(
-                description['mibi.fov_id']))
-    if (not description.get('mibi.folder') and description.get('mibi.fov_id')
-            and description.get('mibi.fov_id').startswith('FOV')):
-        description['mibi.folder'] = description['mibi.fov_id']
-        warnings.warn(
-            'The "folder" attribute is required if "fov_id" is specified. '
-            'Setting "folder" to {}.'.format(description['mibi.folder']))
+    if description.get('mibi.folder'):
+        description['mibi.fov_id'] = ''
+        value = 'mibi.folder'
+        field = 'mibi.fov_id'
+    if description.get('mibi.fov_id'):
+        description['mibi.folder'] = ''
+        value = 'mibi.fov_id'
+        field = 'mibi.folder'
+    mi.MibiImage.match_fov_folder(description[value], description[field], value[5:], field[5:])
     if description.get('mibi.aperture'):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
@@ -375,7 +371,7 @@ def _get_page_data(page, description, metadata, channels):
         metadata.update(_page_metadata(page, description))
 
 def info(filename):
-    """Gets the SIMS pages' metadata from a MibiTiff file.
+    """Gets the metadata from a MibiTiff file.
 
     Args:
         filename: The path to the TIFF.

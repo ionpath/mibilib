@@ -205,14 +205,8 @@ class MibiImage():
     def folder(self, value):
         """Enforce consistency with fov_id."""
         if value:
-            fov = value.split('/')[0]
-            if not self.fov_id:
-                self._fov_id = fov
-            elif self.fov_id != fov:
-                raise ValueError('fov_id must match folder, but here '
-                                 'fov_id={} and you are trying to set folder '
-                                 'to {}.'.format(self.fov_id, value))
             self._folder = value
+            self.match_fov_folder(value, self._fov_id, 'folder', 'fov_id')
 
     @property
     def fov_id(self):
@@ -221,13 +215,8 @@ class MibiImage():
     @fov_id.setter
     def fov_id(self, value):
         """Enforce consistency with folder."""
-        if not self.folder:
-            self._folder = value
-        elif value != self.folder.split('/')[0]:
-            raise ValueError('fov_id must match folder, but here '
-                             'folder={} and you are trying to set fov_id '
-                             'to {}.'.format(self.folder, value))
         self._fov_id = value
+        self.match_fov_folder(value, self._folder, 'fov_id', 'folder')
 
     @property
     def aperture(self):
@@ -341,6 +330,28 @@ class MibiImage():
                     'from the following map: {}'.format(value, APERTURE_MAP)
                 )
         return aperture
+
+
+    @staticmethod
+    def match_fov_folder(value, field, value_name, field_name):
+    """Enforces consistency between fov_id and folder.
+
+    Args:
+        value: Value to match with.
+        field: Field that needs to be updated to value.
+        value_name: String representing whether matching folder or fov_id field.
+        field_name: String representing whether updating folder or fov_id field.
+    """
+        if field_name == 'fov_id':
+            value = value.split('/')[0]
+        if not field:
+            warnings.warn('The "{field_name}" attribute is required if "{value_name}" is specified. '
+                      'Setting "{field_name}" to {value}.')
+        elif field != value:
+            warnings.warn(
+            'The attribute "{field_name}" must match "{value_name}". '
+            'Changing "{field_name}" from {} to {}.'.format(field, value))
+        field = value
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
