@@ -206,7 +206,7 @@ class MibiImage():
         """Enforce consistency with fov_id."""
         if value:
             self._folder = value
-            self.match_fov_folder(value, self._fov_id, 'folder', 'fov_id')
+            self._fov_id = self.match_fov_folder(value, self._fov_id, 'folder', 'fov_id')
 
     @property
     def fov_id(self):
@@ -216,7 +216,7 @@ class MibiImage():
     def fov_id(self, value):
         """Enforce consistency with folder."""
         self._fov_id = value
-        self.match_fov_folder(value, self._folder, 'fov_id', 'folder')
+        self._folder = self.match_fov_folder(value, self._folder, 'fov_id', 'folder')
 
     @property
     def aperture(self):
@@ -333,7 +333,7 @@ class MibiImage():
 
 
     @staticmethod
-    def match_fov_folder(value, field, value_name, field_name):
+    def match_fov_folder(value, field, value_name='valuename', field_name='fieldname'):
         """Enforces consistency between fov_id and folder.
 
         Args:
@@ -343,8 +343,10 @@ class MibiImage():
                         or fov_id field.
             field_name: String representing whether updating folder
                         or fov_id field.
+        Returns:
+            value: Value to set field to.
         """
-        if field_name == 'fov_id':
+        if field_name == 'fov_id' and value_name == 'folder':
             value = value.split('/')[0]
         if not field:
             warnings.warn(
@@ -354,7 +356,7 @@ class MibiImage():
             warnings.warn(
                 f'The attribute "{field_name}" must match "{value_name}". '
                 f'Changing "{field_name}" from {field} to {value}.')
-        field = value
+        return value
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""

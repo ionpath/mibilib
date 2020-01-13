@@ -122,9 +122,9 @@ class TestMibiImage(unittest.TestCase):
         image.fov_id = 'Point2'
         image.folder = 'Point2/RowNumber0/Depth_Profile0'
         image.fov_name = 'R1C3_Tonsil'
-        with self.assertRaises(ValueError):
+        with self.assertWarns(UserWarning):
             image.fov_id = 'Point99'
-        with self.assertRaises(ValueError):
+        with self.assertWarns(UserWarning):
             image.fov_id = None
 
     def test_check_fov_id_without_folder(self):
@@ -223,7 +223,7 @@ class TestMibiImage(unittest.TestCase):
         metadata = METADATA.copy()
         metadata = {**metadata, **USER_DEFINED_METADATA}
         metadata['fov_id'] = 'Point99'
-        with self.assertRaises(ValueError):
+        with self.assertWarns(UserWarning):
             mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
 
     def test_channel_inds_single_channel(self):

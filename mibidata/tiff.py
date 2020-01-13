@@ -353,8 +353,8 @@ def _convert_from_previous(description):
         field = 'mibi.folder'
         matchNeeded = True
     if matchNeeded:
-        mi.MibiImage.match_fov_folder(description[value], description[field],
-                                      value[5:], field[5:])
+        description[field] = mi.MibiImage.match_fov_folder(description[value],
+                                description[field], value[5:], field[5:])
     if description.get('mibi.aperture'):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
