@@ -199,21 +199,19 @@ class MibiImage():
             defined for this instance.
 
         """
-        already_defined = []
-        for key, value in kwargs.items():
-            if not hasattr(self, key):
-                self._user_defined_attributes.append(key)
-                setattr(self, key, value)
-            else:
-                already_defined.append(key)
+        already_defined = [attr for attr in kwargs if hasattr(self, attr)]
         if already_defined:
             if len(already_defined) == 1:
-                already_defined_error = (f'{already_defined[0]} is '
-                                         f'already defined for this instance.')
+                already_def_error = (f'{already_defined[0]} is already '
+                                     f'an attribute of this instance.')
             else:
-                already_defined_error = (f'{", ".join(already_defined)} are '
-                                         f'already defined for this instance.')
-            raise ValueError(already_defined_error)
+                already_def_error = (f'{", ".join(already_defined)} are '
+                                     f'already attributes for this instance.')
+            raise ValueError(already_def_error)
+        for key, value in kwargs.items():
+            self._user_defined_attributes.append(key)
+            setattr(self, key, value)
+
 
     def remove_attr(self, attributes):
         """Removes user-defined attributes from the class instance in use.
@@ -227,33 +225,28 @@ class MibiImage():
                 * attempts to remove a required attribute.
                 * an attribute is not defined for this instance.
         """
-        _required_attr = SPECIFIED_METADATA_ATTRIBUTES
-        _required_rem = []
-        _no_attr = []
-        for attr in attributes:
-            if attr in _required_attr:
-                _required_rem.append(attr)
-            elif hasattr(self, attr):
-                delattr(self, attr)
-                self._user_defined_attributes.remove(attr)
-            else:
-                _no_attr.append(attr)
-        if _required_rem:
-            if len(_required_rem) == 1:
-                required_error = (f'{_required_rem[0]} is a required '
+        required_rem = [attr for attr in attributes if attr
+                        in SPECIFIED_METADATA_ATTRIBUTES]
+        no_attr = [attr for attr in attributes if not hasattr(self, attr)]
+        if required_rem:
+            if len(required_rem) == 1:
+                required_error = (f'{required_rem[0]} is a required '
                                   f'attribute and was not removed.')
             else:
-                required_error = (f'{", ".join(_required_rem)} are required '
+                required_error = (f'{", ".join(required_rem)} are required '
                                   f'attributes and were not removed.')
             raise ValueError(required_error)
-        if _no_attr:
-            if len(_no_attr) == 1:
-                required_error = (f'{_no_attr[0]} is not an attribute '
+        if no_attr:
+            if len(no_attr) == 1:
+                required_error = (f'{no_attr[0]} is not an attribute '
                                   f'of this instance.')
             else:
-                required_error = (f'{", ".join(_no_attr)} are not attributes '
+                required_error = (f'{", ".join(no_attr)} are not attributes '
                                   f'of this instance.')
             raise ValueError(required_error)
+        for attr in attributes:
+            delattr(self, attr)
+            self._user_defined_attributes.remove(attr)
 
 
     @property

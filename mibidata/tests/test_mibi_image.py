@@ -219,6 +219,37 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image._user_defined_attributes,
                          list(USER_DEFINED_METADATA))
 
+    def test_add_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        image.add_attr(**USER_DEFINED_METADATA)
+        self.assertEqual(image._user_defined_attributes,
+                         list(USER_DEFINED_METADATA))
+
+    def test_add_existing_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        metadata = METADATA.copy()
+        metadata = {**metadata, **USER_DEFINED_METADATA}
+        with self.assertRaises(ValueError):
+            image.add_attr(**metadata)
+
+    def test_remove_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        image.remove_attr(USER_DEFINED_METADATA.keys())
+        expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(expected, image)
+
+    def test_remove_required_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            image.remove_attr(['fov_id'])
+
+    def test_remove_undefined_user_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            image.remove_attr(['x_size'])
+
     def test_metadata_wrong_fov_id(self):
         metadata = METADATA.copy()
         metadata = {**metadata, **USER_DEFINED_METADATA}
