@@ -236,19 +236,19 @@ class TestMibiImage(unittest.TestCase):
     def test_remove_user_defined_metadata(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
                              **USER_DEFINED_METADATA)
-        image.remove_attr(USER_DEFINED_METADATA.keys())
+        image.remove_attr(*list(USER_DEFINED_METADATA.keys()))
         expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
         self.assertEqual(expected, image)
 
     def test_remove_required_metadata(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
         with self.assertRaises(ValueError):
-            image.remove_attr(['fov_id'])
+            image.remove_attr('fov_id')
 
     def test_remove_undefined_user_metadata(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
         with self.assertRaises(ValueError):
-            image.remove_attr(['x_size'])
+            image.remove_attr(*['x_size'])
 
     def test_metadata_wrong_fov_id(self):
         metadata = METADATA.copy()

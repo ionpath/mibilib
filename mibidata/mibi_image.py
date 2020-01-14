@@ -213,11 +213,12 @@ class MibiImage():
             setattr(self, key, value)
 
 
-    def remove_attr(self, attributes):
+    def remove_attr(self, *args):
         """Removes user-defined attributes from the class instance in use.
 
         Args:
-            attributes: A list of user-defined attributes for deletion.
+            attributes: A single string or a list of user-defined attributes
+                        for deletion.
 
         Raises:
             ValueError: Raised if
@@ -225,16 +226,16 @@ class MibiImage():
                 * attempts to remove a required attribute.
                 * an attribute is not defined for this instance.
         """
-        required_rem = [attr for attr in attributes if attr
+        required_rem = [attr for attr in args if attr
                         in SPECIFIED_METADATA_ATTRIBUTES]
-        no_attr = [attr for attr in attributes if not hasattr(self, attr)]
+        no_attr = [attr for attr in args if not hasattr(self, attr)]
         if required_rem:
             if len(required_rem) == 1:
                 required_error = (f'{required_rem[0]} is a required '
-                                  f'attribute and was not removed.')
+                                  f'attribute.')
             else:
                 required_error = (f'{", ".join(required_rem)} are required '
-                                  f'attributes and were not removed.')
+                                  f'attributes.')
             raise ValueError(required_error)
         if no_attr:
             if len(no_attr) == 1:
@@ -244,7 +245,7 @@ class MibiImage():
                 required_error = (f'{", ".join(no_attr)} are not attributes '
                                   f'of this instance.')
             raise ValueError(required_error)
-        for attr in attributes:
+        for attr in args:
             delattr(self, attr)
             self._user_defined_attributes.remove(attr)
 
