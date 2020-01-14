@@ -206,7 +206,8 @@ class MibiImage():
         """Enforce consistency with fov_id."""
         if value:
             self._folder = value
-            self._fov_id = self.match_fov_folder(value, self._fov_id, 'folder', 'fov_id')
+            self._fov_id = self.match_fov_folder(value, self._fov_id, 'folder',
+                                                 'fov_id')
 
     @property
     def fov_id(self):
@@ -216,7 +217,8 @@ class MibiImage():
     def fov_id(self, value):
         """Enforce consistency with folder."""
         self._fov_id = value
-        self._folder = self.match_fov_folder(value, self._folder, 'fov_id', 'folder')
+        self._folder = self.match_fov_folder(value, self._folder, 'fov_id',
+                                             'folder')
 
     @property
     def aperture(self):
@@ -333,7 +335,8 @@ class MibiImage():
 
 
     @staticmethod
-    def match_fov_folder(value, field, value_name='valuename', field_name='fieldname'):
+    def match_fov_folder(value, field, value_name='valuename',
+                         field_name='fieldname'):
         """Enforces consistency between fov_id and folder.
 
         Args:
