@@ -495,6 +495,56 @@ software, this will the same as the fov_id.</dd>
 </ul>
 </dd></dl>
 
+<dl class="method">
+<dt id="mibidata.mibi_image.MibiImage.add_attr">
+<code class="descname">add_attr</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.add_attr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Adds user-defined metadata key-value pairs as attributes to</dt>
+<dd>the class instance in use. If attribute already exists
+for the current instance, raises an error.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>kwargs</strong> – A mapping of arguments for a user to add multiple
+attributes with their respecitve
+values.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if attempts to set an attribute that is already</li>
+<li>defined for this instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mibidata.mibi_image.MibiImage.remove_attr">
+<code class="descname">remove_attr</code><span class="sig-paren">(</span><em>attributes</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.remove_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes user-defined attributes from the class instance in use.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>attributes</strong> – A single string or a list of user-defined attributes
+for deletion.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
+<ul class="last simple">
+<li>attempts to remove a required attribute.</li>
+<li>an attribute is not defined for this instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="mibidata.mibi_image.MibiImage.point_name">
 <code class="descname">point_name</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.point_name" title="Permalink to this definition">¶</a></dt>
@@ -563,7 +613,7 @@ used during image acquisition.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li>ValueError raised if the value parameter cannot be mapped to an</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the value parameter cannot be mapped to an</li>
 <li>aperture code.</li>
 </ul>
 </td>
