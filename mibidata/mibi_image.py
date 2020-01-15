@@ -227,7 +227,7 @@ class MibiImage():
                 * an attribute is not defined for this instance.
         """
         if isinstance(attributes, str):
-            attributes = list(attributes)
+            attributes = [attributes]
         required_rem = [attr for attr in attributes if attr
                         in SPECIFIED_METADATA_ATTRIBUTES]
         no_attr = [attr for attr in attributes if not hasattr(self, attr)]

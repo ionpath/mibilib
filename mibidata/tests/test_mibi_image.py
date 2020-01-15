@@ -240,6 +240,13 @@ class TestMibiImage(unittest.TestCase):
         expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
         self.assertEqual(expected, image)
 
+    def test_remove_single_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             x_size=500.)
+        image.remove_attr('x_size')
+        expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(expected, image)
+
     def test_remove_required_metadata(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
         with self.assertRaises(ValueError):
