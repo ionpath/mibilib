@@ -335,8 +335,8 @@ class MibiImage():
 
 
     @staticmethod
-    def match_fov_folder(value, field, value_name='valuename',
-                         field_name='fieldname'):
+    def match_fov_folder(value, field, value_name,
+                         field_name):
         """Enforces consistency between fov_id and folder.
 
         Args:
