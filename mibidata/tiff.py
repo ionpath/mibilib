@@ -339,6 +339,7 @@ def _convert_from_previous(description):
     Most of these conversions would happen during MibiImage construction,
     but we do them here in case reading the info only.
     """
+    match_needed = False
     if not description.get('mibi.fov_name') and description.get(
             'mibi.description'):
         description['mibi.fov_name'] = description.pop('mibi.description')
@@ -346,13 +347,13 @@ def _convert_from_previous(description):
         description['mibi.fov_id'] = ''
         value = 'mibi.folder'
         field = 'mibi.fov_id'
-        matchNeeded = True
+        match_needed = True
     if description.get('mibi.fov_id'):
         description['mibi.folder'] = ''
         value = 'mibi.fov_id'
         field = 'mibi.folder'
-        matchNeeded = True
-    if matchNeeded:
+        match_needed = True
+    if match_needed:
         description[field] = mi.MibiImage.match_fov_folder(
             description[value], description[field], value.split('.')[1],
             field.split('.')[1])
