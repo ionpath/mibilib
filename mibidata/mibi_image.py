@@ -185,6 +185,73 @@ class MibiImage():
             setattr(self, k, v)
             self._user_defined_attributes.append(k)
 
+    def add_attr(self, **kwargs):
+        """Adds user-defined metadata key-value pairs as attributes to
+           the class instance in use. If attribute already exists
+           for the current instance, raises an error.
+
+        Args:
+            kwargs: A mapping of arguments for a user to add multiple
+                    attributes with their respecitve
+                    values.
+        Raises:
+            ValueError: Raised if attempts to set an attribute that is already
+            defined for this instance.
+
+        """
+        already_defined = [attr for attr in kwargs if hasattr(self, attr)]
+        if already_defined:
+            if len(already_defined) == 1:
+                already_def_error = (f'{already_defined[0]} is already '
+                                     f'an attribute of this instance.')
+            else:
+                already_def_error = (f'{", ".join(already_defined)} are '
+                                     f'already attributes for this instance.')
+            raise ValueError(already_def_error)
+        for key, value in kwargs.items():
+            self._user_defined_attributes.append(key)
+            setattr(self, key, value)
+
+
+    def remove_attr(self, attributes):
+        """Removes user-defined attributes from the class instance in use.
+
+        Args:
+            attributes: A single string or a list of user-defined attributes
+                        for deletion.
+
+        Raises:
+            ValueError: Raised if
+
+                * attempts to remove a required attribute.
+                * an attribute is not defined for this instance.
+        """
+        if isinstance(attributes, str):
+            attributes = [attributes]
+        required_rem = [attr for attr in attributes if attr
+                        in SPECIFIED_METADATA_ATTRIBUTES]
+        no_attr = [attr for attr in attributes if not hasattr(self, attr)]
+        if required_rem:
+            if len(required_rem) == 1:
+                required_error = (f'{required_rem[0]} is a required '
+                                  f'attribute.')
+            else:
+                required_error = (f'{", ".join(required_rem)} are required '
+                                  f'attributes.')
+            raise ValueError(required_error)
+        if no_attr:
+            if len(no_attr) == 1:
+                required_error = (f'{no_attr[0]} is not an attribute '
+                                  f'of this instance.')
+            else:
+                required_error = (f'{", ".join(no_attr)} are not attributes '
+                                  f'of this instance.')
+            raise ValueError(required_error)
+        for attr in attributes:
+            delattr(self, attr)
+            self._user_defined_attributes.remove(attr)
+
+
     @property
     def point_name(self):
         """Returns fov_name instead of deprecated point_name."""
@@ -306,7 +373,7 @@ class MibiImage():
             An aperture code (e.g. 'A' or 'B') matching aperture width
             used during image acquisition.
         Raises:
-            ValueError raised if the value parameter cannot be mapped to an
+            ValueError: Raised if the value parameter cannot be mapped to an
             aperture code.
         """
         if value in APERTURE_MAP.values() or value is None:
