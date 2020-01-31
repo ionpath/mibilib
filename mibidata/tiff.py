@@ -229,7 +229,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     extratags=page_tags)
 
 
-def read(file, sims=True, sed=False, optical=False, label=False):
+def read(file, sims=True, sed=False, optical=False, label=False,
+         inc_channels=None):
     """Reads MIBI data from an IonpathMIBI TIFF file.
 
     Args:
@@ -241,6 +242,8 @@ def read(file, sims=True, sed=False, optical=False, label=False):
             False.
         label: Boolean for whether to return the slide label image. Defaults to
             False.
+        inc_channels: List or tuple of channel names to include in MibiImage.
+                      Names should be string tuples of format (mass, target).
 
     Returns: A tuple of the image types set to True in the parameters, in the
         order SIMS, SED, Optical, Label (but including only those types
@@ -248,7 +251,8 @@ def read(file, sims=True, sed=False, optical=False, label=False):
         :class:`mibidata.mibi_image.MibiImage` instance; the other image
         types will be returned as numpy arrays. If an image type is selected to
         be returned  but is not present in the image, it will be returned as
-        None.
+        None. If returning SIMS data and the inc_channels parameter is set, only
+        those channels will be included in the MibiImage instance.
 
     Raises:
         ValueError: Raised if the input file is not of the IonpathMIBI
@@ -259,6 +263,11 @@ def read(file, sims=True, sed=False, optical=False, label=False):
     ])
     if not any((val for val in return_types.values())):
         raise ValueError('At least one image type must be specified to return.')
+    if (inc_channels and not isinstance(inc_channels, (list, tuple)) and not
+            isinstance(inc_channels[0], tuple)):
+        raise ValueError('The parameter inc_channels must be a tuple or list '
+                         'that contains string tuples in the format '
+                         '(mass, target).')
     to_return = {}
     metadata = {}
     sims_data = []
@@ -268,8 +277,9 @@ def read(file, sims=True, sed=False, optical=False, label=False):
         for page in tif.pages:
             description, image_type = _page_description(page)
             if sims and image_type == 'sims':
-                _get_page_data(page, description, metadata, channels)
-                sims_data.append(page.asarray())
+                if _get_page_data(page, description, metadata, channels,
+                                  inc_channels):
+                    sims_data.append(page.asarray())
             elif return_types.get(image_type):
                 to_return[image_type] = page.asarray()
     if sims:
@@ -361,7 +371,7 @@ def _convert_from_previous(description):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
 
-def _get_page_data(page, description, metadata, channels):
+def _get_page_data(page, description, metadata, channels, inc_channels=None):
     """Adds to metadata and channel info for single TIFF page.
 
     Args:
@@ -369,24 +379,43 @@ def _get_page_data(page, description, metadata, channels):
         description: Decoded JSON description.
         metadata: Dictionary of metadata for entire TIFF file to add to.
         channels: List of channels for entire TIFF file to add to.
+        inc_channels: If set, only these channels will be added to channel
+                      parameter.
+
+    Returns:
+        include: Boolean representing whether channel should be included or not.
     """
-    channels.append((description['channel.mass'],
-                     description['channel.target']))
     # Get metadata on first SIMS page only
     if not metadata:
         metadata.update(_page_metadata(page, description))
+    if inc_channels:
+        if (description['channel.mass'],
+                description['channel.target']) not in inc_channels:
+            return False
+    channels.append((description['channel.mass'],
+                     description['channel.target']))
+    return True
 
-def info(filename):
+def info(filename, inc_channels=None):
     """Gets the metadata from a MibiTiff file.
 
     Args:
         filename: The path to the TIFF.
+        inc_channels: List or tuple of channel names to include in MibiImage.
+                      Names should be string tuples of format (mass, target).
 
     Returns:
         A dictionary of metadata as could be supplied as kwargs to
-        :class:`mibidata.mibi_image.MibiImage`, except with a ``channels`` key
-        whose value is a list of (mass, target) tuples.
+        :class:`mibidata.mibi_image.MibiImage`, except with a ``conjugates`` key
+        whose value is a list of (mass, target) tuples. If inc_channels is set,
+        then the metadata ``conjugates`` key only contains information for those
+        channels.
     """
+    if (inc_channels and not isinstance(inc_channels, (list, tuple)) and not
+            isinstance(inc_channels[0], tuple)):
+        raise ValueError('The parameter inc_channels must be a tuple or list '
+                         'that contains string tuples in the format '
+                         '(mass, target).')
     metadata = {}
     channels = []
     with TiffFile(filename) as tif:
@@ -394,6 +423,7 @@ def info(filename):
         for page in tif.pages:
             description, image_type = _page_description(page)
             if image_type == 'sims':
-                _get_page_data(page, description, metadata, channels)
+                _get_page_data(page, description, metadata, channels,
+                               inc_channels)
         metadata['conjugates'] = channels
         return metadata

@@ -8,11 +8,14 @@ import shutil
 import tempfile
 import unittest
 import warnings
+import sys
 
 import numpy as np
 from skimage import io as skio, img_as_ubyte, transform
 from skimage.external.tifffile import TiffFile
 
+print(sys.path)
+sys.path.append('/Users/emunch/Documents/mibitracker-client')
 from mibidata import mibi_image as mi
 from mibidata import tiff, util
 
@@ -104,6 +107,22 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertIsNone(optical)
         self.assertIsNone(label)
         self.assertEqual(image.data.dtype, np.float32)
+
+    def test_sims_selected_channels(self):
+        tiff.write(self.filename, self.float_image)
+        image = tiff.read(self.filename, inc_channels=CHANNELS[1:3])
+        print(image.channels)
+        expected_image = tiff.read(self.filename)
+        expected_image = expected_image.slice_image(CHANNELS[1:3])
+        self.assertEqual(expected_image.channels, image.channels)
+        self.assertEqual(expected_image.metadata(), image.metadata())
+        self.assertEqual(expected_image, image)
+
+    def test_sims_selected_channels_wrong_format(self):
+        STRING_LABELS = ('1', '2', '3')
+        tiff.write(self.filename, self.float_image)
+        with self.assertRaises(ValueError):
+            image = tiff.read(self.filename, inc_channels=STRING_LABELS)
 
     def test_default_ranges(self):
         tiff.write(self.filename, self.float_image)
@@ -202,6 +221,16 @@ class TestWriteReadTiff(unittest.TestCase):
         expected = METADATA.copy()
         expected.update({
             'conjugates': list(CHANNELS),
+            'date': datetime.datetime.strptime(expected['date'],
+                                               '%Y-%m-%dT%H:%M:%S')})
+        self.assertEqual(metadata, expected)
+
+    def test_read_metadata_selected_channels(self):
+        tiff.write(self.filename, self.float_image)
+        metadata = tiff.info(self.filename, CHANNELS[1:3])
+        expected = METADATA.copy()
+        expected.update({
+            'conjugates': list(CHANNELS[1:3]),
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S')})
         self.assertEqual(metadata, expected)
