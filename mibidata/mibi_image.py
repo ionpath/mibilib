@@ -316,7 +316,6 @@ class MibiImage():
     def _set_channels(self, channels, length):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
-        self._channels = tuple(channels)
         if all((isinstance(c, tuple) and len(c) == 2 for c in channels)):
             # Tuples of masses and targets.
             masses, targets = zip(*channels)
@@ -332,6 +331,7 @@ class MibiImage():
             raise ValueError(
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
+        self._channels = tuple(channels)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
@@ -547,10 +547,20 @@ class MibiImage():
         """
         if set(self.channels).intersection(set(image.channels)):
             raise ValueError('Images contain overlapping channels.')
-        self.data = np.concatenate((self.data, image.data), axis=2)
+        if all((isinstance(c, tuple) and len(c) == 2 for c in self.channels)):
+            if not all((isinstance(c, tuple) and len(c) == 2
+                        for c in image.channels)):
+                raise ValueError('Channels to be appended must match form as '
+                                 'original image, which is a list of tuples in '
+                                 'format (mass, target).')
+        if all(isinstance(c, str) for c in self.channels):
+            if not all(isinstance(c, str) for c in image.channels):
+                raise ValueError('Channels to be appended must match form as '
+                                 'original image, which is a list of str.')
         self._set_channels(
             [c for c in self.channels] + [c for c in image.channels],
             len(self.channels) + len(image.channels))
+        self.data = np.concatenate((self.data, image.data), axis=2)
 
     def remove_channels(self, channels, copy=False):
         """Removes specified channels from a MibiImage.
