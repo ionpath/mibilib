@@ -545,18 +545,18 @@ class MibiImage():
             ValueError: Raised if the image has any channels already present on
                 instance to which it is being appended.
         """
-        #TODO: concatenates data before we check if channels are unique
         if set(self.channels).intersection(set(image.channels)):
             raise ValueError('Images contain overlapping channels.')
-        #TODO: make sure channels we are adding are same type: (int, str) or list of str
         if all((isinstance(c, tuple) and len(c) == 2 for c in self.channels)):
-            if not all((isinstance(c, tuple) and len(c) == 2 for c in image.channels)):
-                raise ValueError('Channels to be appended must match form as original image, '
-                                 'which is a list of tuples in format (mass, target).')
+            if not all((isinstance(c, tuple) and len(c) == 2
+                        for c in image.channels)):
+                raise ValueError('Channels to be appended must match form as '
+                                 'original image, which is a list of tuples in '
+                                 'format (mass, target).')
         if all(isinstance(c, str) for c in self.channels):
             if not all(isinstance(c, str) for c in image.channels):
-                raise ValueError('Channels to be appended must match form as original image, '
-                                 'which is a list of str.')
+                raise ValueError('Channels to be appended must match form as '
+                                 'original image, which is a list of str.')
         self._set_channels(
             [c for c in self.channels] + [c for c in image.channels],
             len(self.channels) + len(image.channels))
