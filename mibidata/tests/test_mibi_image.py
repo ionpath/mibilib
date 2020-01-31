@@ -346,6 +346,33 @@ class TestMibiImage(unittest.TestCase):
         np.testing.assert_array_equal(
             first_image.slice_data('4'), second_image.slice_data('4'))
 
+    #TODO
+    def test_append_non_unique_channels(self):
+        first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        second_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        non_unique_masses = [('Mass1', 'A'), ('Mass2', 'B'), ('3', 'C')]
+        second_image = mi.MibiImage(TEST_DATA, non_unique_masses, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        non_unique_targets = [('1', 'Target1'), ('2', 'Target2'), ('3', 'A')]
+        second_image = mi.MibiImage(TEST_DATA, non_unique_targets, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+
+    def test_append_channels_of_different_type(self):
+        first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        second_image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        first_image = second_image.copy()
+        second_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+
     def test_remove_layers_without_copy(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
         image.remove_channels(['1', '3'])
