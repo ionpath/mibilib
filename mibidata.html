@@ -622,6 +622,34 @@ used during image acquisition.</p>
 </table>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="mibidata.mibi_image.MibiImage.match_fov_folder">
+<em class="property">static </em><code class="descname">match_fov_folder</code><span class="sig-paren">(</span><em>value</em>, <em>field</em>, <em>value_name</em>, <em>field_name</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.match_fov_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enforces consistency between fov_id and folder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> – Value to match with.</li>
+<li><strong>field</strong> – Field that needs to be updated to value.</li>
+<li><strong>value_name</strong> – String representing whether matching folder
+or fov_id field.</li>
+<li><strong>field_name</strong> – String representing whether updating folder
+or fov_id field.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Value to set field to.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">value</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="mibidata.mibi_image.MibiImage.metadata">
 <code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.metadata" title="Permalink to this definition">¶</a></dt>
@@ -1215,7 +1243,7 @@ format, or if no image type selected to be returned.</td>
 <dl class="function">
 <dt id="mibidata.tiff.info">
 <code class="descclassname">mibidata.tiff.</code><code class="descname">info</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the SIMS pages’ metadata from a MibiTiff file.</p>
+<dd><p>Gets the metadata from a MibiTiff file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
