@@ -418,7 +418,8 @@ def info(filename, inc_channels=None):
         ValueError: Raised if the inc_channels parameter is not a tuple or list
             of string tuples.
     """
-    if not mi.MibiImage.channels_is_list_of_tuples(inc_channels):
+    if inc_channels and not mi.MibiImage.channels_is_list_of_tuples(
+            inc_channels):
         raise ValueError('The parameter inc_channels must be a tuple or list '
                          'that contains string tuples in the format '
                          '(mass, target).')

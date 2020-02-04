@@ -551,7 +551,7 @@ class MibiImage():
 
         Raises:
             ValueError: Raised if
-            
+
                 * The image has any channels already present on
                   instance to which it is being appended.
                 * The channels to be appended do not match the form of the
