@@ -108,11 +108,8 @@ class TestWriteReadTiff(unittest.TestCase):
     def test_sims_selected_channels(self):
         tiff.write(self.filename, self.float_image)
         image = tiff.read(self.filename, inc_channels=CHANNELS[1:3])
-        print(image.channels)
         expected_image = tiff.read(self.filename)
         expected_image = expected_image.slice_image(CHANNELS[1:3])
-        self.assertEqual(expected_image.channels, image.channels)
-        self.assertEqual(expected_image.metadata(), image.metadata())
         self.assertEqual(expected_image, image)
 
     def test_sims_selected_channels_wrong_format(self):

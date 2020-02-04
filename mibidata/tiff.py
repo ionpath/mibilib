@@ -255,8 +255,12 @@ def read(file, sims=True, sed=False, optical=False, label=False,
         those channels will be included in the MibiImage instance.
 
     Raises:
-        ValueError: Raised if the input file is not of the IonpathMIBI
-            format, or if no image type selected to be returned.
+        ValueError: Raised if
+
+            * The input file is not of the IonpathMIBI format, or if no image
+              type selected to be returned.
+            * The inc_channels parameter is not a tuple or list of
+              string tuples.
     """
     return_types = collections.OrderedDict([
         ('sims', sims), ('sed', sed), ('optical', optical), ('label', label)
@@ -388,10 +392,9 @@ def _get_page_data(page, description, metadata, channels, inc_channels=None):
     # Get metadata on first SIMS page only
     if not metadata:
         metadata.update(_page_metadata(page, description))
-    if inc_channels:
-        if (description['channel.mass'],
-                description['channel.target']) not in inc_channels:
-            return False
+    if inc_channels and (description['channel.mass'], \
+        description['channel.target']) not in inc_channels:
+        return False
     channels.append((description['channel.mass'],
                      description['channel.target']))
     return True
@@ -410,6 +413,10 @@ def info(filename, inc_channels=None):
         whose value is a list of (mass, target) tuples. If inc_channels is set,
         then the metadata ``conjugates`` key only contains information for those
         channels.
+
+    Raises:
+        ValueError: Raised if the inc_channels parameter is not a tuple or list
+            of string tuples.
     """
     if (inc_channels and not isinstance(inc_channels, (list, tuple)) and not
             isinstance(inc_channels[0], tuple)):
