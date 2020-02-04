@@ -267,8 +267,8 @@ def read(file, sims=True, sed=False, optical=False, label=False,
     ])
     if not any((val for val in return_types.values())):
         raise ValueError('At least one image type must be specified to return.')
-    if (inc_channels and not isinstance(inc_channels, (list, tuple)) and not
-            isinstance(inc_channels[0], tuple)):
+    if (inc_channels and not
+            mi.MibiImage.channels_is_list_of_tuples(inc_channels)):
         raise ValueError('The parameter inc_channels must be a tuple or list '
                          'that contains string tuples in the format '
                          '(mass, target).')
@@ -418,8 +418,7 @@ def info(filename, inc_channels=None):
         ValueError: Raised if the inc_channels parameter is not a tuple or list
             of string tuples.
     """
-    if (inc_channels and not isinstance(inc_channels, (list, tuple)) and not
-            isinstance(inc_channels[0], tuple)):
+    if not mi.MibiImage.channels_is_list_of_tuples(inc_channels):
         raise ValueError('The parameter inc_channels must be a tuple or list '
                          'that contains string tuples in the format '
                          '(mass, target).')

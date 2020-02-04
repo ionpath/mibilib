@@ -316,7 +316,7 @@ class MibiImage():
     def _set_channels(self, channels, length):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
-        if all((isinstance(c, tuple) and len(c) == 2 for c in channels)):
+        if MibiImage.channels_is_list_of_tuples(channels):
             # Tuples of masses and targets.
             masses, targets = zip(*channels)
             if len(set(masses)) != length:
@@ -325,7 +325,7 @@ class MibiImage():
                 raise ValueError('Targets are not all unique.')
             self.masses = masses
             self.targets = targets
-        elif all(isinstance(c, str) for c in channels):
+        elif MibiImage.channels_is_list_of_strings(channels):
             self.masses = self.targets = None
         else:
             raise ValueError(
@@ -435,6 +435,14 @@ class MibiImage():
         metadata_keys.extend(self._user_defined_attributes)
         return {key: getattr(self, key) for key in metadata_keys}
 
+    @staticmethod
+    def channels_is_list_of_tuples(channels):
+        return all(isinstance(c, tuple) and len(c) == 2 for c in channels)
+
+    @staticmethod
+    def channels_is_list_of_strings(channels):
+        return all(isinstance(c, str) for c in channels)
+
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.
 
@@ -542,20 +550,23 @@ class MibiImage():
             image: A MibiImage.
 
         Raises:
-            ValueError: Raised if the image has any channels already present on
-                instance to which it is being appended.
+            ValueError: Raised if
+            
+                * The image has any channels already present on
+                  instance to which it is being appended.
+                * The channels to be appended do not match the form of the
+                  channels of the original image.
         """
         if set(self.channels).intersection(set(image.channels)):
             raise ValueError('Images contain overlapping channels.')
-        if all((isinstance(c, tuple) and len(c) == 2 for c in self.channels)):
-            if not all((isinstance(c, tuple) and len(c) == 2
-                        for c in image.channels)):
-                raise ValueError('Channels to be appended must match form as '
+        if MibiImage.channels_is_list_of_tuples(self.channels):
+            if not MibiImage.channels_is_list_of_tuples(image.channels):
+                raise ValueError('Channels to be appended must match form of '
                                  'original image, which is a list of tuples in '
-                                 'format (mass, target).')
-        if all(isinstance(c, str) for c in self.channels):
-            if not all(isinstance(c, str) for c in image.channels):
-                raise ValueError('Channels to be appended must match form as '
+                                 'the format (mass, target).')
+        if MibiImage.channels_is_list_of_strings(self.channels):
+            if not MibiImage.channels_is_list_of_strings(image.channels):
+                raise ValueError('Channels to be appended must match form of '
                                  'original image, which is a list of str.')
         self._set_channels(
             [c for c in self.channels] + [c for c in image.channels],
