@@ -443,6 +443,15 @@ class MibiImage():
     def channels_is_list_of_strings(channels):
         return all(isinstance(c, str) for c in channels)
 
+    @staticmethod
+    def channel_is_single_tuple(channel):
+        return isinstance(channel, tuple) and len(channel) == 2 \
+               and isinstance(channel[0], (int, str))
+
+    @staticmethod
+    def channel_is_single_string(channel):
+        return isinstance(channel, str)
+
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.
 

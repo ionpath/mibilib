@@ -257,8 +257,8 @@ def read(file, sims=True, sed=False, optical=False, label=False,
     Raises:
         ValueError: Raised if
 
-            * The input file is not of the IonpathMIBI format, or if no image
-              type selected to be returned.
+            * The input file is not of the IONpath MIBItiff format, or if no
+              image type is selected to be returned.
             * The inc_channels parameter is not a tuple or list of
               string tuples.
     """
@@ -267,11 +267,13 @@ def read(file, sims=True, sed=False, optical=False, label=False,
     ])
     if not any((val for val in return_types.values())):
         raise ValueError('At least one image type must be specified to return.')
-    if (inc_channels and not
-            mi.MibiImage.channels_is_list_of_tuples(inc_channels)):
+    if inc_channels and not _channels_valid_type(inc_channels):
         raise ValueError('The parameter inc_channels must be a tuple or list '
                          'that contains string tuples in the format '
                          '(mass, target).')
+    if inc_channels:
+        inc_channels = _convert_channels_to_list(inc_channels)
+        num_to_include = len(inc_channels)
     to_return = {}
     metadata = {}
     sims_data = []
@@ -287,6 +289,12 @@ def read(file, sims=True, sed=False, optical=False, label=False,
             elif return_types.get(image_type):
                 to_return[image_type] = page.asarray()
     if sims:
+        if inc_channels and not sims_data:
+            raise ValueError('None of the channels specified for inclusion '
+                             'are present in file.')
+        if inc_channels and len(sims_data) != num_to_include:
+            raise ValueError(f'{inc_channels} are specified for '
+                             'inclusion but are not present in file.')
         to_return['sims'] = mi.MibiImage(np.stack(sims_data, axis=2),
                                          channels, **metadata)
     return_vals = tuple(
@@ -375,6 +383,20 @@ def _convert_from_previous(description):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
 
+def _convert_channels_to_list(channels):
+    if mi.MibiImage.channel_is_single_tuple(channels) or \
+        mi.MibiImage.channel_is_single_string(channels):
+        return [channels]
+    if mi.MibiImage.channels_is_list_of_tuples(channels) or \
+        mi.MibiImage.channels_is_list_of_strings(channels):
+        return list(channels)
+
+def _channels_valid_type(channels):
+    return mi.MibiImage.channel_is_single_tuple(channels) or \
+        mi.MibiImage.channel_is_single_string(channels) or \
+        mi.MibiImage.channels_is_list_of_tuples(channels) or \
+        mi.MibiImage.channels_is_list_of_strings(channels)
+
 def _get_page_data(page, description, metadata, channels, inc_channels=None):
     """Adds to metadata and channel info for single TIFF page.
 
@@ -392,9 +414,21 @@ def _get_page_data(page, description, metadata, channels, inc_channels=None):
     # Get metadata on first SIMS page only
     if not metadata:
         metadata.update(_page_metadata(page, description))
-    if inc_channels and (description['channel.mass'], \
-        description['channel.target']) not in inc_channels:
-        return False
+    if inc_channels is not None:
+        if mi.MibiImage.channels_is_list_of_tuples(inc_channels):
+            if (description['channel.mass'], description['channel.target']) \
+            not in inc_channels:
+                return False
+            inc_channels.remove((description['channel.mass'],
+                                 description['channel.target']))
+        elif mi.MibiImage.channels_is_list_of_strings(inc_channels):
+            if str(description['channel.mass']) not in inc_channels and \
+                description['channel.target'] not in inc_channels:
+                return False
+            try:
+                inc_channels.remove(str(description['channel.mass']))
+            except ValueError:
+                inc_channels.remove(description['channel.target'])
     channels.append((description['channel.mass'],
                      description['channel.target']))
     return True
@@ -418,11 +452,13 @@ def info(filename, inc_channels=None):
         ValueError: Raised if the inc_channels parameter is not a tuple or list
             of string tuples.
     """
-    if inc_channels and not mi.MibiImage.channels_is_list_of_tuples(
-            inc_channels):
+    if inc_channels and not _channels_valid_type(inc_channels):
         raise ValueError('The parameter inc_channels must be a tuple or list '
                          'that contains string tuples in the format '
                          '(mass, target).')
+    if inc_channels:
+        inc_channels = _convert_channels_to_list(inc_channels)
+        num_to_include = len(inc_channels)
     metadata = {}
     channels = []
     with TiffFile(filename) as tif:
@@ -432,5 +468,11 @@ def info(filename, inc_channels=None):
             if image_type == 'sims':
                 _get_page_data(page, description, metadata, channels,
                                inc_channels)
+        if inc_channels and not channels:
+            raise ValueError('None of the channels specified for inclusion '
+                             'are present in the file.')
+        if inc_channels and len(channels) != num_to_include:
+            raise ValueError(f'{inc_channels} are specified for '
+                             'inclusion but are not present in file.')
         metadata['conjugates'] = channels
         return metadata
