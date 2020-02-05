@@ -243,7 +243,8 @@ def read(file, sims=True, sed=False, optical=False, label=False,
         label: Boolean for whether to return the slide label image. Defaults to
             False.
         inc_channels: List or tuple of channel names to include in MibiImage.
-                      Names should be string tuples of format (mass, target).
+                      Names should be string tuples of format (mass, target) or
+                      strings.
 
     Returns: A tuple of the image types set to True in the parameters, in the
         order SIMS, SED, Optical, Label (but including only those types
@@ -260,7 +261,7 @@ def read(file, sims=True, sed=False, optical=False, label=False,
             * The input file is not of the IONpath MIBItiff format, or if no
               image type is selected to be returned.
             * The inc_channels parameter is not a tuple or list of
-              string tuples.
+              string tuples or strings.
     """
     return_types = collections.OrderedDict([
         ('sims', sims), ('sed', sed), ('optical', optical), ('label', label)
@@ -293,8 +294,12 @@ def read(file, sims=True, sed=False, optical=False, label=False,
             raise ValueError('None of the channels specified for inclusion '
                              'are present in file.')
         if inc_channels and len(sims_data) != num_to_include:
-            raise ValueError(f'{inc_channels} are specified for '
-                             'inclusion but are not present in file.')
+            if len(inc_channels) == 1:
+                raise ValueError(f'{str(inc_channels).strip("[]")} is specified'
+                                 ' for inclusion but is not present in the '
+                                 'file.')
+            raise ValueError(f'{str(inc_channels).strip("[]")} are specified '
+                             'for inclusion but are not present in the file.')
         to_return['sims'] = mi.MibiImage(np.stack(sims_data, axis=2),
                                          channels, **metadata)
     return_vals = tuple(
@@ -383,7 +388,7 @@ def _convert_from_previous(description):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
 
-def _convert_channels_to_list(channels):
+def _convert_channels_to_list(channels): #pylint: disable=inconsistent-return-statements
     if mi.MibiImage.channel_is_single_tuple(channels) or \
         mi.MibiImage.channel_is_single_string(channels):
         return [channels]
@@ -439,7 +444,8 @@ def info(filename, inc_channels=None):
     Args:
         filename: The path to the TIFF.
         inc_channels: List or tuple of channel names to include in MibiImage.
-                      Names should be string tuples of format (mass, target).
+                      Names should be string tuples of format (mass, target) or
+                      strings.
 
     Returns:
         A dictionary of metadata as could be supplied as kwargs to
@@ -450,7 +456,7 @@ def info(filename, inc_channels=None):
 
     Raises:
         ValueError: Raised if the inc_channels parameter is not a tuple or list
-            of string tuples.
+            of string tuples or strings.
     """
     if inc_channels and not _channels_valid_type(inc_channels):
         raise ValueError('The parameter inc_channels must be a tuple or list '
