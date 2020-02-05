@@ -18,7 +18,7 @@ XML = (
     '<Point PointName="Point">\n'
     '<RowNumber0 XAttrib="1000" YAttrib="2000" />\n'
     '<Chemical_Image XShift="0" XSize="2" YSize="2" EG6Active="false" '
-    'MassGain="1." MassOffset="0." TimeResolution="0.5" '
+    'MassGain="1." MassOffset="0." MassRange="200." TimeResolution="0.5" '
     'AcquisitionTime="4" >\n'
     '<Markers />\n'
     '</Chemical_Image>\n'
@@ -26,7 +26,7 @@ XML = (
     '<Point PointName="Custom">\n'
     '<RowNumber0 XAttrib="-1000" YAttrib="-2000" />\n'
     '<Depth_Profile AcquisitionTime="0.2"  XSize="2" YSize="2"\n'
-    'MassGain="1." MassOffset="0." TimeResolution="0.5" \n'
+    'MassGain="1." MassOffset="0." MassRange="200." TimeResolution="0.5" \n'
     'MaxNumberOfLevels="2" >\n'
     '</Depth_Profile>\n'
     '</Point>\n'
@@ -79,6 +79,7 @@ class TestRuns(unittest.TestCase):
             'TimeResolution': 0.5,
             'MassGain': 1.0,
             'MassOffset': 0.0,
+            'MassRange': 200.0,
             'XSize': 2.0,
             'YSize': 2.0
         }
