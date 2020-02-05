@@ -9,9 +9,6 @@ import tempfile
 import unittest
 import warnings
 
-import sys
-sys.path.append('/Users/emunch/Documents/mibitracker-client')
-
 import numpy as np
 from skimage import io as skio, img_as_ubyte, transform
 from skimage.external.tifffile import TiffFile
@@ -129,16 +126,16 @@ class TestWriteReadTiff(unittest.TestCase):
     def test_sims_selected_channels_not_in_file(self):
         tiff.write(self.filename, self.float_image)
         with self.assertRaises(ValueError):
-            image = tiff.read(self.filename, inc_channels=(6, 'Target6'))
+            tiff.read(self.filename, inc_channels=(6, 'Target6'))
         with self.assertRaises(ValueError):
-            image = tiff.read(self.filename,
-                              inc_channels=((6, 'Target6'), (7, 'Target7'),
-                                            (5, 'Target5')))
+            tiff.read(self.filename, inc_channels=((6, 'Target6'),
+                                                   (7, 'Target7'),
+                                                   (5, 'Target5')))
         with self.assertRaises(ValueError):
-            image = tiff.read(self.filename, inc_channels='Target6')
+            tiff.read(self.filename, inc_channels='Target6')
         with self.assertRaises(ValueError):
-            image = tiff.read(self.filename, inc_channels=('Target6', 'Target7',
-                                                           'Target5'))
+            tiff.read(self.filename, inc_channels=('Target6', 'Target7',
+                                                   'Target5'))
 
     def test_sims_selected_channels_wrong_format(self):
         STRING_LABELS = (1, 2, 3)
@@ -275,14 +272,14 @@ class TestWriteReadTiff(unittest.TestCase):
     def test_read_metadata_channels_not_in_file(self):
         tiff.write(self.filename, self.float_image)
         with self.assertRaises(ValueError):
-            image = tiff.info(self.filename, (6, 'Target6'))
+            tiff.info(self.filename, (6, 'Target6'))
         with self.assertRaises(ValueError):
-            image = tiff.info(self.filename, ((6, 'Target6'), (7, 'Target7'),
-                                              (5, 'Target5')))
+            tiff.info(self.filename, ((6, 'Target6'), (7, 'Target7'),
+                                      (5, 'Target5')))
         with self.assertRaises(ValueError):
-            image = tiff.info(self.filename, '6')
+            tiff.info(self.filename, '6')
         with self.assertRaises(ValueError):
-            image = tiff.info(self.filename, ('6', '7'))
+            tiff.info(self.filename, ('6', '7'))
 
     def test_read_metadata_with_user_defined_metadata(self):
         tiff.write(self.filename, self.image_user_defined_metadata)
