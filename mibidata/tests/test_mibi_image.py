@@ -9,6 +9,9 @@ import tempfile
 import unittest
 import warnings
 
+import sys
+sys.path.append('/Users/emunch/Documents/mibitracker-client')
+
 import numpy as np
 from skimage import io as skio, transform
 
@@ -355,10 +358,8 @@ class TestMibiImage(unittest.TestCase):
     def test_append_single_channel(self):
         first_image = mi.MibiImage(TEST_DATA[:, :, :2],
                                    ['Target1', 'Target2'], **METADATA)
-        print(first_image.data.shape)
         second_data = np.expand_dims(TEST_DATA[:, :, 2], -1)
         second_image = mi.MibiImage(second_data, ['Target3'], **METADATA)
-        print(second_image.data.shape)
         expected = mi.MibiImage(TEST_DATA, ['Target1', 'Target2',
                                             'Target3'], **METADATA)
         first_image.append(second_image)
@@ -368,8 +369,6 @@ class TestMibiImage(unittest.TestCase):
         second_image.channels = [('Mass3', 'Target3')]
         expected.channels = TUPLE_LABELS
         first_image.append(second_image)
-        print(first_image.channels)
-        print(expected.channels)
         np.testing.assert_array_equal(first_image.data, expected.data)
         self.assertEqual(first_image, expected)
 

@@ -113,6 +113,8 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(expected_image, image)
         image = tiff.read(self.filename, inc_channels=['Target2', '3'])
         self.assertEqual(expected_image, image)
+        image = tiff.read(self.filename, inc_channels=(2, 3))
+        self.assertEqual(expected_image, image)
 
     def test_sims_single_selected_channel(self):
         tiff.write(self.filename, self.float_image)
@@ -121,6 +123,10 @@ class TestWriteReadTiff(unittest.TestCase):
         expected_image = expected_image.slice_image((3, 'Target3'))
         self.assertEqual(expected_image, image)
         image = tiff.read(self.filename, inc_channels='Target3')
+        self.assertEqual(expected_image, image)
+        image = tiff.read(self.filename, inc_channels='3')
+        self.assertEqual(expected_image, image)
+        image = tiff.read(self.filename, inc_channels=3)
         self.assertEqual(expected_image, image)
 
     def test_sims_selected_channels_not_in_file(self):
@@ -136,12 +142,16 @@ class TestWriteReadTiff(unittest.TestCase):
         with self.assertRaises(ValueError):
             tiff.read(self.filename, inc_channels=('Target6', 'Target7',
                                                    'Target5'))
+        with self.assertRaises(ValueError):
+            tiff.read(self.filename, inc_channels=6)
+        with self.assertRaises(ValueError):
+            tiff.read(self.filename, inc_channels=[5, 6, 7])
 
     def test_sims_selected_channels_wrong_format(self):
-        STRING_LABELS = (1, 2, 3)
+        CONFUSING_LABELS = ('1', '2')
         tiff.write(self.filename, self.float_image)
         with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=STRING_LABELS)
+            tiff.read(self.filename, inc_channels=CONFUSING_LABELS)
 
     def test_default_ranges(self):
         tiff.write(self.filename, self.float_image)
@@ -256,6 +266,8 @@ class TestWriteReadTiff(unittest.TestCase):
         STRING_CHANNELS = ['2', '3']
         metadata = tiff.info(self.filename, STRING_CHANNELS)
         self.assertEqual(metadata, expected)
+        metadata = tiff.info(self.filename, [2, 3])
+        self.assertEqual(metadata, expected)
 
     def test_read_metadata_single_channel(self):
         tiff.write(self.filename, self.float_image)
@@ -268,6 +280,8 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(metadata, expected)
         metadata = tiff.info(self.filename, '2')
         self.assertEqual(metadata, expected)
+        metadata = tiff.info(self.filename, 2)
+        self.assertEqual(metadata, expected)
 
     def test_read_metadata_channels_not_in_file(self):
         tiff.write(self.filename, self.float_image)
@@ -279,7 +293,11 @@ class TestWriteReadTiff(unittest.TestCase):
         with self.assertRaises(ValueError):
             tiff.info(self.filename, '6')
         with self.assertRaises(ValueError):
-            tiff.info(self.filename, ('6', '7'))
+            tiff.info(self.filename, ['6', '7'])
+        with self.assertRaises(ValueError):
+            tiff.info(self.filename, 6)
+        with self.assertRaises(ValueError):
+            tiff.info(self.filename, (6, 7))
 
     def test_read_metadata_with_user_defined_metadata(self):
         tiff.write(self.filename, self.image_user_defined_metadata)
