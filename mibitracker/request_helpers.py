@@ -564,16 +564,16 @@ class MibiRequests():
         Returns:
             A MxN numpy array of the channel data.
         """
-        image_info = self.get('images/{}/'.format(image_id)).json()
-
-        if not channel_name in image_info['overlays']:
-            raise MibiTrackerError(
-                'Specified channel name is not present in image')
-        buf = io.BytesIO()
-        response = requests.get(image_info['overlays'][channel_name],
-                                timeout=self._data_transfer_timeout)
+        response = self.get(
+            f'images/{image_id}/channel_url/',
+            params={
+                'channel': channel_name
+            })
         response.raise_for_status()
-        buf.write(response.content)
+
+        png = requests.get(response.json()['url'])
+        buf = io.BytesIO()
+        buf.write(png.content)
         buf.seek(0)
         return skio.imread(buf)
 
