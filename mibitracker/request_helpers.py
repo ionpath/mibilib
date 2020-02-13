@@ -564,16 +564,22 @@ class MibiRequests():
         Returns:
             A MxN numpy array of the channel data.
         """
-        image_info = self.get('images/{}/'.format(image_id)).json()
+        try:
+            response = self.get(
+                f'images/{image_id}/channel_url/',
+                params={
+                    'channel': channel_name
+                })
+            response.raise_for_status()
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                raise MibiTrackerError(
+                    f'Channel \'{channel_name}\' not found in the image.')
+            raise e
 
-        if not channel_name in image_info['overlays']:
-            raise MibiTrackerError(
-                'Specified channel name is not present in image')
+        png = requests.get(response.json()['url'])
         buf = io.BytesIO()
-        response = requests.get(image_info['overlays'][channel_name],
-                                timeout=self._data_transfer_timeout)
-        response.raise_for_status()
-        buf.write(response.content)
+        buf.write(png.content)
         buf.seek(0)
         return skio.imread(buf)
 
@@ -621,7 +627,7 @@ class StatusCheckedSession(requests.Session):
                 response_json = response.json()
             except json.decoder.JSONDecodeError:
                 response_json = None
-            raise HTTPError(str(e), response_json)
+            raise HTTPError(str(e), response_json, response=response)
         return response
 
     def _set_timeout(self, kwargs):
