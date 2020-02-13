@@ -564,12 +564,18 @@ class MibiRequests():
         Returns:
             A MxN numpy array of the channel data.
         """
-        response = self.get(
-            f'images/{image_id}/channel_url/',
-            params={
-                'channel': channel_name
-            })
-        response.raise_for_status()
+        try:
+            response = self.get(
+                f'images/{image_id}/channel_url/',
+                params={
+                    'channel': channel_name
+                })
+            response.raise_for_status()
+        except HTTPError as e:
+            if e.response.status_code == 404:
+                raise MibiTrackerError(
+                    f'Channel \'{channel_name}\' not found in the image.')
+            raise e
 
         png = requests.get(response.json()['url'])
         buf = io.BytesIO()
@@ -621,7 +627,7 @@ class StatusCheckedSession(requests.Session):
                 response_json = response.json()
             except json.decoder.JSONDecodeError:
                 response_json = None
-            raise HTTPError(str(e), response_json)
+            raise HTTPError(str(e), response_json, response=response)
         return response
 
     def _set_timeout(self, kwargs):
