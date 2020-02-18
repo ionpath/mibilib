@@ -188,7 +188,7 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     """
     overlay = None
     for key, val in color_map.items():
-        array = np.power(
+        array = np.power(  # pylint: disable=assignment-from-no-return
             image[val] / np.maximum(np.max(image[val]), min_scaling),
             gamma)
         rgb = (
