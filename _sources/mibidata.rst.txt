@@ -20,6 +20,14 @@ mibidata.combine\_tiffs module
     :undoc-members:
     :show-inheritance:
 
+mibidata.constants module
+-------------------------
+
+.. automodule:: mibidata.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 mibidata.mibi\_image module
 ---------------------------
 
