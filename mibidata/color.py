@@ -239,16 +239,16 @@ def compose_overlay(image, overlay_settings):
     for v in overlay_settings.values():
         if 'color' in v:
             break
-        if 'channels' in v:
-            overlay_settings = v['channels']
+        if 'channels' in overlay_settings:
+            overlay_settings = overlay_settings['channels']
             break
         if len(overlay_settings) == 1 and 'channels' in v:
             overlay_settings = v['channels']
             break
-        raise ValueError('Unexpected format of overlay_settings dictionary.)
+        raise ValueError('Unexpected format of overlay_settings dictionary.')
 
-    composite = None
-    for i, channel in enumerate(overlay_settings):
+    overlay = None
+    for channel in overlay_settings:
         setting = overlay_settings[channel]
         array = image[channel]
         # If set to min brightess, skip this channel:
@@ -268,13 +268,13 @@ def compose_overlay(image, overlay_settings):
             array /= (1 - setting['brightness'])
             np.clip(array, 0, 1, out=array)
         elif setting['brightness'] < 0:
-            array = np.power(array, 1 - 3 * setting['brightness'])
+            array = np.power(array, 1 - 3 * setting['brightness']) # pylint: disable=assignment-from-no-return
         rgb = (
             np.stack((array, array, array), axis=2) *
             constants.COLORS[setting['color']]
         )
-        if composite is None:
-            composite = rgb
+        if overlay is None:
+            overlay = rgb
         else:
-            composite = _porter_duff_screen(composite, rgb)
-    return np.uint8(composite * 255)
+            overlay = _porter_duff_screen(overlay, rgb)
+    return np.uint8(overlay * 255)
