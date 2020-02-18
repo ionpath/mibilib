@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ElementTree
 import numpy as np
 
 MASS_CALIBRATION_PARAMETERS = ('TimeResolution', 'MassGain', 'MassOffset',
-                               'XSize', 'YSize')
+                               'MassRange', 'XSize', 'YSize')
 FOV_PATTERN = re.compile('^(Depth_Profile|Chemical_Image)$')
 _MICRONS_PER_MOTOR_STEP = 0.1  # value of a motor step in microns
 

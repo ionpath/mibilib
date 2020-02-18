@@ -1,6 +1,6 @@
 """Color transformation and composites.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
 from scipy import ndimage
@@ -168,29 +168,6 @@ def _porter_duff_screen(backdrop, source):
     return backdrop + source - (backdrop * source)
 
 
-def _screen(color_map):
-    """Combines multiple image channels by color into a 3-D array.
-
-    Args:
-        A map keyed by color with values of NxM arrays that will be assigned
-        that hue before screening with the others. The allowed colors are
-        'Cyan', 'Yellow', 'Magenta', 'Green', 'Orange', 'Violet', 'Red' and
-        'Blue'. The arrays must contain floats in the unit interval.
-
-    Returns:
-        An NxMx3 float array of an RGB image with values in the unit interval.
-    """
-    screened = None
-    for color, array in color_map.items():
-        hsl = _gray2hsl(array, constants.COLORS[color])
-        rgb = hsl2rgb(hsl)
-        if screened is None:
-            screened = rgb
-        else:
-            screened = _porter_duff_screen(screened, rgb)
-    return screened
-
-
 def composite(image, color_map, gamma=1/3, min_scaling=10):
     """Combines multiple image channels by color into a 3-D array.
 
@@ -199,7 +176,7 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
         color_map: A dictionary keyed by color with values of channel names
             corresponding to a subset of those in the MibiImage. The
             allowed colors are 'Cyan', 'Yellow', 'Magenta', 'Green',
-            'Orange', 'Violet', 'Red' and 'Blue'.
+            'Orange', 'Violet', 'Red', 'Blue' and 'Gray'.
         gamma: The value with which to scale the image data. Defaults to 1/3.
             If no gamma correction is desired, set to 1.
         min_scaling: The minimum number of counts used as the divisor for each
@@ -209,13 +186,20 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     Returns:
         An NxMx3 uint8 array of an RGB image.
     """
-    data_map = {}
+    overlay = None
     for key, val in color_map.items():
-        data_map[key] = np.power(  # pylint: disable=assignment-from-no-return
+        array = np.power(  # pylint: disable=assignment-from-no-return
             image[val] / np.maximum(np.max(image[val]), min_scaling),
             gamma)
-    screened = _screen(data_map)
-    return np.uint8(screened * 255)
+        rgb = (
+            np.stack((array, array, array), axis=2) *
+            constants.COLORS[key]
+        )
+        if overlay is None:
+            overlay = rgb
+        else:
+            overlay = _porter_duff_screen(overlay, rgb)
+    return np.uint8(overlay * 255)
 
 
 def compose_overlay(image, overlay_settings):
@@ -261,7 +245,7 @@ def compose_overlay(image, overlay_settings):
         if len(overlay_settings) == 1 and 'channels' in v:
             overlay_settings = v['channels']
             break
-        raise ValueError("Unexpected format of overlay_settings dictionary.")
+        raise ValueError('Unexpected format of overlay_settings dictionary.)
 
     composite = None
     for i, channel in enumerate(overlay_settings):

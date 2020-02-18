@@ -31,6 +31,10 @@ _MAX_DENOMINATOR = 1000000
 # Encoding of tiff tags.
 ENCODING = 'utf-8'
 
+REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder',
+                                'dwell', 'scans', 'mass_gain', 'mass_offset',
+                                'time_resolution', 'coordinates', 'size',
+                                'masses', 'targets')
 
 def _micron_to_cm(arg):
     """Converts microns (1cm = 1e4 microns) to a fraction tuple in cm."""
@@ -79,7 +83,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             * The image is not a :class:`mibidata.mibi_image.MibiImage`
               instance.
             * The :class:`mibidata.mibi_image.MibiImage` coordinates, size,
-              masses or targets are None.
+              fov_id, fov_name, run, folder, dwell, scans, mass_gain,
+              mass_offset, time_resolution, masses or targets are None.
             * `dtype` is not one of ``np.float32`` or ``np.uint16``.
             * `write_float` has been specified.
             * Converting the native :class:`mibidata.mibi_image.MibiImage` dtype
@@ -88,10 +93,17 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if not isinstance(image, mi.MibiImage):
         raise ValueError('image must be a mibidata.mibi_image.MibiImage '
                          'instance.')
-    if image.coordinates is None or image.size is None:
-        raise ValueError('Image coordinates and size must not be None.')
-    if image.masses is None or image.targets is None:
-        raise ValueError('Image channels must contain both masses and targets.')
+    missing_required_metadata = [m for m in REQUIRED_METADATA_ATTRIBUTES
+                                 if not getattr(image, m)]
+    if missing_required_metadata:
+        if len(missing_required_metadata) == 1:
+            missing_metadata_error = (f'{missing_required_metadata[0]} is '
+                                      f'required and may not be None.')
+        else:
+            missing_metadata_error = (f'{", ".join(missing_required_metadata)}'
+                                      f' are required and may not be None.')
+        raise ValueError(missing_metadata_error)
+
     if write_float is not None:
         raise ValueError('`write_float` has been deprecated. Please use the '
                          '`dtype` argument instead.')
@@ -254,15 +266,10 @@ def read(file, sims=True, sed=False, optical=False, label=False):
     with TiffFile(file) as tif:
         _check_software(tif)
         for page in tif.pages:
-            description = _page_description(page)
-            image_type = description['image.type'].lower()
+            description, image_type = _page_description(page)
             if sims and image_type == 'sims':
-                channels.append((description['channel.mass'],
-                                 description['channel.target']))
+                _get_page_data(page, description, metadata, channels)
                 sims_data.append(page.asarray())
-                # Get metadata on first SIMS page only
-                if not metadata:
-                    metadata.update(_page_metadata(page, description))
             elif return_types.get(image_type):
                 to_return[image_type] = page.asarray()
     if sims:
@@ -284,9 +291,13 @@ def _check_software(file):
 
 
 def _page_description(page):
-    """Loads and decodes the JSON description in a TIF page."""
-    return json.loads(
+    """Loads and decodes the JSON description and image type in a
+       TIFF page.
+    """
+    description = json.loads(
         page.tags['image_description'].value.decode(ENCODING))
+    image_type = description['image.type'].lower()
+    return description, image_type
 
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
@@ -328,29 +339,45 @@ def _convert_from_previous(description):
     Most of these conversions would happen during MibiImage construction,
     but we do them here in case reading the info only.
     """
+    match_needed = False
     if not description.get('mibi.fov_name') and description.get(
             'mibi.description'):
         description['mibi.fov_name'] = description.pop('mibi.description')
-    # TODO: Clean up repetition between this and the same MibiImage method
-    if description.get('mibi.folder') and not description.get('mibi.fov_id'):
-        description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
-        warnings.warn(
-            'The "fov_id" attribute is now required if "folder" is '
-            'specified. Setting "fov_id" to {}.'.format(
-                description['mibi.fov_id']))
-    if (not description.get('mibi.folder') and description.get('mibi.fov_id')
-            and description.get('mibi.fov_id').startswith('FOV')):
-        description['mibi.folder'] = description['mibi.fov_id']
-        warnings.warn(
-            'The "folder" attribute is required if "fov_id" is specified. '
-            'Setting "folder" to {}.'.format(description['mibi.folder']))
+    if description.get('mibi.folder'):
+        description['mibi.fov_id'] = ''
+        value = 'mibi.folder'
+        field = 'mibi.fov_id'
+        match_needed = True
+    if description.get('mibi.fov_id'):
+        description['mibi.folder'] = ''
+        value = 'mibi.fov_id'
+        field = 'mibi.folder'
+        match_needed = True
+    if match_needed:
+        description[field] = mi.MibiImage.match_fov_folder(
+            description[value], description[field], value.split('.')[1],
+            field.split('.')[1])
     if description.get('mibi.aperture'):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
 
+def _get_page_data(page, description, metadata, channels):
+    """Adds to metadata and channel info for single TIFF page.
+
+    Args:
+        page: Single page in TIFF file.
+        description: Decoded JSON description.
+        metadata: Dictionary of metadata for entire TIFF file to add to.
+        channels: List of channels for entire TIFF file to add to.
+    """
+    channels.append((description['channel.mass'],
+                     description['channel.target']))
+    # Get metadata on first SIMS page only
+    if not metadata:
+        metadata.update(_page_metadata(page, description))
 
 def info(filename):
-    """Gets the SIMS pages' metadata from a MibiTiff file.
+    """Gets the metadata from a MibiTiff file.
 
     Args:
         filename: The path to the TIFF.
@@ -365,13 +392,8 @@ def info(filename):
     with TiffFile(filename) as tif:
         _check_software(tif)
         for page in tif.pages:
-            description = _page_description(page)
-            image_type = description['image.type'].lower()
+            description, image_type = _page_description(page)
             if image_type == 'sims':
-                channels.append((description['channel.mass'],
-                                 description['channel.target']))
-                #  Get metadata on first SIMS page only
-                if not metadata:
-                    metadata.update(_page_metadata(page, description))
+                _get_page_data(page, description, metadata, channels)
         metadata['conjugates'] = channels
         return metadata

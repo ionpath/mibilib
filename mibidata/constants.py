@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+"""Constants used in mibidata module.
+
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+
+>>>>>>> DPPA-753
 COLORS = {
     'Cyan': (0.0, 1.0, 1.0),
     'Yellow': (1.0, 1.0, 0.0),
@@ -9,6 +16,7 @@ COLORS = {
     'Blue': (0.0, 0.0, 1.0),
     'Gray': (1.0, 1.0, 1.0),
 }
+<<<<<<< HEAD
 
 OVERLAY_MIN_BRIGHTNESS = -0.9
 
@@ -96,3 +104,5 @@ OVERLAY_SMOOTHING_KERNELS = [
         [0.002276, 0.003984, 0.005944, 0.007556, 0.008186, 0.007556, 0.005944, 0.003984, 0.002276],
     ],
 ]
+=======
+>>>>>>> DPPA-753

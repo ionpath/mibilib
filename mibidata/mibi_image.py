@@ -185,6 +185,73 @@ class MibiImage():
             setattr(self, k, v)
             self._user_defined_attributes.append(k)
 
+    def add_attr(self, **kwargs):
+        """Adds user-defined metadata key-value pairs as attributes to
+           the class instance in use. If attribute already exists
+           for the current instance, raises an error.
+
+        Args:
+            kwargs: A mapping of arguments for a user to add multiple
+                    attributes with their respecitve
+                    values.
+        Raises:
+            ValueError: Raised if attempts to set an attribute that is already
+            defined for this instance.
+
+        """
+        already_defined = [attr for attr in kwargs if hasattr(self, attr)]
+        if already_defined:
+            if len(already_defined) == 1:
+                already_def_error = (f'{already_defined[0]} is already '
+                                     f'an attribute of this instance.')
+            else:
+                already_def_error = (f'{", ".join(already_defined)} are '
+                                     f'already attributes for this instance.')
+            raise ValueError(already_def_error)
+        for key, value in kwargs.items():
+            self._user_defined_attributes.append(key)
+            setattr(self, key, value)
+
+
+    def remove_attr(self, attributes):
+        """Removes user-defined attributes from the class instance in use.
+
+        Args:
+            attributes: A single string or a list of user-defined attributes
+                        for deletion.
+
+        Raises:
+            ValueError: Raised if
+
+                * attempts to remove a required attribute.
+                * an attribute is not defined for this instance.
+        """
+        if isinstance(attributes, str):
+            attributes = [attributes]
+        required_rem = [attr for attr in attributes if attr
+                        in SPECIFIED_METADATA_ATTRIBUTES]
+        no_attr = [attr for attr in attributes if not hasattr(self, attr)]
+        if required_rem:
+            if len(required_rem) == 1:
+                required_error = (f'{required_rem[0]} is a required '
+                                  f'attribute.')
+            else:
+                required_error = (f'{", ".join(required_rem)} are required '
+                                  f'attributes.')
+            raise ValueError(required_error)
+        if no_attr:
+            if len(no_attr) == 1:
+                required_error = (f'{no_attr[0]} is not an attribute '
+                                  f'of this instance.')
+            else:
+                required_error = (f'{", ".join(no_attr)} are not attributes '
+                                  f'of this instance.')
+            raise ValueError(required_error)
+        for attr in attributes:
+            delattr(self, attr)
+            self._user_defined_attributes.remove(attr)
+
+
     @property
     def point_name(self):
         """Returns fov_name instead of deprecated point_name."""
@@ -205,14 +272,9 @@ class MibiImage():
     def folder(self, value):
         """Enforce consistency with fov_id."""
         if value:
-            fov = value.split('/')[0]
-            if not self.fov_id:
-                self._fov_id = fov
-            elif self.fov_id != fov:
-                raise ValueError('fov_id must match folder, but here '
-                                 'fov_id={} and you are trying to set folder '
-                                 'to {}.'.format(self.fov_id, value))
             self._folder = value
+            self._fov_id = self.match_fov_folder(value, self._fov_id, 'folder',
+                                                 'fov_id')
 
     @property
     def fov_id(self):
@@ -221,13 +283,9 @@ class MibiImage():
     @fov_id.setter
     def fov_id(self, value):
         """Enforce consistency with folder."""
-        if not self.folder:
-            self._folder = value
-        elif value != self.folder.split('/')[0]:
-            raise ValueError('fov_id must match folder, but here '
-                             'folder={} and you are trying to set fov_id '
-                             'to {}.'.format(self.folder, value))
         self._fov_id = value
+        self._folder = self.match_fov_folder(value, self._folder, 'fov_id',
+                                             'folder')
 
     @property
     def aperture(self):
@@ -258,7 +316,6 @@ class MibiImage():
     def _set_channels(self, channels, length):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
-        self._channels = tuple(channels)
         if all((isinstance(c, tuple) and len(c) == 2 for c in channels)):
             # Tuples of masses and targets.
             masses, targets = zip(*channels)
@@ -274,6 +331,7 @@ class MibiImage():
             raise ValueError(
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
+        self._channels = tuple(channels)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
@@ -315,7 +373,7 @@ class MibiImage():
             An aperture code (e.g. 'A' or 'B') matching aperture width
             used during image acquisition.
         Raises:
-            ValueError raised if the value parameter cannot be mapped to an
+            ValueError: Raised if the value parameter cannot be mapped to an
             aperture code.
         """
         if value in APERTURE_MAP.values() or value is None:
@@ -341,6 +399,34 @@ class MibiImage():
                     'from the following map: {}'.format(value, APERTURE_MAP)
                 )
         return aperture
+
+
+    @staticmethod
+    def match_fov_folder(value, field, value_name,
+                         field_name):
+        """Enforces consistency between fov_id and folder.
+
+        Args:
+            value: Value to match with.
+            field: Field that needs to be updated to value.
+            value_name: String representing whether matching folder
+                        or fov_id field.
+            field_name: String representing whether updating folder
+                        or fov_id field.
+        Returns:
+            value: Value to set field to.
+        """
+        if field_name == 'fov_id' and value_name == 'folder':
+            value = value.split('/')[0]
+        if not field:
+            warnings.warn(
+                f'The "{field_name}" attribute is required if "{value_name}" '
+                f'is specified. Setting "{field_name}" to {value}.')
+        elif field != value:
+            warnings.warn(
+                f'The attribute "{field_name}" must match "{value_name}". '
+                f'Changing "{field_name}" from {field} to {value}.')
+        return value
 
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
@@ -461,10 +547,20 @@ class MibiImage():
         """
         if set(self.channels).intersection(set(image.channels)):
             raise ValueError('Images contain overlapping channels.')
-        self.data = np.concatenate((self.data, image.data), axis=2)
+        if all((isinstance(c, tuple) and len(c) == 2 for c in self.channels)):
+            if not all((isinstance(c, tuple) and len(c) == 2
+                        for c in image.channels)):
+                raise ValueError('Channels to be appended must match form as '
+                                 'original image, which is a list of tuples in '
+                                 'format (mass, target).')
+        if all(isinstance(c, str) for c in self.channels):
+            if not all(isinstance(c, str) for c in image.channels):
+                raise ValueError('Channels to be appended must match form as '
+                                 'original image, which is a list of str.')
         self._set_channels(
             [c for c in self.channels] + [c for c in image.channels],
             len(self.channels) + len(image.channels))
+        self.data = np.concatenate((self.data, image.data), axis=2)
 
     def remove_channels(self, channels, copy=False):
         """Removes specified channels from a MibiImage.

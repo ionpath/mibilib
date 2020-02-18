@@ -122,9 +122,9 @@ class TestMibiImage(unittest.TestCase):
         image.fov_id = 'Point2'
         image.folder = 'Point2/RowNumber0/Depth_Profile0'
         image.fov_name = 'R1C3_Tonsil'
-        with self.assertRaises(ValueError):
+        with self.assertWarns(UserWarning):
             image.fov_id = 'Point99'
-        with self.assertRaises(ValueError):
+        with self.assertWarns(UserWarning):
             image.fov_id = None
 
     def test_check_fov_id_without_folder(self):
@@ -219,11 +219,49 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image._user_defined_attributes,
                          list(USER_DEFINED_METADATA))
 
+    def test_add_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        image.add_attr(**USER_DEFINED_METADATA)
+        self.assertEqual(image._user_defined_attributes,
+                         list(USER_DEFINED_METADATA))
+
+    def test_add_existing_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        metadata = METADATA.copy()
+        metadata = {**metadata, **USER_DEFINED_METADATA}
+        with self.assertRaises(ValueError):
+            image.add_attr(**metadata)
+
+    def test_remove_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        image.remove_attr(USER_DEFINED_METADATA.keys())
+        expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(expected, image)
+
+    def test_remove_single_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             x_size=500.)
+        image.remove_attr('x_size')
+        expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(expected, image)
+
+    def test_remove_required_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            image.remove_attr('fov_id')
+
+    def test_remove_undefined_user_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            image.remove_attr(['x_size', 'y_size'])
+
     def test_metadata_wrong_fov_id(self):
         metadata = METADATA.copy()
         metadata = {**metadata, **USER_DEFINED_METADATA}
         metadata['fov_id'] = 'Point99'
-        with self.assertRaises(ValueError):
+        with self.assertWarns(UserWarning):
             mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
 
     def test_channel_inds_single_channel(self):
@@ -307,6 +345,42 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(first_image, expected)
         np.testing.assert_array_equal(
             first_image.slice_data('4'), second_image.slice_data('4'))
+
+    def test_append_non_unique_channels(self):
+        first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        original_data = np.copy(first_image.data)
+        second_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+        non_unique_masses = [('Mass1', 'A'), ('Mass2', 'B'), ('3', 'C')]
+        second_image = mi.MibiImage(TEST_DATA, non_unique_masses, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+        non_unique_targets = [('1', 'Target1'), ('2', 'Target2'), ('3', 'A')]
+        second_image = mi.MibiImage(TEST_DATA, non_unique_targets, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+
+    def test_append_channels_of_different_type(self):
+        first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        original_data = np.copy(first_image.data)
+        second_image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+        first_image = second_image.copy()
+        second_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, STRING_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
 
     def test_remove_layers_without_copy(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
