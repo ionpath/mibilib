@@ -5,16 +5,7 @@ Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
 import numpy as np
 from scipy import ndimage
 
-COLORS = {
-    'Cyan': np.pi,
-    'Yellow': np.pi / 3,
-    'Magenta': 5 * np.pi / 3,
-    'Green': 2 * np.pi / 3,
-    'Orange': 0.2166 * np.pi,
-    'Violet': 1.483 * np.pi,
-    'Red': 0,
-    'Blue': 4 * np.pi / 3,
-}
+from mibidata import constants
 
 
 def _trim(array, lower=0., upper=1.):
@@ -191,7 +182,7 @@ def _screen(color_map):
     """
     screened = None
     for color, array in color_map.items():
-        hsl = _gray2hsl(array, COLORS[color])
+        hsl = _gray2hsl(array, constants.COLORS[color])
         rgb = hsl2rgb(hsl)
         if screened is None:
             screened = rgb
@@ -251,8 +242,8 @@ def compose_overlay(image, overlay_settings):
     - 'intensity_lower' (optional):
         Lower limit of the channel intensity; defaults to 0.
     - 'blur' (optional):
-        float between 0 and 1. Defines the gaussian blur of the channel;
-        defaults to 0.
+        integer between 0 and 10. Defines the gaussian blur of the channel
+        according to pre-defined convolution kernels.
 
     Args:
         image: A MibiImage.
@@ -261,47 +252,45 @@ def compose_overlay(image, overlay_settings):
     Returns:
         An NxMx3 uint8 array of an RGB image.
     """
-    # Convolve with this filter no matter what, to mimic browser rendering.
-    kernel = np.array([
-        [0.05, 0.1, 0.05],
-        [0.1, 0.4, 0.1],
-        [0.05, 0.1, 0.05]
-    ])
-
     for v in overlay_settings.values():
         if 'color' in v:
             break
-        if 'channels' in overlay_settings:
-            overlay_settings = overlay_settings['channels']
+        if 'channels' in v:
+            overlay_settings = v['channels']
             break
         if len(overlay_settings) == 1 and 'channels' in v:
             overlay_settings = v['channels']
             break
         raise ValueError("Unexpected format of overlay_settings dictionary.")
 
+    composite = None
     for i, channel in enumerate(overlay_settings):
-        item = overlay_settings[channel]
-        int_array = image[channel]
+        setting = overlay_settings[channel]
+        array = image[channel]
+        # If set to min brightess, skip this channel:
+        if setting['brightness'] == constants.OVERLAY_MIN_BRIGHTNESS:
+            continue
+        array = image[channel]
         # Because we treat the min differently, don't use np.clip
-        range_min = item.get('intensity_lower', 0)
-        range_max = item.get('intensity_higher', int_array.max())
-        int_array[int_array > range_max] = range_max
-        int_array[int_array < range_min] = 0
-        float_array = int_array / float(range_max)
-        float_array[int_array > 0] += item.get('brightness', 0)
-        # Apply default filter even if no blurring
-        ndimage.filters.convolve(float_array, kernel, output=float_array)
-        if item.get('blur', 0) > 0:
-            ndimage.filters.gaussian_filter(
-                float_array, item['blur'] * 100, output=float_array)
-        np.clip(float_array, 0, 1, out=float_array)
-        if item['color'] == 'Gray':
-            rgb = np.stack((float_array, float_array, float_array), axis=2)
+        range_min = setting.get('intensity_lower', 0)
+        range_max = setting.get('intensity_higher', array.max())
+        array[array > range_max] = range_max
+        array[array < range_min] = 0
+        array = array / float(range_max)
+        array = ndimage.filters.convolve(
+            array, constants.OVERLAY_SMOOTHING_KERNELS[setting['blur']])
+        np.clip(array, 0, 1, out=array)
+        if setting['brightness'] > 0:
+            array /= (1 - setting['brightness'])
+            np.clip(array, 0, 1, out=array)
+        elif setting['brightness'] < 0:
+            array = np.power(array, 1 - 3 * setting['brightness'])
+        rgb = (
+            np.stack((array, array, array), axis=2) *
+            constants.COLORS[setting['color']]
+        )
+        if composite is None:
+            composite = rgb
         else:
-            hsl = _gray2hsl(float_array, COLORS[item['color']])
-            rgb = hsl2rgb(hsl)
-        if i == 0:
-            overlay = rgb
-        else:
-            overlay = _porter_duff_screen(overlay, rgb)
-    return np.uint8(overlay * 255)
+            composite = _porter_duff_screen(composite, rgb)
+    return np.uint8(composite * 255)
