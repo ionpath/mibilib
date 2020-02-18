@@ -1,20 +1,11 @@
 """Color transformation and composites.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
 from scipy import ndimage
 
-COLORS = {
-    'Cyan': np.pi,
-    'Yellow': np.pi / 3,
-    'Magenta': 5 * np.pi / 3,
-    'Green': 2 * np.pi / 3,
-    'Orange': 0.2166 * np.pi,
-    'Violet': 1.483 * np.pi,
-    'Red': 0,
-    'Blue': 4 * np.pi / 3,
-}
+from mibidata import constants
 
 
 def _trim(array, lower=0., upper=1.):
@@ -177,29 +168,6 @@ def _porter_duff_screen(backdrop, source):
     return backdrop + source - (backdrop * source)
 
 
-def _screen(color_map):
-    """Combines multiple image channels by color into a 3-D array.
-
-    Args:
-        A map keyed by color with values of NxM arrays that will be assigned
-        that hue before screening with the others. The allowed colors are
-        'Cyan', 'Yellow', 'Magenta', 'Green', 'Orange', 'Violet', 'Red' and
-        'Blue'. The arrays must contain floats in the unit interval.
-
-    Returns:
-        An NxMx3 float array of an RGB image with values in the unit interval.
-    """
-    screened = None
-    for color, array in color_map.items():
-        hsl = _gray2hsl(array, COLORS[color])
-        rgb = hsl2rgb(hsl)
-        if screened is None:
-            screened = rgb
-        else:
-            screened = _porter_duff_screen(screened, rgb)
-    return screened
-
-
 def composite(image, color_map, gamma=1/3, min_scaling=10):
     """Combines multiple image channels by color into a 3-D array.
 
@@ -208,7 +176,7 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
         color_map: A dictionary keyed by color with values of channel names
             corresponding to a subset of those in the MibiImage. The
             allowed colors are 'Cyan', 'Yellow', 'Magenta', 'Green',
-            'Orange', 'Violet', 'Red' and 'Blue'.
+            'Orange', 'Violet', 'Red', 'Blue' and 'Gray'.
         gamma: The value with which to scale the image data. Defaults to 1/3.
             If no gamma correction is desired, set to 1.
         min_scaling: The minimum number of counts used as the divisor for each
@@ -218,13 +186,20 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     Returns:
         An NxMx3 uint8 array of an RGB image.
     """
-    data_map = {}
+    overlay = None
     for key, val in color_map.items():
-        data_map[key] = np.power(  # pylint: disable=assignment-from-no-return
+        array = np.power(  # pylint: disable=assignment-from-no-return
             image[val] / np.maximum(np.max(image[val]), min_scaling),
             gamma)
-    screened = _screen(data_map)
-    return np.uint8(screened * 255)
+        rgb = (
+            np.stack((array, array, array), axis=2) *
+            constants.COLORS[key]
+        )
+        if overlay is None:
+            overlay = rgb
+        else:
+            overlay = _porter_duff_screen(overlay, rgb)
+    return np.uint8(overlay * 255)
 
 
 def compose_overlay(image, overlay_settings):
@@ -279,28 +254,28 @@ def compose_overlay(image, overlay_settings):
             break
         raise ValueError("Unexpected format of overlay_settings dictionary.")
 
-    for i, channel in enumerate(overlay_settings):
+    overlay = None
+    for channel in overlay_settings:
         item = overlay_settings[channel]
-        int_array = image[channel]
+        array = image[channel]
         # Because we treat the min differently, don't use np.clip
         range_min = item.get('intensity_lower', 0)
-        range_max = item.get('intensity_higher', int_array.max())
-        int_array[int_array > range_max] = range_max
-        int_array[int_array < range_min] = 0
-        float_array = int_array / float(range_max)
-        float_array[int_array > 0] += item.get('brightness', 0)
+        range_max = item.get('intensity_higher', array.max())
+        array[array > range_max] = range_max
+        array[array < range_min] = 0
+        array = array / float(range_max)
+        array[array > 0] += item.get('brightness', 0)
         # Apply default filter even if no blurring
-        ndimage.filters.convolve(float_array, kernel, output=float_array)
+        array = ndimage.filters.convolve(array, kernel)
         if item.get('blur', 0) > 0:
             ndimage.filters.gaussian_filter(
-                float_array, item['blur'] * 100, output=float_array)
-        np.clip(float_array, 0, 1, out=float_array)
-        if item['color'] == 'Gray':
-            rgb = np.stack((float_array, float_array, float_array), axis=2)
-        else:
-            hsl = _gray2hsl(float_array, COLORS[item['color']])
-            rgb = hsl2rgb(hsl)
-        if i == 0:
+                array, item['blur'] * 100, output=array)
+        np.clip(array, 0, 1, out=array)
+        rgb = (
+            np.stack((array, array, array), axis=2) *
+            constants.COLORS[item['color']]
+        )
+        if overlay is None:
             overlay = rgb
         else:
             overlay = _porter_duff_screen(overlay, rgb)
