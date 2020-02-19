@@ -15,8 +15,9 @@ Even if your system already has a version of Python installed, it is strongly
 recommended to use the `conda` environment manager to install and manage this
 library's dependencies.
 
-### Option A: Clone repository and create environment
-This option downloads the source code and creates the development environment.
+### Option A (Development): Clone repository and create environment
+This option downloads the source code and creates a development environment. It does not add this library to the path, so if your use case is to import it into
+other projects rather than interact with the source, Option B is recommended.
 ```bash
 cd <path/to/where/you/want/to/install/project>
 git clone https://github.com/ionpath/mibitracker-client
@@ -28,7 +29,7 @@ conda env create -f environment.yml
 conda activate mibitracker-client
 ```
 
-### Option B: Install with pip
+### Option B (Usage): Install with pip
 This option is useful if you want this library to be installed as part of an
 existing environment or as a dependency inside a requirements.txt file. You may
 install a particular release using its tag (recommended)
