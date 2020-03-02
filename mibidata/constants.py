@@ -17,8 +17,9 @@ COLORS = {
 OVERLAY_MIN_BRIGHTNESS = -0.9
 
 # The kernels below are those used by WegGL convolution in MIBItracker.
+# pylint: disable=line-too-long
 OVERLAY_SMOOTHING_KERNELS = [
-    [  
+    [
         [0.05, 0.1, 0.05],
         [0.1, 0.4, 0.1],
         [0.05, 0.1, 0.05]
