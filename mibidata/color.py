@@ -226,8 +226,8 @@ def compose_overlay(image, overlay_settings):
     - 'intensity_lower' (optional):
         Lower limit of the channel intensity; defaults to 0.
     - 'blur' (optional):
-        float between 0 and 1. Defines the gaussian blur of the channel;
-        defaults to 0.
+        integer between 0 and 10. Defines the gaussian blur of the channel
+        according to pre-defined convolution kernels.
 
     Args:
         image: A MibiImage.
@@ -236,13 +236,6 @@ def compose_overlay(image, overlay_settings):
     Returns:
         An NxMx3 uint8 array of an RGB image.
     """
-    # Convolve with this filter no matter what, to mimic browser rendering.
-    kernel = np.array([
-        [0.05, 0.1, 0.05],
-        [0.1, 0.4, 0.1],
-        [0.05, 0.1, 0.05]
-    ])
-
     for v in overlay_settings.values():
         if 'color' in v:
             break
@@ -252,28 +245,33 @@ def compose_overlay(image, overlay_settings):
         if len(overlay_settings) == 1 and 'channels' in v:
             overlay_settings = v['channels']
             break
-        raise ValueError("Unexpected format of overlay_settings dictionary.")
+        raise ValueError('Unexpected format of overlay_settings dictionary.')
 
     overlay = None
     for channel in overlay_settings:
-        item = overlay_settings[channel]
+        setting = overlay_settings[channel]
+        array = image[channel]
+        # If set to min brightess, skip this channel:
+        if setting['brightness'] == constants.OVERLAY_MIN_BRIGHTNESS:
+            continue
         array = image[channel]
         # Because we treat the min differently, don't use np.clip
-        range_min = item.get('intensity_lower', 0)
-        range_max = item.get('intensity_higher', array.max())
+        range_min = setting.get('intensity_lower', 0)
+        range_max = setting.get('intensity_higher', array.max())
         array[array > range_max] = range_max
         array[array < range_min] = 0
         array = array / float(range_max)
-        array[array > 0] += item.get('brightness', 0)
-        # Apply default filter even if no blurring
-        array = ndimage.filters.convolve(array, kernel)
-        if item.get('blur', 0) > 0:
-            ndimage.filters.gaussian_filter(
-                array, item['blur'] * 100, output=array)
+        array = ndimage.filters.convolve(
+            array, constants.OVERLAY_SMOOTHING_KERNELS[setting['blur']])
         np.clip(array, 0, 1, out=array)
+        if setting['brightness'] > 0:
+            array /= (1 - setting['brightness'])
+            np.clip(array, 0, 1, out=array)
+        elif setting['brightness'] < 0:
+            array = np.power(array, 1 - 3 * setting['brightness']) # pylint: disable=assignment-from-no-return
         rgb = (
             np.stack((array, array, array), axis=2) *
-            constants.COLORS[item['color']]
+            constants.COLORS[setting['color']]
         )
         if overlay is None:
             overlay = rgb
