@@ -288,8 +288,7 @@ def read(file, sims=True, sed=False, optical=False, label=False,
         if (targets or masses) and not sims_data:
             raise ValueError('None of the channels specified for inclusion '
                              'are present in file.')
-        image = mi.MibiImage(np.stack(sims_data, axis=2),
-                                         channels, **metadata)
+        image = mi.MibiImage(np.stack(sims_data, axis=2), channels, **metadata)
         if masses:
             missing_masses = list(set(masses) - set(image.masses))
             if missing_masses:
