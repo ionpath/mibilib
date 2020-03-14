@@ -316,7 +316,7 @@ class MibiImage():
     def _set_channels(self, channels, length):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
-        if MibiImage.channels_is_list_of_tuples(channels):
+        if all((isinstance(c, tuple) and len(c) == 2 for c in channels)):
             # Tuples of masses and targets.
             masses, targets = zip(*channels)
             if len(set(masses)) != length:
@@ -325,11 +325,7 @@ class MibiImage():
                 raise ValueError('Targets are not all unique.')
             self.masses = masses
             self.targets = targets
-        #TODO: DPPA-732: this is line that causes test to fail
-        elif MibiImage.channels_is_list_of_strings(channels):
-        #line below from original code, but if want ability to pass in
-            #an individual tuple, does not account for this
-        #elif all(isinstance(c, str) for c in channels):
+        elif all(isinstance(c, str) for c in channels):
             self.masses = self.targets = None
         else:
             raise ValueError(
@@ -439,77 +435,6 @@ class MibiImage():
         metadata_keys.extend(self._user_defined_attributes)
         return {key: getattr(self, key) for key in metadata_keys}
 
-    @staticmethod
-    def channels_is_list_of_tuples(channels):
-        """Checks if channels is an interable of tuples in correct
-        format.
-
-        Args:
-            channels: Representation of MibiImage channels.
-
-        Returns: True if channels is an iterable of tuples in form
-            (int, str) or (str, str), even if iterable has length of 1.
-        """
-        if isinstance(channels, int):
-            return False
-        return all(MibiImage.channel_is_single_tuple(c) for c in channels)
-
-    @staticmethod
-    def channels_is_list_of_strings(channels):
-        """Checks if channels is a list of strings.
-
-        Args:
-            channels: Representation of MibiImage channels.
-
-        Returns: True if channels is an iterable of strings, even if
-            iterable has length of 1.
-
-        Raises:
-            ValueError raised if channels parameter is a tuple of 2 strings,
-            as this could also be interpreted as a singular tuple representation
-            of a channel.
-        """
-        if isinstance(channels, (int, str)):
-            return False
-        if isinstance(channels, tuple) and len(channels) == 2 and \
-            all(isinstance(c, str) for c in channels):
-            raise ValueError('Unsure if iterable of strings or '
-                             'singular tuple of strings.')
-        return all(isinstance(c, str) for c in channels)
-
-    @staticmethod
-    def channels_is_list_of_ints(channels):
-        """Checks if channels is an iterable of ints.
-
-        Args:
-            channels: Representation of MibiImage channels.
-
-        Returns: True if channels is an iterable of strings, even if
-            iterable has length of 1.
-
-        Raises:
-            ValueError raised if channels parameter is a tuple of 2 strings,
-            as this could also be interpreted as a singular tuple representation
-            of a channel.
-        """
-        if isinstance(channels, int):
-            return False
-        return all(isinstance(c, int) for c in channels)
-
-    @staticmethod
-    def channel_is_single_tuple(channel):
-        return isinstance(channel, tuple) and len(channel) == 2 \
-               and isinstance(channel[0], (int, str)) and \
-                   isinstance(channel[1], str)
-
-    @staticmethod
-    def channel_is_single_string(channel):
-        return isinstance(channel, str)
-
-    @staticmethod
-    def channel_is_single_int(channel):
-        return isinstance(channel, int)
-
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.
 
@@ -617,25 +542,20 @@ class MibiImage():
             image: A MibiImage.
 
         Raises:
-            ValueError: Raised if
-
-                * The image has any channels already present on
-                  instance to which it is being appended.
-                * The channels to be appended do not match the form of the
-                  channels of the original image.
+            ValueError: Raised if the image has any channels already present on
+                instance to which it is being appended.
         """
-        og_channels = list(self.channels)
-        new_channels = list(image.channels)
-        if set(og_channels).intersection(set(new_channels)):
+        if set(self.channels).intersection(set(image.channels)):
             raise ValueError('Images contain overlapping channels.')
-        if MibiImage.channels_is_list_of_tuples(og_channels):
-            if not MibiImage.channels_is_list_of_tuples(new_channels):
-                raise ValueError('Channels to be appended must match form of '
+        if all((isinstance(c, tuple) and len(c) == 2 for c in self.channels)):
+            if not all((isinstance(c, tuple) and len(c) == 2
+                        for c in image.channels)):
+                raise ValueError('Channels to be appended must match form as '
                                  'original image, which is a list of tuples in '
-                                 'the format (mass, target).')
-        if MibiImage.channels_is_list_of_strings(og_channels):
-            if not MibiImage.channels_is_list_of_strings(new_channels):
-                raise ValueError('Channels to be appended must match form of '
+                                 'format (mass, target).')
+        if all(isinstance(c, str) for c in self.channels):
+            if not all(isinstance(c, str) for c in image.channels):
+                raise ValueError('Channels to be appended must match form as '
                                  'original image, which is a list of str.')
         self._set_channels(
             [c for c in self.channels] + [c for c in image.channels],

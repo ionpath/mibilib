@@ -105,53 +105,49 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertIsNone(label)
         self.assertEqual(image.data.dtype, np.float32)
 
-    def test_sims_selected_channels(self):
+    def test_sims_selected_masses(self):
         tiff.write(self.filename, self.float_image)
-        image = tiff.read(self.filename, inc_channels=CHANNELS[1:3])
-        expected_image = tiff.read(self.filename)
-        expected_image = expected_image.slice_image(CHANNELS[1:3])
-        self.assertEqual(expected_image, image)
-        image = tiff.read(self.filename, inc_channels=['Target2', '3'])
-        self.assertEqual(expected_image, image)
-        image = tiff.read(self.filename, inc_channels=(2, 3))
+        image = tiff.read(self.filename, masses=self.float_image.masses[1:3])
+        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
         self.assertEqual(expected_image, image)
 
-    def test_sims_single_selected_channel(self):
+    def test_sims_selected_targets(self):
         tiff.write(self.filename, self.float_image)
-        image = tiff.read(self.filename, inc_channels=(3, 'Target3'))
-        expected_image = tiff.read(self.filename)
-        expected_image = expected_image.slice_image((3, 'Target3'))
-        self.assertEqual(expected_image, image)
-        image = tiff.read(self.filename, inc_channels='Target3')
-        self.assertEqual(expected_image, image)
-        image = tiff.read(self.filename, inc_channels='3')
-        self.assertEqual(expected_image, image)
-        image = tiff.read(self.filename, inc_channels=3)
+        image = tiff.read(self.filename, targets=self.float_image.targets[1:3])
+        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
         self.assertEqual(expected_image, image)
 
-    def test_sims_selected_channels_not_in_file(self):
+    def test_sims_selected_different_masses_and_targets(self):
         tiff.write(self.filename, self.float_image)
-        with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=(6, 'Target6'))
-        with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=((6, 'Target6'),
-                                                   (7, 'Target7'),
-                                                   (5, 'Target5')))
-        with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels='Target6')
-        with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=('Target6', 'Target7',
-                                                   'Target5'))
-        with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=6)
-        with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=[5, 6, 7])
+        image = tiff.read(self.filename, masses=self.float_image.masses[1:2],
+                          targets=self.float_image.targets[2:3])
+        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
+        self.assertEqual(expected_image, image)
 
-    def test_sims_selected_channels_wrong_format(self):
-        CONFUSING_LABELS = ('1', '2')
+    def test_sims_selected_overlapping_masses_and_targets(self):
+        tiff.write(self.filename, self.float_image)
+        image = tiff.read(self.filename, masses=self.float_image.masses[1:3],
+                          targets=self.float_image.targets[2:3])
+        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
+        self.assertEqual(expected_image, image)
+
+    def test_sims_extra_masses_and_targets(self):
+        tiff.write(self.filename, self.float_image)
+        with warnings.catch_warnings(record=True) as warns:
+            image = tiff.read(self.filename, masses=[1, 2, 6],
+                              targets=['Target0'])
+        expected_image = tiff.read(self.filename).slice_image([1, 2])
+        self.assertEqual(expected_image, image)
+        messages = [str(w.message) for w in warns]
+        print(messages)
+        self.assertTrue('Requested masses not found in file: [6]' in messages)
+        self.assertTrue('Requested targets not found in file: [\'Target0\']'
+                        in messages)
+
+    def test_sims_no_selected_found(self):
         tiff.write(self.filename, self.float_image)
         with self.assertRaises(ValueError):
-            tiff.read(self.filename, inc_channels=CONFUSING_LABELS)
+            tiff.read(self.filename, targets=['do', 'not', 'exist'])
 
     def test_default_ranges(self):
         tiff.write(self.filename, self.float_image)
@@ -253,51 +249,6 @@ class TestWriteReadTiff(unittest.TestCase):
             'date': datetime.datetime.strptime(expected['date'],
                                                '%Y-%m-%dT%H:%M:%S')})
         self.assertEqual(metadata, expected)
-
-    def test_read_metadata_selected_channels(self):
-        tiff.write(self.filename, self.float_image)
-        metadata = tiff.info(self.filename, CHANNELS[1:3])
-        expected = METADATA.copy()
-        expected.update({
-            'conjugates': list(CHANNELS[1:3]),
-            'date': datetime.datetime.strptime(expected['date'],
-                                               '%Y-%m-%dT%H:%M:%S')})
-        self.assertEqual(metadata, expected)
-        STRING_CHANNELS = ['2', '3']
-        metadata = tiff.info(self.filename, STRING_CHANNELS)
-        self.assertEqual(metadata, expected)
-        metadata = tiff.info(self.filename, [2, 3])
-        self.assertEqual(metadata, expected)
-
-    def test_read_metadata_single_channel(self):
-        tiff.write(self.filename, self.float_image)
-        metadata = tiff.info(self.filename, CHANNELS[1])
-        expected = METADATA.copy()
-        expected.update({
-            'conjugates': [CHANNELS[1]],
-            'date': datetime.datetime.strptime(expected['date'],
-                                               '%Y-%m-%dT%H:%M:%S')})
-        self.assertEqual(metadata, expected)
-        metadata = tiff.info(self.filename, '2')
-        self.assertEqual(metadata, expected)
-        metadata = tiff.info(self.filename, 2)
-        self.assertEqual(metadata, expected)
-
-    def test_read_metadata_channels_not_in_file(self):
-        tiff.write(self.filename, self.float_image)
-        with self.assertRaises(ValueError):
-            tiff.info(self.filename, (6, 'Target6'))
-        with self.assertRaises(ValueError):
-            tiff.info(self.filename, ((6, 'Target6'), (7, 'Target7'),
-                                      (5, 'Target5')))
-        with self.assertRaises(ValueError):
-            tiff.info(self.filename, '6')
-        with self.assertRaises(ValueError):
-            tiff.info(self.filename, ['6', '7'])
-        with self.assertRaises(ValueError):
-            tiff.info(self.filename, 6)
-        with self.assertRaises(ValueError):
-            tiff.info(self.filename, (6, 7))
 
     def test_read_metadata_with_user_defined_metadata(self):
         tiff.write(self.filename, self.image_user_defined_metadata)

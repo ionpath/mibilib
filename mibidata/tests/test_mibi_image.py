@@ -9,9 +9,6 @@ import tempfile
 import unittest
 import warnings
 
-import sys
-sys.path.append('/Users/emunch/Documents/mibitracker-client')
-
 import numpy as np
 from skimage import io as skio, transform
 
