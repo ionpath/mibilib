@@ -117,30 +117,30 @@ class TestWriteReadTiff(unittest.TestCase):
         expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
         self.assertEqual(expected_image, image)
 
-    def test_sims_selected_different_masses_and_targets(self):
+    def test_sims_selected_masses_and_targets(self):
         tiff.write(self.filename, self.float_image)
-        image = tiff.read(self.filename, masses=self.float_image.masses[1:2],
-                          targets=self.float_image.targets[2:3])
-        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
-        self.assertEqual(expected_image, image)
+        with self.assertRaises(ValueError):
+            tiff.read(self.filename, masses=self.float_image.masses[1:2],
+                      targets=self.float_image.targets[2:3])
 
-    def test_sims_selected_overlapping_masses_and_targets(self):
-        tiff.write(self.filename, self.float_image)
-        image = tiff.read(self.filename, masses=self.float_image.masses[1:3],
-                          targets=self.float_image.targets[2:3])
-        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
-        self.assertEqual(expected_image, image)
-
-    def test_sims_extra_masses_and_targets(self):
+    def test_sims_extra_masses(self):
         tiff.write(self.filename, self.float_image)
         with warnings.catch_warnings(record=True) as warns:
-            image = tiff.read(self.filename, masses=[1, 2, 6],
-                              targets=['Target0'])
+            image = tiff.read(self.filename, masses=[1, 2, 6])
         expected_image = tiff.read(self.filename).slice_image([1, 2])
         self.assertEqual(expected_image, image)
         messages = [str(w.message) for w in warns]
-        print(messages)
         self.assertTrue('Requested masses not found in file: [6]' in messages)
+
+    def test_sims_extra_targets(self):
+        tiff.write(self.filename, self.float_image)
+        target = self.float_image.targets[1]
+
+        with warnings.catch_warnings(record=True) as warns:
+            image = tiff.read(self.filename, targets=['Target0', target])
+        expected_image = tiff.read(self.filename).slice_image([target])
+        self.assertEqual(expected_image, image)
+        messages = [str(w.message) for w in warns]
         self.assertTrue('Requested targets not found in file: [\'Target0\']'
                         in messages)
 

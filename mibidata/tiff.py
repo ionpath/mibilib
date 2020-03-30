@@ -243,11 +243,11 @@ def read(file, sims=True, sed=False, optical=False, label=False,
         label: Boolean for whether to return the slide label image. Defaults to
             False.
         masses: A list of integer masses. If specified, only channels
-            corresponding to these masses (as well as any specified targets)
-            will be included in the returned MibiImage.
-        targets: A list of string targets. Only channels corresponding to these
-            targets (as well as any specified masses) will be included in the
-            returned MibiImage.
+            corresponding to these masses will be included in the returned
+            MibiImage. Either masses or targets can be specified, not both.
+        targets: A list of string targets. If specified, only channels
+            corresponding to these targets will be included in the returned
+            MibiImage. Either masses or targets can be specified, not both.
 
     Returns: A tuple of the image types set to True in the parameters, in the
         order SIMS, SED, Optical, Label (but including only those types
@@ -264,12 +264,15 @@ def read(file, sims=True, sed=False, optical=False, label=False,
 
             * The input file is not of the IONpath MIBItiff format
             * No image type is selected to be returned.
+            * Both masses and targets are specified.
     """
     return_types = collections.OrderedDict([
         ('sims', sims), ('sed', sed), ('optical', optical), ('label', label)
     ])
     if not any((val for val in return_types.values())):
         raise ValueError('At least one image type must be specified to return.')
+    if masses and targets:
+        raise ValueError('Either masses or targets can be specified, not both.')
     to_return = {}
     metadata = {}
     sims_data = []
