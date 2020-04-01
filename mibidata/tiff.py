@@ -229,7 +229,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     extratags=page_tags)
 
 
-def read(file, sims=True, sed=False, optical=False, label=False):
+def read(file, sims=True, sed=False, optical=False, label=False,
+         masses=None, targets=None):
     """Reads MIBI data from an IonpathMIBI TIFF file.
 
     Args:
@@ -241,6 +242,12 @@ def read(file, sims=True, sed=False, optical=False, label=False):
             False.
         label: Boolean for whether to return the slide label image. Defaults to
             False.
+        masses: A list of integer masses. If specified, only channels
+            corresponding to these masses will be included in the returned
+            MibiImage. Either masses or targets can be specified, not both.
+        targets: A list of string targets. If specified, only channels
+            corresponding to these targets will be included in the returned
+            MibiImage. Either masses or targets can be specified, not both.
 
     Returns: A tuple of the image types set to True in the parameters, in the
         order SIMS, SED, Optical, Label (but including only those types
@@ -248,17 +255,24 @@ def read(file, sims=True, sed=False, optical=False, label=False):
         :class:`mibidata.mibi_image.MibiImage` instance; the other image
         types will be returned as numpy arrays. If an image type is selected to
         be returned  but is not present in the image, it will be returned as
-        None.
+        None. If returning SIMS data and the masses or targets parameters are
+        set, only those channels will be included in the MibiImage instance,
+        otherwise all channels present in the file will be returned.
 
     Raises:
-        ValueError: Raised if the input file is not of the IonpathMIBI
-            format, or if no image type selected to be returned.
+        ValueError: Raised if
+
+            * The input file is not of the IONpath MIBItiff format
+            * No image type is selected to be returned.
+            * Both masses and targets are specified.
     """
     return_types = collections.OrderedDict([
         ('sims', sims), ('sed', sed), ('optical', optical), ('label', label)
     ])
     if not any((val for val in return_types.values())):
         raise ValueError('At least one image type must be specified to return.')
+    if masses and targets:
+        raise ValueError('Either masses or targets can be specified, not both.')
     to_return = {}
     metadata = {}
     sims_data = []
@@ -267,19 +281,43 @@ def read(file, sims=True, sed=False, optical=False, label=False):
         _check_software(tif)
         for page in tif.pages:
             description, image_type = _page_description(page)
-            if sims and image_type == 'sims':
+            if sims and image_type == 'sims' and _include_page(
+                    description, masses, targets):
                 _get_page_data(page, description, metadata, channels)
                 sims_data.append(page.asarray())
             elif return_types.get(image_type):
                 to_return[image_type] = page.asarray()
     if sims:
-        to_return['sims'] = mi.MibiImage(np.stack(sims_data, axis=2),
-                                         channels, **metadata)
+        if (targets or masses) and not sims_data:
+            raise ValueError('None of the channels specified for inclusion '
+                             'are present in file.')
+        image = mi.MibiImage(np.stack(sims_data, axis=2), channels, **metadata)
+        if masses:
+            missing_masses = list(set(masses) - set(image.masses))
+            if missing_masses:
+                warnings.warn(f'Requested masses not found in file: '
+                              f'{missing_masses}')
+        if targets:
+            missing_targets = list(set(targets) - set(image.targets))
+            if missing_targets:
+                warnings.warn(f'Requested targets not found in file: '
+                              f'{missing_targets}')
+        to_return['sims'] = image
     return_vals = tuple(
         to_return.get(key)for key, val in return_types.items() if val)
     if len(return_vals) == 1:
         return return_vals[0]
     return return_vals
+
+
+def _include_page(description, masses, targets):
+    if not masses and not targets:
+        return True
+    if masses and description['channel.mass'] in masses:
+        return True
+    if targets and description['channel.target'] in targets:
+        return True
+    return False
 
 
 def _check_software(file):

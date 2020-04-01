@@ -345,6 +345,29 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(first_image, expected)
         np.testing.assert_array_equal(
             first_image.slice_data('4'), second_image.slice_data('4'))
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2], TUPLE_LABELS[:2],
+                                   **METADATA)
+        second_image.channels = [('Mass3', 'Target3'), ('Mass4', 'Target4')]
+        expected.channels = TUPLE_LABELS + (('Mass4', 'Target4'),)
+        first_image.append(second_image)
+        self.assertEqual(first_image, expected)
+
+    def test_append_single_channel(self):
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2],
+                                   ['Target1', 'Target2'], **METADATA)
+        second_data = np.expand_dims(TEST_DATA[:, :, 2], -1)
+        second_image = mi.MibiImage(second_data, ['Target3'], **METADATA)
+        expected = mi.MibiImage(TEST_DATA, ['Target1', 'Target2',
+                                            'Target3'], **METADATA)
+        first_image.append(second_image)
+        self.assertEqual(first_image, expected)
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2], TUPLE_LABELS[:2],
+                                   **METADATA)
+        second_image.channels = [('Mass3', 'Target3')]
+        expected.channels = TUPLE_LABELS
+        first_image.append(second_image)
+        np.testing.assert_array_equal(first_image.data, expected.data)
+        self.assertEqual(first_image, expected)
 
     def test_append_non_unique_channels(self):
         first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)

@@ -105,6 +105,50 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertIsNone(label)
         self.assertEqual(image.data.dtype, np.float32)
 
+    def test_sims_selected_masses(self):
+        tiff.write(self.filename, self.float_image)
+        image = tiff.read(self.filename, masses=self.float_image.masses[1:3])
+        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
+        self.assertEqual(expected_image, image)
+
+    def test_sims_selected_targets(self):
+        tiff.write(self.filename, self.float_image)
+        image = tiff.read(self.filename, targets=self.float_image.targets[1:3])
+        expected_image = tiff.read(self.filename).slice_image(CHANNELS[1:3])
+        self.assertEqual(expected_image, image)
+
+    def test_sims_selected_masses_and_targets(self):
+        tiff.write(self.filename, self.float_image)
+        with self.assertRaises(ValueError):
+            tiff.read(self.filename, masses=self.float_image.masses[1:2],
+                      targets=self.float_image.targets[2:3])
+
+    def test_sims_extra_masses(self):
+        tiff.write(self.filename, self.float_image)
+        with warnings.catch_warnings(record=True) as warns:
+            image = tiff.read(self.filename, masses=[1, 2, 6])
+        expected_image = tiff.read(self.filename).slice_image([1, 2])
+        self.assertEqual(expected_image, image)
+        messages = [str(w.message) for w in warns]
+        self.assertTrue('Requested masses not found in file: [6]' in messages)
+
+    def test_sims_extra_targets(self):
+        tiff.write(self.filename, self.float_image)
+        target = self.float_image.targets[1]
+
+        with warnings.catch_warnings(record=True) as warns:
+            image = tiff.read(self.filename, targets=['Target0', target])
+        expected_image = tiff.read(self.filename).slice_image([target])
+        self.assertEqual(expected_image, image)
+        messages = [str(w.message) for w in warns]
+        self.assertTrue('Requested targets not found in file: [\'Target0\']'
+                        in messages)
+
+    def test_sims_no_selected_found(self):
+        tiff.write(self.filename, self.float_image)
+        with self.assertRaises(ValueError):
+            tiff.read(self.filename, targets=['do', 'not', 'exist'])
+
     def test_default_ranges(self):
         tiff.write(self.filename, self.float_image)
         with TiffFile(self.filename) as tif:
