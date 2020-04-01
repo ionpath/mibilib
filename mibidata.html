@@ -746,10 +746,17 @@ metadata will be preserved.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> – A MibiImage.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> – A MibiImage.</p>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the image has any channels already present on
-instance to which it is being appended.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
+<ul class="last simple">
+<li>The image has any channels already present on
+instance to which it is being appended.</li>
+<li>The channels to be appended do not match the form of the
+channels of the original image.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1205,7 +1212,7 @@ to the specified or inferred <code class="docutils literal notranslate"><span cl
 
 <dl class="function">
 <dt id="mibidata.tiff.read">
-<code class="descclassname">mibidata.tiff.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file</em>, <em>sims=True</em>, <em>sed=False</em>, <em>optical=False</em>, <em>label=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mibidata.tiff.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file</em>, <em>sims=True</em>, <em>sed=False</em>, <em>optical=False</em>, <em>label=False</em>, <em>masses=None</em>, <em>targets=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads MIBI data from an IonpathMIBI TIFF file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1220,6 +1227,12 @@ True.</li>
 False.</li>
 <li><strong>label</strong> – Boolean for whether to return the slide label image. Defaults to
 False.</li>
+<li><strong>masses</strong> – A list of integer masses. If specified, only channels
+corresponding to these masses will be included in the returned
+MibiImage. Either masses or targets can be specified, not both.</li>
+<li><strong>targets</strong> – A list of string targets. If specified, only channels
+corresponding to these targets will be included in the returned
+MibiImage. Either masses or targets can be specified, not both.</li>
 </ul>
 </td>
 </tr>
@@ -1232,14 +1245,21 @@ specified). The SIMS data will be returned as a
 <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance; the other image
 types will be returned as numpy arrays. If an image type is selected to
 be returned  but is not present in the image, it will be returned as
-None.</dd>
+None. If returning SIMS data and the masses or targets parameters are
+set, only those channels will be included in the MibiImage instance,
+otherwise all channels present in the file will be returned.</dd>
 </dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the input file is not of the IonpathMIBI
-format, or if no image type selected to be returned.</td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
+<ul class="last simple">
+<li>The input file is not of the IONpath MIBItiff format</li>
+<li>No image type is selected to be returned.</li>
+<li>Both masses and targets are specified.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
