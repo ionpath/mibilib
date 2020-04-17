@@ -54,12 +54,12 @@ invalid or unexpected.</p>
 <div class="section" id="module-mibitracker.request_helpers">
 <span id="mibitracker-request-helpers-module"></span><h2>mibitracker.request_helpers module<a class="headerlink" href="#module-mibitracker.request_helpers" title="Permalink to this headline">¶</a></h2>
 <p>Helper class for making and retrying requests to the MIBItracker.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="class">
 <dt id="mibitracker.request_helpers.MibiRequests">
-<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email=None</em>, <em>password=None</em>, <em>token=None</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em>, <em>session_timeout=10</em>, <em>data_transfer_timeout=30</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mibitracker.request_helpers.</code><code class="descname">MibiRequests</code><span class="sig-paren">(</span><em>url</em>, <em>email=None</em>, <em>password=None</em>, <em>token=None</em>, <em>refresh=300</em>, <em>retries=3</em>, <em>retry_methods=('HEAD'</em>, <em>'GET'</em>, <em>'PUT'</em>, <em>'DELETE'</em>, <em>'OPTIONS'</em>, <em>'TRACE'</em>, <em>'POST')</em>, <em>retry_codes=(502</em>, <em>503)</em>, <em>session_timeout=10</em>, <em>data_transfer_timeout=30</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Helper class for making requests to the MibiTracker.</p>
+<p>Helper class for making requests to the MIBItracker.</p>
 <p>This is an opinionated way of using <code class="docutils literal notranslate"><span class="pre">requests.Session</span></code> with the following
 features:</p>
 <ul class="simple">
@@ -78,11 +78,14 @@ instance needs to be initialized.</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>url</strong> – The string url to the backend of a MibiTracker instance, e.g.
+<li><strong>url</strong> – The string url to the backend of a MIBItracker instance, e.g.
 <code class="docutils literal notranslate"><span class="pre">'https://backend-dot-mibitracker-demo.appspot.com'</span></code>.</li>
-<li><strong>email</strong> – The string email address of your MibiTracker account.</li>
-<li><strong>password</strong> – The string password of your MibiTracker account.</li>
-<li><strong>token</strong> – A JSON Web Token (JWT) to validate a MibiTracker session.</li>
+<li><strong>email</strong> – The string email address of your MIBItracker account.</li>
+<li><strong>password</strong> – The string password of your MIBItracker account.</li>
+<li><strong>token</strong> – A JSON Web Token (JWT) to validate a MIBItracker session.</li>
+<li><strong>refresh</strong> – Number of seconds since previous refresh to automatically
+refresh token. Defaults to 5 minutes. Set to 0 or None in order
+to not attempt refreshes.</li>
 <li><strong>retries</strong> – The max number of retries for HTTP status errors. Defaults
 to <code class="docutils literal notranslate"><span class="pre">MAX_RETRIES</span></code> which is set to 3.</li>
 <li><strong>retry_methods</strong> – The HTTP methods to retry. Defaults to
@@ -90,7 +93,7 @@ to <code class="docutils literal notranslate"><span class="pre">MAX_RETRIES</spa
 whitelist with the addition of POST.</li>
 <li><strong>retry_codes</strong> – The HTTP status codes to retry. Defaults to <code class="docutils literal notranslate"><span class="pre">(502,</span> <span class="pre">503)</span></code>,
 which are associated with transient errors seen on app engine.</li>
-<li><strong>session_timeout</strong> – Timeout for MibiTracker requests.</li>
+<li><strong>session_timeout</strong> – Timeout for MIBItracker requests.</li>
 <li><strong>data_transfer_timeout</strong> – Timeout for data transfer requests.</li>
 </ul>
 </td>
@@ -100,7 +103,7 @@ which are associated with transient errors seen on app engine.</li>
 <dl class="attribute">
 <dt id="mibitracker.request_helpers.MibiRequests.url">
 <code class="descname">url</code><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.url" title="Permalink to this definition">¶</a></dt>
-<dd><p>The string url to the backend of a MibiTracker instance.</p>
+<dd><p>The string url to the backend of a MIBItracker instance.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -119,6 +122,13 @@ response’s status code is &gt;= 400.</td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="mibitracker.request_helpers.MibiRequests.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refreshes the authorization token stored in the session header.</p>
+<p>Raises HTTP 400 if attempting to refresh an expired token.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>route</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.get" title="Permalink to this definition">¶</a></dt>
@@ -211,7 +221,7 @@ or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.download_file">
 <code class="descname">download_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.download_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads a file from MibiTracker storage.</p>
+<dd><p>Downloads a file from MIBItracker storage.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -311,7 +321,7 @@ response JSON returned when updating the new images.</p>
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.upload_mibitiff">
 <code class="descname">upload_mibitiff</code><span class="sig-paren">(</span><em>tiff_file</em>, <em>run_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_mibitiff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uploads a single TIFF to the MibiTracker.</p>
+<dd><p>Uploads a single TIFF to the MIBItracker.</p>
 <p>This uses the ‘run’ and ‘folder’ fields in the MibiTiff’s description to
 associate this with the correct image.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -327,7 +337,7 @@ mandatory in the future.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MibiTracker after uploading the file and
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MIBItracker after uploading the file and
 queuing it to be processed into viewable data.</p>
 </td>
 </tr>
@@ -344,7 +354,7 @@ queuing it to be processed into viewable data.</p>
 <dl class="method">
 <dt id="mibitracker.request_helpers.MibiRequests.upload_channel">
 <code class="descname">upload_channel</code><span class="sig-paren">(</span><em>image_id</em>, <em>image_file</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uploads a grayscale PNG or TIFF to the MibiTracker.</p>
+<dd><p>Uploads a grayscale PNG or TIFF to the MIBItracker.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -361,7 +371,7 @@ an extension to indicate format, such as “CD45.tiff” or
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MibiTracker after uploading the file.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The response from the MIBItracker after uploading the file.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – Raised if image_file is not a string path or file object.</p>
@@ -484,7 +494,7 @@ sharing is enabled.</div></blockquote>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>image_ids</strong> – A list of ints of ids of the images in MibiTracker
+<li><strong>image_ids</strong> – A list of ints of ids of the images in MIBItracker
 corresponding to the images to be added to the new imageset.</li>
 <li><strong>imageset_name</strong> – A string name for the new imageset.</li>
 <li><strong>project_id</strong> – An integer id specifying the project in which to create
