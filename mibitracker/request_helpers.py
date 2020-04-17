@@ -1,7 +1,8 @@
 """Helper class for making and retrying requests to the MIBItracker.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
+import datetime
 import io
 import json
 import os
@@ -23,14 +24,14 @@ RETRY_STATUS_CODES = (502, 503)
 # POST is added here as compared to the urllib3 defaults.
 RETRY_METHOD_WHITELIST = (
     'HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE', 'POST')
-# Timeout for MibiTracker requests
+# Timeout for MIBItracker requests
 SESSION_TIMEOUT = 10
 # Timeout for data transfer requests
 DATA_TRANSFER_TIMEOUT = 30
 
 
 class MibiRequests():
-    """Helper class for making requests to the MibiTracker.
+    """Helper class for making requests to the MIBItracker.
 
     This is an opinionated way of using ``requests.Session`` with the following
     features:
@@ -43,11 +44,14 @@ class MibiRequests():
         instance needs to be initialized.
 
     Args:
-        url: The string url to the backend of a MibiTracker instance, e.g.
+        url: The string url to the backend of a MIBItracker instance, e.g.
             ``'https://backend-dot-mibitracker-demo.appspot.com'``.
-        email: The string email address of your MibiTracker account.
-        password: The string password of your MibiTracker account.
-        token: A JSON Web Token (JWT) to validate a MibiTracker session.
+        email: The string email address of your MIBItracker account.
+        password: The string password of your MIBItracker account.
+        token: A JSON Web Token (JWT) to validate a MIBItracker session.
+        refresh: Number of seconds since previous refresh to automatically
+            refresh token. Defaults to 5 minutes. Set to 0 or None in order
+            to not attempt refreshes.
         retries: The max number of retries for HTTP status errors. Defaults
             to ``MAX_RETRIES`` which is set to 3.
         retry_methods: The HTTP methods to retry. Defaults to
@@ -55,11 +59,11 @@ class MibiRequests():
             whitelist with the addition of POST.
         retry_codes: The HTTP status codes to retry. Defaults to ``(502, 503)``,
             which are associated with transient errors seen on app engine.
-        session_timeout: Timeout for MibiTracker requests.
+        session_timeout: Timeout for MIBItracker requests.
         data_transfer_timeout: Timeout for data transfer requests.
 
     Attributes:
-        url: The string url to the backend of a MibiTracker instance.
+        url: The string url to the backend of a MIBItracker instance.
         session: A ``StatusCheckedSession`` that includes an authorization
             header and automatically raises for HTTP status errors.
 
@@ -73,6 +77,7 @@ class MibiRequests():
                  email=None,
                  password=None,
                  token=None,
+                 refresh=300,  # 5 minutes
                  retries=MAX_RETRIES,
                  retry_methods=RETRY_METHOD_WHITELIST,
                  retry_codes=RETRY_STATUS_CODES,
@@ -82,6 +87,8 @@ class MibiRequests():
         self.url = url.rstrip('/')  # We add this as part of request params
         self.session = StatusCheckedSession(timeout=session_timeout)
         self._data_transfer_timeout = data_transfer_timeout
+        self._refresh_seconds = refresh
+        self._last_refresh = datetime.datetime.now()
 
         # Provide either an email and password, or a token
         # The token will be used in lieu of email and password if provided
@@ -112,6 +119,27 @@ class MibiRequests():
         token = response.json()['token']
         self.session.headers.update({'Authorization': 'JWT {}'.format(token)})
 
+    def refresh(self):
+        """Refreshes the authorization token stored in the session header.
+
+        Raises HTTP 400 if attempting to refresh an expired token."""
+        token = self.session.post(  # use the session to avoid recursion
+            '{}/api-token-refresh/'.format(self.url),
+            data=json.dumps(
+                {'token': self.session.headers['Authorization'][4:]}
+            ),
+            headers={'content-type': 'application/json'},
+        ).json()['token']
+        self.session.headers.update({'Authorization': 'JWT {}'.format(token)})
+
+    def _check_refresh(self):
+        current_time = datetime.datetime.now()
+        if (self._refresh_seconds and
+                (current_time - self._last_refresh).total_seconds() >
+                self._refresh_seconds):
+            self._last_refresh = current_time
+            self.refresh()
+
     @staticmethod
     def _prepare_route(route):
         if not route.startswith('/'):
@@ -130,6 +158,7 @@ class MibiRequests():
         Returns:
             The response from ``requests.Session.get``.
         """
+        self._check_refresh()
         return self.session.get('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
@@ -144,6 +173,7 @@ class MibiRequests():
         Returns:
             The response from ``requests.Session.post``.
         """
+        self._check_refresh()
         return self.session.post('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
@@ -158,6 +188,7 @@ class MibiRequests():
         Returns:
             The response from ``requests.Session.put``.
         """
+        self._check_refresh()
         return self.session.put('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
@@ -172,11 +203,12 @@ class MibiRequests():
         Returns:
             The response from ``requests.Session.delete``.
         """
+        self._check_refresh()
         return self.session.delete('{}{}'.format(
             self.url, self._prepare_route(route)), *args, **kwargs)
 
     def download_file(self, path):
-        """Downloads a file from MibiTracker storage.
+        """Downloads a file from MIBItracker storage.
 
         Args:
             path: The path to the file in storage. This usually can be
@@ -213,8 +245,7 @@ class MibiRequests():
         if run_label:
             payload['label'] = run_label
 
-        return self.session.get(
-            '{}{}'.format(self.url, '/runs/'), params=payload).json()
+        return self.get('/runs/', params=payload).json()
 
     def copy_run(self, old_label, new_label, **kwargs):
         """Creates a copy of the run corresponding to the label.
@@ -330,7 +361,7 @@ class MibiRequests():
             if sed:
                 sed_path = '/'.join((item['run']['path'], item['folder'], sed))
                 _, ext = os.path.splitext(sed_path)
-                # MibiTracker only accepts TIFF, PNG and BMP images so it has
+                # MIBItracker only accepts TIFF, PNG and BMP images so it has
                 # to be one of these if it's already in there
                 if ext.lower() == '.bmp':
                     content_type = 'image/bmp'
@@ -370,7 +401,7 @@ class MibiRequests():
         return response
 
     def upload_mibitiff(self, tiff_file, run_id=None):
-        """Uploads a single TIFF to the MibiTracker.
+        """Uploads a single TIFF to the MIBItracker.
 
         This uses the 'run' and 'folder' fields in the MibiTiff's description to
         associate this with the correct image.
@@ -383,7 +414,7 @@ class MibiRequests():
                 mandatory in the future.
 
         Returns:
-            The response from the MibiTracker after uploading the file and
+            The response from the MIBItracker after uploading the file and
             queuing it to be processed into viewable data.
 
         Raises:
@@ -425,7 +456,7 @@ class MibiRequests():
         return response
 
     def upload_channel(self, image_id, image_file, filename=None):
-        """Uploads a grayscale PNG or TIFF to the MibiTracker.
+        """Uploads a grayscale PNG or TIFF to the MIBItracker.
 
         Args:
             image_id: The integer id of the image to associate the channel with.
@@ -438,7 +469,7 @@ class MibiRequests():
                 "cell_boundaries.png".
 
         Returns:
-            The response from the MibiTracker after uploading the file.
+            The response from the MIBItracker after uploading the file.
 
         Raises:
             TypeError: Raised if image_file is not a string path or file object.
@@ -470,8 +501,8 @@ class MibiRequests():
         Returns:
             A list of dicts of of image metadata for the specified run.
         """
-        return self.session.get(
-            '{}/images/'.format(self.url),
+        return self.get(
+            '/images/',
             params={'run__label': run_label, 'paging': 'no'}).json()
 
     def image_conjugates(self, image_id):
@@ -592,7 +623,7 @@ class MibiRequests():
          sharing is enabled.
 
         Args:
-            image_ids: A list of ints of ids of the images in MibiTracker
+            image_ids: A list of ints of ids of the images in MIBItracker
                 corresponding to the images to be added to the new imageset.
             imageset_name: A string name for the new imageset.
             project_id: An integer id specifying the project in which to create
