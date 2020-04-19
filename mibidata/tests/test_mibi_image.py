@@ -22,14 +22,27 @@ MASS_LABELS = ('Mass1', 'Mass2', 'Mass3')
 MASS_INTEGERS = (1, 2, 3)
 TARGET_LABELS = ('Target1', 'Target2', 'Target3')
 METADATA = {
-    'run': 'Run', 'date': '2017-09-16T15:26:00',
-    'coordinates': (12345, 67890), 'size': 500., 'slide': '857',
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
+    'fov_id': 'Point1', 'fov_name': 'R1C3_Tonsil',
+    'folder': 'Point1/RowNumber0/Depth_Profile0',
+    'dwell': 4, 'scans': '0,5', 'aperture': 'B',
+    'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'mass_offset': 0.1, 'mass_gain': 0.2,
+    'time_resolution': 0.5, 'miscalibrated': False, 'check_reg': False,
+    'filename': '20180703_1234_test', 'description': 'test image',
+    'version': 'alpha'
+}
+USER_DEFINED_METADATA = {'x_size': 500., 'y_size': 500., 'mass_range': 20}
+OLD_METADATA = {
+    'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
+    'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
     'point_name': 'R1C3_Tonsil', 'dwell': 4, 'scans': '0,5',
     'folder': 'Point1/RowNumber0/Depth_Profile0',
-    'aperture': '300um', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
-    'panel': '20170916_1x', 'version': None, 'mass_offset': None,
-    'mass_gain': None, 'time_resolution': None, 'miscalibrated': None,
-    'check_reg': None, 'filename': '20180703_1234'
+    'aperture': 'B', 'instrument': 'MIBIscope1', 'tissue': 'Tonsil',
+    'panel': '20170916_1x', 'version': None, 'mass_offset': 0.1,
+    'mass_gain': 0.2, 'time_resolution': 0.5, 'miscalibrated': False,
+    'check_reg': False, 'filename': '20180703_1234_test'
 }
 
 
@@ -40,6 +53,7 @@ class TestMibiImage(unittest.TestCase):
         warnings.filterwarnings(
             'ignore',
             message='Anti-aliasing will be enabled by default.*')
+        self.maxDiff = None
 
     def test_mibi_image_string_labels(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -95,14 +109,55 @@ class TestMibiImage(unittest.TestCase):
         with self.assertRaises(ValueError):
             image.channels = invalid_tuple_3
 
-    def test_get_labels(self):
-        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
-        self.assertEqual(image.labels, image.channels)
+    def test_backwards_compatibility_with_old_metadata(self):
+        with self.assertWarns(UserWarning):
+            image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **OLD_METADATA)
+        self.assertEqual(image.fov_id, OLD_METADATA['folder'].split('/')[0])
+        self.assertEqual(image.fov_name, OLD_METADATA['point_name'])
+        self.assertEqual(image.point_name, OLD_METADATA['point_name'])
+        self.assertEqual(image._user_defined_attributes, ['point_name'])
 
-    def test_set_labels(self):
-        image = mi.MibiImage(TEST_DATA, STRING_LABELS)
-        image.labels = TARGET_LABELS
-        self.assertEqual(image.channels, TARGET_LABELS)
+    def test_check_fov_id(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        image.fov_id = 'Point2'
+        image.folder = 'Point2/RowNumber0/Depth_Profile0'
+        image.fov_name = 'R1C3_Tonsil'
+        with self.assertWarns(UserWarning):
+            image.fov_id = 'Point99'
+        with self.assertWarns(UserWarning):
+            image.fov_id = None
+
+    def test_check_fov_id_without_folder(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, fov_id='FOV1')
+        self.assertEqual(image.fov_id, 'FOV1')
+        self.assertEqual(image.folder, 'FOV1')
+
+    def test_check_folder_without_fov_id(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                             folder='Point1/RowNumber0/Depth_Profile0')
+        self.assertEqual(image.fov_id, 'Point1')
+        self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0')
+
+
+    def test_convert_from_non_encoded_new_aperture(self):
+        with warnings.catch_warnings(record=True) as w:
+            image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                                 aperture=u'300 \u03bcm')
+        self.assertTrue(
+            str(w[-1].message).startswith('Deprecated aperture code'))
+        self.assertEqual(image.aperture, 'B')
+
+    def test_convert_from_deprecated_aperture(self):
+        with warnings.catch_warnings(record=True) as w:
+            image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                                 aperture='300um')
+        self.assertTrue(
+            str(w[-1].message).startswith('Deprecated aperture code'))
+        self.assertEqual(image.aperture, 'B')
+
+    def test_bad_aperture(self):
+        with self.assertRaises(ValueError):
+            mi.MibiImage(TEST_DATA, TUPLE_LABELS, aperture='invalid')
 
     def test_equality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -142,6 +197,72 @@ class TestMibiImage(unittest.TestCase):
         metadata['date'] = datetime.datetime.strptime(metadata['date'],
                                                       mi._DATETIME_FORMAT)
         self.assertEqual(image.metadata(), metadata)
+
+    def test_metadata_with_user_defined_metadata_in_instantiation(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        metadata = METADATA.copy()
+        metadata.update(USER_DEFINED_METADATA)
+        metadata['date'] = datetime.datetime.strptime(metadata['date'],
+                                                      mi._DATETIME_FORMAT)
+        self.assertEqual(image.metadata(), metadata)
+
+    def test_retrieve_user_defined_attributes(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **USER_DEFINED_METADATA)
+        self.assertEqual(image.mass_range, 20) # pylint: disable=no-member
+        self.assertEqual(image.x_size, 500.) # pylint: disable=no-member
+        self.assertEqual(image.y_size, 500.) # pylint: disable=no-member
+
+    def test_capture_of_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        self.assertEqual(image._user_defined_attributes,
+                         list(USER_DEFINED_METADATA))
+
+    def test_add_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        image.add_attr(**USER_DEFINED_METADATA)
+        self.assertEqual(image._user_defined_attributes,
+                         list(USER_DEFINED_METADATA))
+
+    def test_add_existing_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        metadata = METADATA.copy()
+        metadata = {**metadata, **USER_DEFINED_METADATA}
+        with self.assertRaises(ValueError):
+            image.add_attr(**metadata)
+
+    def test_remove_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             **USER_DEFINED_METADATA)
+        image.remove_attr(USER_DEFINED_METADATA.keys())
+        expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(expected, image)
+
+    def test_remove_single_user_defined_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA,
+                             x_size=500.)
+        image.remove_attr('x_size')
+        expected = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        self.assertEqual(expected, image)
+
+    def test_remove_required_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            image.remove_attr('fov_id')
+
+    def test_remove_undefined_user_metadata(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            image.remove_attr(['x_size', 'y_size'])
+
+    def test_metadata_wrong_fov_id(self):
+        metadata = METADATA.copy()
+        metadata = {**metadata, **USER_DEFINED_METADATA}
+        metadata['fov_id'] = 'Point99'
+        with self.assertWarns(UserWarning):
+            mi.MibiImage(TEST_DATA, TUPLE_LABELS, **metadata)
 
     def test_channel_inds_single_channel(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS)
@@ -224,6 +345,65 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(first_image, expected)
         np.testing.assert_array_equal(
             first_image.slice_data('4'), second_image.slice_data('4'))
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2], TUPLE_LABELS[:2],
+                                   **METADATA)
+        second_image.channels = [('Mass3', 'Target3'), ('Mass4', 'Target4')]
+        expected.channels = TUPLE_LABELS + (('Mass4', 'Target4'),)
+        first_image.append(second_image)
+        self.assertEqual(first_image, expected)
+
+    def test_append_single_channel(self):
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2],
+                                   ['Target1', 'Target2'], **METADATA)
+        second_data = np.expand_dims(TEST_DATA[:, :, 2], -1)
+        second_image = mi.MibiImage(second_data, ['Target3'], **METADATA)
+        expected = mi.MibiImage(TEST_DATA, ['Target1', 'Target2',
+                                            'Target3'], **METADATA)
+        first_image.append(second_image)
+        self.assertEqual(first_image, expected)
+        first_image = mi.MibiImage(TEST_DATA[:, :, :2], TUPLE_LABELS[:2],
+                                   **METADATA)
+        second_image.channels = [('Mass3', 'Target3')]
+        expected.channels = TUPLE_LABELS
+        first_image.append(second_image)
+        np.testing.assert_array_equal(first_image.data, expected.data)
+        self.assertEqual(first_image, expected)
+
+    def test_append_non_unique_channels(self):
+        first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        original_data = np.copy(first_image.data)
+        second_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+        non_unique_masses = [('Mass1', 'A'), ('Mass2', 'B'), ('3', 'C')]
+        second_image = mi.MibiImage(TEST_DATA, non_unique_masses, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+        non_unique_targets = [('1', 'Target1'), ('2', 'Target2'), ('3', 'A')]
+        second_image = mi.MibiImage(TEST_DATA, non_unique_targets, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+
+    def test_append_channels_of_different_type(self):
+        first_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        original_data = np.copy(first_image.data)
+        second_image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, TUPLE_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
+        first_image = second_image.copy()
+        second_image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, **METADATA)
+        with self.assertRaises(ValueError):
+            first_image.append(second_image)
+        self.assertEqual(first_image.channels, STRING_LABELS)
+        np.testing.assert_array_equal(first_image.data, original_data)
 
     def test_remove_layers_without_copy(self):
         image = mi.MibiImage(TEST_DATA, STRING_LABELS, **METADATA)

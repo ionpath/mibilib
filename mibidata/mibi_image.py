@@ -9,15 +9,37 @@ import warnings
 import numpy as np
 from skimage import io as skio, transform
 
-# THe format of the run xml.
+# The format of the run xml.
 _DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 # The attributes to include in the metadata dictionary.
-_ATTRIBUTES = ('run', 'date', 'coordinates', 'size', 'slide', 'point_name',
-               'folder', 'dwell', 'scans', 'aperture',
-               'instrument', 'tissue', 'panel', 'version', 'mass_offset',
-               'mass_gain', 'time_resolution', 'miscalibrated', 'check_reg',
-               'filename')
+SPECIFIED_METADATA_ATTRIBUTES = ('date', 'run', 'coordinates', 'size', 'slide',
+                                 'fov_id', 'fov_name', 'folder', 'dwell',
+                                 'scans', 'aperture', 'instrument', 'tissue',
+                                 'panel', 'mass_offset', 'mass_gain',
+                                 'time_resolution', 'miscalibrated',
+                                 'check_reg', 'filename', 'description',
+                                 'version')
 
+
+
+APERTURE_1MM = u'A'
+APERTURE_300UM = u'B'
+APERTURE_100UM = u'C'
+APERTURE_30UM = u'D'
+
+APERTURE_MAP = {
+    u'1 mm': APERTURE_1MM,
+    u'300 \u03BCm': APERTURE_300UM,
+    u'100 \u03BCm': APERTURE_100UM,
+    u'30 \u03BCm': APERTURE_30UM,
+}
+
+_DEPRECATED_APERTURE_MAP = {
+    '1mm': APERTURE_1MM,
+    '300um': APERTURE_300UM,
+    '100um': APERTURE_100UM,
+    '30um': APERTURE_30UM,
+}
 
 class MibiImage():
     """A multiplexed image with labeled channels and metadata.
@@ -28,42 +50,59 @@ class MibiImage():
         channels: A tuple of channel names of length D. The names may
             either be strings, or tuples of strings of the format (mass,
             target).
-        run: A string name of the run during which this image was acquired.
-        date: The run date. It can either be a datetime object, or a string.
-            If a string, it will be parsed according to the
-            `datetime_format``.
-        coordinates: A tuple of (x, y) stage coordinates at which the image
-            was acquired; stage coordinates should be in microns.
-        size: A float size of the image width/height in  :math:`\\mu m`.
-        slide: A string or integer slide ID.
-        point_name: A string name for the point as assigned during the run.
-        folder: The folder name for this image as determined by the
-            acquisition software.
-        dwell: A float pixel dwell time in :math:`ms`.
-        scans: A comma-separated list of image scan numbers.
-        aperture: A string name of the aperture used during image
-            acquisition.
-        instrument: A string identifier for the instrument used.
-        tissue: A string name of the tissue type.
-        panel: A string name of the panel used to stain the tissue.
-        version: A string identifier for the software version used.
-        datetime_format: The optional format of the date, if given as a
-            string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
-        mass_offset: Mass offset parameter used for mass calibration.
-        mass_gain: Mass gain used for mass calibration.
-        time_resolution: Parameter used for mass calibration.
-        miscalibrated: Whether or not there was significant difference between
-            peak locations after mass recalibration.
-        check_reg: Whether or not the maximum shift between depths is higher
-            than a threshold.
+        kwargs: A mapping of arguments that used to define the image
+            metadata. A list of required keys follows; however, the
+            user can define other metadata key-value pairs that will be added
+            as attributes to the class instance in use.
+
+            * run: A string name of the run during which this image was
+                acquired.
+            * date: The run date. It can either be a datetime object,
+                or a string. If a string, it will be parsed according to the
+                ``datetime_format``.
+            * coordinates: A tuple of (x, y) stage coordinates at which the
+                image was acquired; stage coordinates should be in microns.
+            * size: A float size of the image width/height in  :math:`\\mu m`.
+            * slide: A string or integer slide ID.
+            * fov_id: A string identifying the FOV within the run,
+                i.e. 'FOV1' in MIBIcontrol or 'Point1' in earlier versions.
+            * fov_name: A user-defined string name for the FOV as assigned
+                before the run. In prior versions this was called 'point_name'.
+            * folder: The folder name for this image as determined by the
+                acquisition software. For data generated from MIBIcontrol
+                software, this will the same as the fov_id.
+            * dwell: A float pixel dwell time in :math:`ms`.
+            * scans: A comma-separated list of image scan numbers.
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width
+                used during image acquisition.
+            * instrument: A string identifier for the instrument used.
+            * tissue: A string name of the tissue type.
+            * panel: A string name of the panel used to stain the tissue.
+            * version: A string identifier for the software version used.
+            * datetime_format: The optional format of the date, if given as a
+                string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
+            * mass_offset: Mass offset parameter used for mass calibration.
+            * mass_gain: Mass gain used for mass calibration.
+            * time_resolution: Parameter used for mass calibration.
+            * miscalibrated: Whether or not there was significant difference
+                between peak locations after mass recalibration.
+            * check_reg: Whether or not the maximum shift between depths is
+                higher than a threshold.
+            * filename: The name of the instrument file containing the run
+                metadata.
+            * description: String describing any additional information about
+                the image.
 
     Raises:
         ValueError: Raised if
 
-            - the shape of data does not match length of channels.
-            - the channel names are not unique.
-            - the masses (if included in channel tuples) are not unique.
-            - the targets (if included in channel tuples) are not unique.
+            * the shape of data does not match length of channels.
+            * the channel names are not unique.
+            * the masses (if included in channel tuples) are not unique.
+            * the targets (if included in channel tuples) are not unique.
+            * the fov_id doesn't match the point in folder, unless the call
+                is using the old point name format, in which case, only a
+                warning is shown.
 
     Attributes:
         data: An MxMxD numpy array of multiplexed image data, where D is
@@ -71,77 +110,190 @@ class MibiImage():
         channels: A tuple of channel names of length D. The names may
             either be strings, or tuples of strings of the format (mass,
             target).
-        masses: A tuple of the masses of the channels, if the channels were
-            given as (mass, target) tuples; otherwise None.
-        targets: A tuple of the targets of the channels, if the channels were
-            given as (mass, target) tuples; otherwise None.
-        run: A string name of the run during which this image was acquired.
-        date: A datetime object of the run date.
-        coordinates: A tuple of (x, y) stage coordinates in microns at which
-            the image was acquired.
-        size: A float size of the image width/height in :math:`\\mu m`.
-        slide: A string or integer slide ID.
-        point_name: A string name for the point as assigned during the run.
-        folder: The folder name for this image as determined by the
-            acquisition software.
-        dwell: A float pixel dwell time in :math:`ms`.
-        scans: A comma-separated list of image scan numbers.
-        aperture: A string name of the aperture used during image
-            acquisition.
-        instrument: A string identifier for the instrument used.
-        tissue: A string name of the tissue type.
-        panel: A string name of the panel used to stain the tissue.
-        version: A string identifier for the software version used.
-        mass_offset: Mass offset parameter used for mass calibration.
-        mass_gain: Mass gain used for mass calibration.
-        time_resolution: Parameter used for mass calibration.
-        miscalibrated: Whether or not there was significant difference between
-            peak locations after mass recalibration.
-        check_reg: Whether or not the maximum shift between depths is higher
-            than a threshold.
-        filename: The name of the Run XML file which corresponds to the run
-            name.
+        kwargs: A mapping of arguments that used to define the image
+            metadata. A list of required keys follows; however, the
+            user can define other metadata key-value pairs that will be added
+            as attributes to the class instance in use.
+
+            * run: A string name of the run during which this image was
+                acquired.
+            * date: The run date. It can either be a datetime object,
+                or a string. If a string, it will be parsed according to the
+                ``datetime_format``.
+            * coordinates: A tuple of (x, y) stage coordinates at which the
+                image was acquired; stage coordinates should be in microns.
+            * size: A float size of the image width/height in  :math:`\\mu m`.
+            * slide: A string or integer slide ID.
+            * fov_id: A string identifying the FOV within the run,
+                i.e. 'FOV1' in MIBIcontrol or 'Point1' in earlier versions.
+            * fov_name: A user-defined string name for the FOV as assigned
+                before the run. In prior versions this was called 'point_name'.
+            * folder: The folder name for this image as determined by the
+                acquisition software. For data generated from MIBIcontrol
+                software, this will the same as the fov_id.
+            * dwell: A float pixel dwell time in :math:`ms`.
+            * scans: A comma-separated list of image scan numbers.
+            * aperture: Aperture code (e.g. 'A' or 'B') matching aperture width
+                used during image acquisition.
+            * instrument: A string identifier for the instrument used.
+            * tissue: A string name of the tissue type.
+            * panel: A string name of the panel used to stain the tissue.
+            * version: A string identifier for the software version used.
+            * datetime_format: The optional format of the date, if given as a
+                string. Defaults to ``'%Y-%m-%dT%H:%M:%S'``.
+            * mass_offset: Mass offset parameter used for mass calibration.
+            * mass_gain: Mass gain used for mass calibration.
+            * time_resolution: Parameter used for mass calibration.
+            * miscalibrated: Whether or not there was significant difference
+                between peak locations after mass recalibration.
+            * check_reg: Whether or not the maximum shift between depths is
+                higher than a threshold.
+            * filename: The name of the instrument file containing the run
+                metadata.
+            * description: String describing any additional information about
+                the image.
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(self, data, channels, run=None, date=None,
-                 coordinates=None, size=None, slide=None, point_name=None,
-                 folder=None, dwell=None, scans=None, aperture=None,
-                 instrument=None, tissue=None, panel=None, version=None,
-                 mass_offset=None, mass_gain=None, time_resolution=None,
-                 miscalibrated=None, check_reg=None,
-                 datetime_format=_DATETIME_FORMAT, filename=None):
+    def __init__(self, data, channels, **kwargs):
 
+        # initialize non metadata attributes
         self._length = len(channels)
         if data.shape[2] != self._length:
             raise ValueError('Channels length does not match data dimensions.')
         self.data = data
         self._set_channels(channels, self._length)
 
+        # initialize required metadata
+        self._folder = None
+        self._fov_id = None
+        self._aperture = None
+        date = kwargs.pop('date', None)
+        datetime_format = kwargs.pop('datetime_format', _DATETIME_FORMAT)
         try:
             self.date = datetime.datetime.strptime(date, datetime_format)
         except TypeError:  # Given as datetime obj already, or None.
             self.date = date
 
-        self.run = run
-        self.coordinates = coordinates
-        self.size = size
-        self.slide = slide
-        self.point_name = point_name
-        self.folder = folder
-        self.dwell = dwell
-        self.scans = scans
-        self.aperture = aperture
-        self.instrument = instrument
-        self.tissue = tissue
-        self.panel = panel
-        self.version = version
-        self.mass_offset = mass_offset
-        self.mass_gain = mass_gain
-        self.time_resolution = time_resolution
-        self.miscalibrated = miscalibrated
-        self.check_reg = check_reg
-        self.filename = filename
+        for attr in SPECIFIED_METADATA_ATTRIBUTES[1:]:
+            setattr(self, attr, kwargs.pop(attr, None))
+
+        # empty list for storing user-defined attribute names
+        self._user_defined_attributes = []
+
+        # whatever remains (if anything) is user-defined metadata
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+            self._user_defined_attributes.append(k)
+
+    def add_attr(self, **kwargs):
+        """Adds user-defined metadata key-value pairs as attributes to
+           the class instance in use. If attribute already exists
+           for the current instance, raises an error.
+
+        Args:
+            kwargs: A mapping of arguments for a user to add multiple
+                    attributes with their respecitve
+                    values.
+        Raises:
+            ValueError: Raised if attempts to set an attribute that is already
+            defined for this instance.
+
+        """
+        already_defined = [attr for attr in kwargs if hasattr(self, attr)]
+        if already_defined:
+            if len(already_defined) == 1:
+                already_def_error = (f'{already_defined[0]} is already '
+                                     f'an attribute of this instance.')
+            else:
+                already_def_error = (f'{", ".join(already_defined)} are '
+                                     f'already attributes for this instance.')
+            raise ValueError(already_def_error)
+        for key, value in kwargs.items():
+            self._user_defined_attributes.append(key)
+            setattr(self, key, value)
+
+
+    def remove_attr(self, attributes):
+        """Removes user-defined attributes from the class instance in use.
+
+        Args:
+            attributes: A single string or a list of user-defined attributes
+                        for deletion.
+
+        Raises:
+            ValueError: Raised if
+
+                * attempts to remove a required attribute.
+                * an attribute is not defined for this instance.
+        """
+        if isinstance(attributes, str):
+            attributes = [attributes]
+        required_rem = [attr for attr in attributes if attr
+                        in SPECIFIED_METADATA_ATTRIBUTES]
+        no_attr = [attr for attr in attributes if not hasattr(self, attr)]
+        if required_rem:
+            if len(required_rem) == 1:
+                required_error = (f'{required_rem[0]} is a required '
+                                  f'attribute.')
+            else:
+                required_error = (f'{", ".join(required_rem)} are required '
+                                  f'attributes.')
+            raise ValueError(required_error)
+        if no_attr:
+            if len(no_attr) == 1:
+                required_error = (f'{no_attr[0]} is not an attribute '
+                                  f'of this instance.')
+            else:
+                required_error = (f'{", ".join(no_attr)} are not attributes '
+                                  f'of this instance.')
+            raise ValueError(required_error)
+        for attr in attributes:
+            delattr(self, attr)
+            self._user_defined_attributes.remove(attr)
+
+
+    @property
+    def point_name(self):
+        """Returns fov_name instead of deprecated point_name."""
+        return self.fov_name
+
+    @point_name.setter
+    def point_name(self, value):
+        """Convert deprecated point_name to fov_name."""
+        warnings.warn('The "point_name" attribute is deprecated. '
+                      'Setting "fov_name" to "{}".'.format(value))
+        self.fov_name = value  # pylint: disable=attribute-defined-outside-init
+
+    @property
+    def folder(self):
+        return self._folder
+
+    @folder.setter
+    def folder(self, value):
+        """Enforce consistency with fov_id."""
+        if value:
+            self._folder = value
+            self._fov_id = self.match_fov_folder(value, self._fov_id, 'folder',
+                                                 'fov_id')
+
+    @property
+    def fov_id(self):
+        return self._fov_id
+
+    @fov_id.setter
+    def fov_id(self, value):
+        """Enforce consistency with folder."""
+        self._fov_id = value
+        self._folder = self.match_fov_folder(value, self._folder, 'fov_id',
+                                             'folder')
+
+    @property
+    def aperture(self):
+        return self._aperture
+
+    @aperture.setter
+    def aperture(self, value):
+        self._aperture = self.parse_aperture(value)
 
     @property
     def channels(self):
@@ -161,28 +313,9 @@ class MibiImage():
         """
         self._set_channels(values, self._length)
 
-    @property
-    def labels(self):
-        """For backwards compatibility.
-
-        This may be removed in a future version. Use the :attr:`~channels`
-        property instead.
-        """
-        return self.channels
-
-    @labels.setter
-    def labels(self, values):
-        """This property is for backwards compatibility only.
-
-        This may be removed in a future version. Use the :attr:`~channels`
-        property instead.
-        """
-        self._set_channels(values, self._length)
-
     def _set_channels(self, channels, length):
         if len(set(channels)) != length:
             raise ValueError('Channels are not all unique.')
-        self._channels = tuple(channels)
         if all((isinstance(c, tuple) and len(c) == 2 for c in channels)):
             # Tuples of masses and targets.
             masses, targets = zip(*channels)
@@ -198,6 +331,7 @@ class MibiImage():
             raise ValueError(
                 'Channels must be a list of tuples of (int, str) or a '
                 'list of str')
+        self._channels = tuple(channels)
 
     def __eq__(self, other):
         """Checks for equality between MibiImage instances.
@@ -230,9 +364,76 @@ class MibiImage():
         s += '}'
         return s
 
+    @staticmethod
+    def parse_aperture(value):
+        """
+        Args:
+            value: A string representing an aperture code.
+        Returns:
+            An aperture code (e.g. 'A' or 'B') matching aperture width
+            used during image acquisition.
+        Raises:
+            ValueError: Raised if the value parameter cannot be mapped to an
+            aperture code.
+        """
+        if value in APERTURE_MAP.values() or value is None:
+            # Allow valid aperture codes or None
+            aperture = value
+        else:
+            # Convert known string aperture parameters, if possible
+            try:
+                unified_map = {
+                    **_DEPRECATED_APERTURE_MAP,
+                    **APERTURE_MAP
+                }
+                aperture = unified_map[value]
+                warnings.warn(
+                    'Deprecated aperture code \'{}\', converting to \'{}\'. In '
+                    'a future version, values from the following map will be '
+                    'required: {}'.format(value,
+                                          unified_map[value],
+                                          APERTURE_MAP))
+            except KeyError:
+                raise ValueError(
+                    'Invalid aperture code \'{}\', must use values'
+                    'from the following map: {}'.format(value, APERTURE_MAP)
+                )
+        return aperture
+
+
+    @staticmethod
+    def match_fov_folder(value, field, value_name,
+                         field_name):
+        """Enforces consistency between fov_id and folder.
+
+        Args:
+            value: Value to match with.
+            field: Field that needs to be updated to value.
+            value_name: String representing whether matching folder
+                        or fov_id field.
+            field_name: String representing whether updating folder
+                        or fov_id field.
+        Returns:
+            value: Value to set field to.
+        """
+        if field_name == 'fov_id' and value_name == 'folder':
+            value = value.split('/')[0]
+        if not field:
+            warnings.warn(
+                f'The "{field_name}" attribute is required if "{value_name}" '
+                f'is specified. Setting "{field_name}" to {value}.')
+        elif field != value:
+            warnings.warn(
+                f'The attribute "{field_name}" must match "{value_name}". '
+                f'Changing "{field_name}" from {field} to {value}.')
+        return value
+
     def metadata(self):
         """Returns a dictionary of the image's metadata."""
-        return {key: getattr(self, key) for key in _ATTRIBUTES}
+        metadata_keys = list(SPECIFIED_METADATA_ATTRIBUTES)
+        # find user-defined metadata
+        metadata_keys.extend(self._user_defined_attributes)
+        return {key: getattr(self, key) for key in metadata_keys}
 
     def channel_inds(self, channels):
         """Returns the indices of the specified channels on the data's 2nd axis.
@@ -341,15 +542,29 @@ class MibiImage():
             image: A MibiImage.
 
         Raises:
-            ValueError: Raised if the image has any channels already present on
-                instance to which it is being appended.
+            ValueError: Raised if
+
+                * The image has any channels already present on
+                  instance to which it is being appended.
+                * The channels to be appended do not match the form of the
+                  channels of the original image.
         """
         if set(self.channels).intersection(set(image.channels)):
             raise ValueError('Images contain overlapping channels.')
-        self.data = np.concatenate((self.data, image.data), axis=2)
+        if all((isinstance(c, tuple) and len(c) == 2 for c in self.channels)):
+            if not all((isinstance(c, tuple) and len(c) == 2
+                        for c in image.channels)):
+                raise ValueError('Channels to be appended must match form of '
+                                 'original image, which is a list of tuples in '
+                                 'format (mass, target).')
+        if all(isinstance(c, str) for c in self.channels):
+            if not all(isinstance(c, str) for c in image.channels):
+                raise ValueError('Channels to be appended must match form of '
+                                 'original image, which is a list of str.')
         self._set_channels(
             [c for c in self.channels] + [c for c in image.channels],
             len(self.channels) + len(image.channels))
+        self.data = np.concatenate((self.data, image.data), axis=2)
 
     def remove_channels(self, channels, copy=False):
         """Removes specified channels from a MibiImage.
@@ -433,7 +648,7 @@ class MibiImage():
                     anti_aliasing=False).astype(dtype)
 
         if copy:
-            return MibiImage(_resize(), self.labels, **self.metadata())
+            return MibiImage(_resize(), self.channels, **self.metadata())
         self.data = _resize()
 
     def export_pngs(self, path, size=None):

@@ -1,14 +1,15 @@
 """Tests for mibitracker.helpers.
 
 This tests for the retry and status checking utilities only.
-Specific helper functions that make use of the MibiTracker API and can be
-tested by running a local instance of the MibiTracker to ensure proper
+Specific helper functions that make use of the MIBItracker API and can be
+tested by running a local instance of the MIBItracker to ensure proper
 integration. A set of examples can be found in
 mibitracker/testing/MibiRequestsTesting.ipynb.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved.
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved.
 """
 
+import datetime
 import io
 import json
 import os
@@ -51,7 +52,8 @@ class TestMibiRequests(unittest.TestCase):
                 fake_token
             )
             mock_option.assert_called_once_with(
-                'https://mibitracker-instance.ionpath.com'
+                'https://mibitracker-instance.ionpath.com',
+                timeout=request_helpers.SESSION_TIMEOUT
             )
         except ValueError as e:
             self.fail(e)
@@ -80,40 +82,72 @@ class TestMibiRequests(unittest.TestCase):
                 None
             )
 
-    def test_prepare_route(self):
-        self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')
-        self.assertEqual(self.mtu._prepare_route('images/'), '/images/')
+    @patch('requests.Session.post')
+    def test_refresh(self, mock_post):
+        self.mtu.session.headers.update({'Authorization': 'JWT token'})
+        mock_post().json.return_value = {'token': 'refreshed'}
+        self.mtu.refresh()
+        mock_post.assert_called_with(
+            'https://mibitracker-instance.ionpath.com/api-token-refresh/',
+            data=json.dumps({'token': 'token'}),
+            headers={'content-type': 'application/json'},
+            timeout=request_helpers.SESSION_TIMEOUT,
+        )
+        self.assertEqual(self.mtu.session.headers['Authorization'],
+                         'JWT refreshed')
 
+    @patch.object(request_helpers.MibiRequests, 'refresh')
+    def test_check_refresh(self, mock_refresh):
+        self.mtu._check_refresh()
+        mock_refresh.assert_not_called()
+        self.mtu._last_refresh = self.mtu._last_refresh - datetime.timedelta(
+            seconds=self.mtu._refresh_seconds + 1)
+        self.mtu._check_refresh()
+        mock_refresh.assert_called_once()
+
+    def test_prepare_route(self):
+        self.assertEqual(self.mtu._prepare_route('/images/'), '/images/')  # pylint: disable=protected-access
+        self.assertEqual(self.mtu._prepare_route('images/'), '/images/')  # pylint: disable=protected-access
+
+    @patch.object(request_helpers.MibiRequests, '_check_refresh')
     @patch('requests.Session.get')
-    def test_get(self, mock_get):
+    def test_get(self, mock_get, mock_check_refresh):
         self.mtu.get('images', params={'key': 'value'})
         mock_get.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images',
-            params={'key': 'value'}
+            params={'key': 'value'}, timeout=request_helpers.SESSION_TIMEOUT
         )
+        mock_check_refresh.assert_called_once()
 
+    @patch.object(request_helpers.MibiRequests, '_check_refresh')
     @patch('requests.Session.post')
-    def test_post(self, mock_post):
+    def test_post(self, mock_post, mock_check_refresh):
         self.mtu.post('/images/', data={'key': 'value'})
         mock_post.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/',
-            data={'key': 'value'}
+            data={'key': 'value'}, timeout=request_helpers.SESSION_TIMEOUT
         )
+        mock_check_refresh.assert_called_once()
 
+    @patch.object(request_helpers.MibiRequests, '_check_refresh')
     @patch('requests.Session.put')
-    def test_put(self, mock_put):
+    def test_put(self, mock_put, mock_check_refresh):
         self.mtu.put('/images/1/', data={'key': 'value'})
         mock_put.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/1/',
-            data={'key': 'value'}
+            data={'key': 'value'}, timeout=request_helpers.SESSION_TIMEOUT
         )
+        mock_check_refresh.assert_called_once()
 
+    @patch.object(request_helpers.MibiRequests, '_check_refresh')
     @patch('requests.Session.delete')
-    def test_delete(self, mock_delete):
+    def test_delete(self, mock_delete, mock_check_refresh):
         self.mtu.delete('/images/1/')
         mock_delete.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/1/',
+            timeout=request_helpers.SESSION_TIMEOUT
         )
+        mock_check_refresh.assert_called_once()
 
     def test_init_sets_retries(self):
         adapter = self.mtu.session.get_adapter(self.mtu.url)
@@ -228,14 +262,14 @@ class TestMibiRequests(unittest.TestCase):
     @patch('requests.Session.post')
     def test_upload_channel(self, mock_post):
         buf = io.BytesIO()
-        self.mtu._upload_channel(1, buf, 'image.tiff')
+        self.mtu._upload_channel(1, buf, 'image.tiff')  # pylint: disable=protected-access
 
         expected_files = {
             'attachment': ('image.tiff', buf, 'image/tiff')
         }
         mock_post.assert_called_once_with(
             'https://mibitracker-instance.ionpath.com/images/1/upload_channel/',
-            files=expected_files,
+            files=expected_files, timeout=request_helpers.SESSION_TIMEOUT
         )
 
     @patch.object(request_helpers.MibiRequests, 'upload_channel')

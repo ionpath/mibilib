@@ -1,19 +1,11 @@
 """Color transformation and composites.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
+from scipy import ndimage
 
-COLORS = {
-    'Cyan': np.pi,
-    'Yellow': np.pi / 3,
-    'Magenta': 5 * np.pi / 3,
-    'Green': 2 * np.pi / 3,
-    'Orange': 0.2166 * np.pi,
-    'Violet': 1.483 * np.pi,
-    'Red': 0,
-    'Blue': 4 * np.pi / 3,
-}
+from mibidata import constants
 
 
 def _trim(array, lower=0., upper=1.):
@@ -176,29 +168,6 @@ def _porter_duff_screen(backdrop, source):
     return backdrop + source - (backdrop * source)
 
 
-def _screen(color_map):
-    """Combines multiple image channels by color into a 3-D array.
-
-    Args:
-        A map keyed by color with values of NxM arrays that will be assigned
-        that hue before screening with the others. The allowed colors are
-        'Cyan', 'Yellow', 'Magenta', 'Green', 'Orange', 'Violet', 'Red' and
-        'Blue'. The arrays must contain floats in the unit interval.
-
-    Returns:
-        An NxMx3 float array of an RGB image with values in the unit interval.
-    """
-    screened = None
-    for color, array in color_map.items():
-        hsl = _gray2hsl(array, COLORS[color])
-        rgb = hsl2rgb(hsl)
-        if screened is None:
-            screened = rgb
-        else:
-            screened = _porter_duff_screen(screened, rgb)
-    return screened
-
-
 def composite(image, color_map, gamma=1/3, min_scaling=10):
     """Combines multiple image channels by color into a 3-D array.
 
@@ -207,7 +176,7 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
         color_map: A dictionary keyed by color with values of channel names
             corresponding to a subset of those in the MibiImage. The
             allowed colors are 'Cyan', 'Yellow', 'Magenta', 'Green',
-            'Orange', 'Violet', 'Red' and 'Blue'.
+            'Orange', 'Violet', 'Red', 'Blue' and 'Gray'.
         gamma: The value with which to scale the image data. Defaults to 1/3.
             If no gamma correction is desired, set to 1.
         min_scaling: The minimum number of counts used as the divisor for each
@@ -217,10 +186,95 @@ def composite(image, color_map, gamma=1/3, min_scaling=10):
     Returns:
         An NxMx3 uint8 array of an RGB image.
     """
-    data_map = {}
+    overlay = None
     for key, val in color_map.items():
-        data_map[key] = np.power(  # pylint: disable=assignment-from-no-return
+        array = np.power(  # pylint: disable=assignment-from-no-return
             image[val] / np.maximum(np.max(image[val]), min_scaling),
             gamma)
-    screened = _screen(data_map)
-    return np.uint8(screened * 255)
+        rgb = (
+            np.stack((array, array, array), axis=2) *
+            constants.COLORS[key]
+        )
+        if overlay is None:
+            overlay = rgb
+        else:
+            overlay = _porter_duff_screen(overlay, rgb)
+    return np.uint8(overlay * 255)
+
+
+def compose_overlay(image, overlay_settings):
+    """Overlays multiple image channels using overlay_settings from MIBItracker.
+
+    The overlay_settings are intended to have the form of a channels.json file
+    as downloaded from MIBItracker but they can have any of the of the following
+    forms:
+
+    1. ``{'image_id': {'channels': {'channel_1': {'color': color, ...}, ...}}``,
+    2. ``{'channels': {'channel_1': {'color': color, ...}, ...}``,
+    3. ``{'channel_1': {'color': color, ...}, ...}``.
+
+    Each channel is expected to have the following fields:
+
+    - 'color' (required):
+        One of the following: 'Cyan', 'Yellow', 'Magenta', 'Green', 'Orange',
+        'Violet', 'Red', 'Blue', or 'Gray'.
+    - 'brightness' (optional):
+        float between -1 and 1; defaults to 0.
+    - 'intensity_higher' (optional):
+        Upper limit of the channel intensity; defaults to maximum counts in the
+        channel.
+    - 'intensity_lower' (optional):
+        Lower limit of the channel intensity; defaults to 0.
+    - 'blur' (optional):
+        integer between 0 and 10. Defines the gaussian blur of the channel
+        according to pre-defined convolution kernels.
+
+    Args:
+        image: A MibiImage.
+        overlay_settings: Dictionary of MIBItracker visual settings.
+
+    Returns:
+        An NxMx3 uint8 array of an RGB image.
+    """
+    for v in overlay_settings.values():
+        if 'color' in v:
+            break
+        if 'channels' in overlay_settings:
+            overlay_settings = overlay_settings['channels']
+            break
+        if len(overlay_settings) == 1 and 'channels' in v:
+            overlay_settings = v['channels']
+            break
+        raise ValueError('Unexpected format of overlay_settings dictionary.')
+
+    overlay = None
+    for channel in overlay_settings:
+        setting = overlay_settings[channel]
+        array = image[channel]
+        # If set to min brightess, skip this channel:
+        if setting['brightness'] == constants.OVERLAY_MIN_BRIGHTNESS:
+            continue
+        array = image[channel]
+        # Because we treat the min differently, don't use np.clip
+        range_min = setting.get('intensity_lower', 0)
+        range_max = setting.get('intensity_higher', array.max())
+        array[array > range_max] = range_max
+        array[array < range_min] = 0
+        array = array / float(range_max)
+        array = ndimage.filters.convolve(
+            array, constants.OVERLAY_SMOOTHING_KERNELS[setting['blur']])
+        np.clip(array, 0, 1, out=array)
+        if setting['brightness'] > 0:
+            array /= (1 - setting['brightness'])
+            np.clip(array, 0, 1, out=array)
+        elif setting['brightness'] < 0:
+            array = np.power(array, 1 - 3 * setting['brightness']) # pylint: disable=assignment-from-no-return
+        rgb = (
+            np.stack((array, array, array), axis=2) *
+            constants.COLORS[setting['color']]
+        )
+        if overlay is None:
+            overlay = rgb
+        else:
+            overlay = _porter_duff_screen(overlay, rgb)
+    return np.uint8(overlay * 255)
