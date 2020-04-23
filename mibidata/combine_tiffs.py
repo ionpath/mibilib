@@ -94,7 +94,7 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     fovs, calibration = runs.parse_xml(run_path)
     point_number = int(point[5:])
     try:
-        fov = fovs[point_number]
+        fov = fovs[point_number - 1] # point number is 1-based, not 0-based
     except IndexError:
         raise IndexError('{} not found in run xml.'.format(point))
     if fov['date']:
