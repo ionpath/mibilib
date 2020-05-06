@@ -424,7 +424,8 @@ class MibiRequests():
         if run_id is None:
             raise ValueError(
                 'run_id is mandatory in MIBitracker >=v1.1 and cannot be None')
-        response = self.get('/upload_mibitiff/sign_tiff_url/').json()
+        response = self.get(
+            f'/upload_mibitiff/sign_tiff_url/?run_id={run_id}').json()
         try:
             with open(tiff_file, 'rb') as fh:
                 self._upload_mibitiff(response['url'], fh)
