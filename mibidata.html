@@ -1007,7 +1007,7 @@ calibration: A dict containing mass calibration parameters.</td>
 <div class="section" id="module-mibidata.segmentation">
 <span id="mibidata-segmentation-module"></span><h2>mibidata.segmentation module<a class="headerlink" href="#module-mibidata.segmentation" title="Permalink to this headline">¶</a></h2>
 <p>Utilities for working with segmentation data.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.segmentation.extract_cell_dataframe">
 <code class="descclassname">mibidata.segmentation.</code><code class="descname">extract_cell_dataframe</code><span class="sig-paren">(</span><em>label_image</em>, <em>image=None</em>, <em>mode='total'</em>, <em>num_sectors=8</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.extract_cell_dataframe" title="Permalink to this definition">¶</a></dt>
@@ -1062,17 +1062,22 @@ corresponds to the label of an image region, such as a cell or
 other segment.</li>
 <li><strong>df</strong> – A dataframe whose index corresponds to the integers in the
 label_array, and whose column values will replace the labels in the
-returned image.</li>
+returned image. It is expected that the index will have name ‘label’
+as is returned from <a href="#id1"><span class="problematic" id="id2">:function:`extract_cell_dataframe`</span></a>.</li>
 <li><strong>columns</strong> – An optional sequence of which columns from the dataframe to
 include in the returned image. Defaults to None, which uses all
 columns in the dataframe.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <code class="xref py py-class docutils literal notranslate"><span class="pre">mibitof.mibi_image.MibiImage</span></code> instance where each channel
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance where each channel
 corresponds to a dataframe column, and the data is a copy of the label
 image where each pixel has been replaced with the corresponding value
 from that label’s row in the dataframe.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IndexError</span></code> – if the index values of the DataFrame do not match the labels
+in the image.</p>
 </td>
 </tr>
 </tbody>
