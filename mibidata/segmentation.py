@@ -1,6 +1,8 @@
 """Utilities for working with segmentation data.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -117,22 +119,43 @@ def replace_labeled_pixels(label_image, df, columns=None):
             other segment.
         df: A dataframe whose index corresponds to the integers in the
             label_array, and whose column values will replace the labels in the
-            returned image.
+            returned image. It is expected that the index will have name 'label'
+            as is returned from :function:`extract_cell_dataframe`.
         columns: An optional sequence of which columns from the dataframe to
             include in the returned image. Defaults to None, which uses all
             columns in the dataframe.
 
     Returns:
-        A :class:`mibitof.mibi_image.MibiImage` instance where each channel
+        A :class:`mibidata.mibi_image.MibiImage` instance where each channel
         corresponds to a dataframe column, and the data is a copy of the label
         image where each pixel has been replaced with the corresponding value
         from that label's row in the dataframe.
+
+    Raises:
+        IndexError: if the index values of the DataFrame do not match the labels
+            in the image.
     """
+    if df.index.name != 'label':
+        warnings.warn(
+            f'The dataframe index name is expected to be "label", but was '
+            f'found to be {df.index.name}. Check to make sure the index is '
+            f'formatted correctly as cell labels.'
+        )
+    if 0 in df.index:
+        warnings.warn(
+            'The dataframe index name is expected to be positive integer '
+            'labels, but was found to contain 0. Check to make sure the index '
+            'is formatted correctly as cell labels.'
+        )
     if columns is None:
         columns = df.columns
     label_array = np.zeros((label_image.max() + 1, len(columns)),
                            dtype=label_image.dtype)
-    label_array[df.index, :] = df[columns]
+    try:
+        label_array[df.index, :] = df[columns]
+    except IndexError:
+        raise IndexError('The values in the dataframe index do not match those '
+                         'in the label image.')
     columns = [str(i) for i in columns]
     return mi.MibiImage(label_array[label_image], columns)
 
