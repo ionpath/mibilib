@@ -36,11 +36,12 @@ APERTURE_MAP = {
     u'500 \u03BCm': APERTURE_500UM,
 }
 
-_DEPRECATED_APERTURE_MAP = {
+_IOX_APERTURE_MAP = {
     '1mm': APERTURE_1MM,
     '300um': APERTURE_300UM,
     '100um': APERTURE_100UM,
     '30um': APERTURE_30UM,
+    '500um': APERTURE_500UM,
 }
 
 class MibiImage():
@@ -385,7 +386,7 @@ class MibiImage():
             # Convert known string aperture parameters, if possible
             try:
                 unified_map = {
-                    **_DEPRECATED_APERTURE_MAP,
+                    **_IOX_APERTURE_MAP,
                     **APERTURE_MAP
                 }
                 aperture = unified_map[value]
