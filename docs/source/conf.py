@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-#
+"""Configuration sphinx documentation."""
+
 # Ionpath's mibilib documentation build configuration file,
 # created by sphinx-quickstart on Tue Aug  2 08:57:24 2016.
 #
@@ -68,8 +68,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'IONpath MIBItracker Client'
-copyright = u'2018, IONpath Inc.'
+project = u'IONpath MIBIlib'
+copyright = u'2020, IONpath Inc.'  # pylint: disable=redefined-builtin
 author = u'IONpath Inc.'
 
 autodoc_member_order = 'bysource'
@@ -236,17 +236,17 @@ htmlhelp_basename = 'mibilib-doc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
