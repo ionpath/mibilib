@@ -4,16 +4,16 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.7
-    working_directory: ~/mibitracker-client
+    working_directory: ~/mibilib
     steps:
       - checkout:
-          path: ~/mibitracker-client
+          path: ~/mibilib
       - restore_cache:
           key: cache2-{{ checksum "environment.yml" }}
       - run:
           name: Install Python deps in a conda env if not cached
           command: |
-            if [[ ! -d ~/miniconda/envs/mibitracker-client ]]; then
+            if [[ ! -d ~/miniconda/envs/mibilib ]]; then
                 echo "Installing Miniconda ...";
                 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh;
                 bash ~/miniconda.sh -b -f -p ~/miniconda;
@@ -24,19 +24,19 @@ jobs:
       - save_cache:
           key: cache2-{{ checksum "environment.yml" }}
           paths:
-            - ~/miniconda/envs/mibitracker-client
+            - ~/miniconda/envs/mibilib
       - run:
           name: Run tests
           command: |
-            ~/miniconda/envs/mibitracker-client/bin/coverage run -m py.test mibitracker mibidata
-            ~/miniconda/envs/mibitracker-client/bin/coverage html -i --omit=*/tests/*
+            ~/miniconda/envs/mibilib/bin/coverage run -m py.test mibitracker mibidata
+            ~/miniconda/envs/mibilib/bin/coverage html -i --omit=*/tests/*
       - run:
           name: Run pylint on files changed from master
           command: |
             for i in $(git diff origin/master --name-only | grep \\.py$ | grep -v tests); do
               if [[ -f $i ]]; then
                 echo "linting $i";
-                ~/miniconda/envs/mibitracker-client/bin/pylint $i;
+                ~/miniconda/envs/mibilib/bin/pylint $i;
               else
                 echo "skipping $i because it was deleted";
               fi
@@ -44,7 +44,7 @@ jobs:
             for i in $(git diff origin/master --name-only | grep tests/.*\\.py$); do
               if [[ -f $i ]]; then
                 echo "linting $i";
-                ~/miniconda/envs/mibitracker-client/bin/pylint \
+                ~/miniconda/envs/mibilib/bin/pylint \
                   --disable=protected-access,no-self-use,no-name-in-module,import-error,no-member,unused-argument  \
                 $i;
               else
@@ -69,13 +69,13 @@ jobs:
             if [ $CIRCLE_BRANCH == "master" ]; then
               git config --global user.email $(git --no-pager show -s --format='%ae' HEAD)
               git config --global user.name $(git --no-pager show -s --format='%an' HEAD)
-              git clone https://github.com/ionpath/mibitracker-client out
+              git clone https://github.com/ionpath/mibilib out
               cd out
               git checkout gh-pages || git checkout --orphan gh-pages
               git rm -rf .
               cd ..
-              ~/miniconda/envs/mibitracker-client/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
-              ~/miniconda/envs/mibitracker-client/bin/sphinx-build -b html docs/source out
+              ~/miniconda/envs/mibilib/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
+              ~/miniconda/envs/mibilib/bin/sphinx-build -b html docs/source out
               mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
               cd out
               touch .nojekyll
@@ -84,17 +84,17 @@ jobs:
               git push origin gh-pages
             fi
       - persist_to_workspace:
-          root: ~/mibitracker-client
+          root: ~/mibilib
           paths:
             - docs
   tag_test:
-    working_directory: ~/mibitracker-client
+    working_directory: ~/mibilib
     docker:
       - image: circleci/python:3.7 # container for the build job
 
     steps:
       - checkout:
-          path: ~/mibitracker-client
+          path: ~/mibilib
       - run:
           name: Check if tag and setup.py are consistent
           command: |

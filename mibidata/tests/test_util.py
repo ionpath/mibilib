@@ -1,6 +1,6 @@
 """Tests for mibidata.util
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
 import unittest
 import numpy as np
