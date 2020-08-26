@@ -1,6 +1,6 @@
 """Splits single-depth MIBI scans into pseudo Depth Profiles.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
 # pylint: disable=too-many-branches
 
