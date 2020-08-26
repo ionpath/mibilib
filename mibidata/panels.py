@@ -1,6 +1,6 @@
 """Utility for working with panels saved as CSV files.
 
-Copyright (C) 2019 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
 import pandas as pd

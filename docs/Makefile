@@ -94,9 +94,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/mibitracker-client-doc.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/mibilib-doc.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/mibitracker-client-doc.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/mibilib-doc.qhc"
 
 .PHONY: applehelp
 applehelp:
@@ -113,8 +113,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/mibitracker-client-doc"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/mibitracker-client-doc"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/mibilib-doc"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/mibilib-doc"
 	@echo "# devhelp"
 
 .PHONY: epub

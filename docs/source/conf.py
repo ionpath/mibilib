@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-#
-# Ionpath's mibitracker-client documentation build configuration file,
+"""Configuration sphinx documentation."""
+
+# Ionpath's mibilib documentation build configuration file,
 # created by sphinx-quickstart on Tue Aug  2 08:57:24 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -20,7 +20,7 @@ import os
 # documentation root, use os.path.abspath to make it absolute.
 
 # This works for a docs directory that is parallel to the mibitracker directory:
-# mibitracker-client/
+# mibilib/
 # |-- README
 # |-- setup.py
 # `-- mibitracker/
@@ -68,8 +68,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'IONpath MIBItracker Client'
-copyright = u'2018, IONpath Inc.'
+project = u'IONpath MIBIlib'
+copyright = u'2020, IONpath Inc.'  # pylint: disable=redefined-builtin
 author = u'IONpath Inc.'
 
 autodoc_member_order = 'bysource'
@@ -231,29 +231,29 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'mibitracker-client-doc'
+htmlhelp_basename = 'mibilib-doc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'mibitracker-client-doc.tex',
+    (master_doc, 'mibilib-doc.tex',
      u'IONpath  MIBItracker Client Documentation',
      u'Ionpath Inc.', 'manual'),
 ]
@@ -284,7 +284,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'mibitracker-client-doc',
+    (master_doc, 'mibilib-doc',
      u'IONpath MIBItracker Client Documentation',
      [author], 1)
 ]
@@ -299,9 +299,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'mibitracker-client-doc',
+    (master_doc, 'mibilib-doc',
      u'IONpath MIBItracker Client Documentation',
-     author, 'mibitracker-client', 'One line description of project.',
+     author, 'mibilib', 'One line description of project.',
      'Miscellaneous'),
 ]
 

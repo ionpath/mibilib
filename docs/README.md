@@ -1,6 +1,6 @@
-# mibitracker-client-doc
-Documentation for the mibitracker-client package is available at
-https://ionpath.github.io/mibitracker-client/.
+# mibilib-doc
+Documentation for the mibilib package is available at
+https://ionpath.github.io/mibilib/.
 
 This directory contains the configuration for sphinx to auto-generate
 the documentation.
@@ -8,7 +8,7 @@ the documentation.
 It assumes the following directory structure:
 
 ```
-mibitracker-client/
+mibilib/
 |-- README
 |-- setup.py
 `-- mibitracker/
@@ -23,7 +23,7 @@ docs/
 
 To generated updated .rst files in the source/ directory, and a build/
 directory containing the .html docs, execute the following commands from the
-parent mibitracker-client directory:
+parent mibilib directory:
 ```
 sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
 sphinx-build -b html docs/source out
