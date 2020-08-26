@@ -1,5 +1,5 @@
-mibitracker-client
-==================
+mibilib
+=======
 
 .. toctree::
    :maxdepth: 4

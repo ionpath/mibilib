@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mibidata package &#8212; IONpath MIBItracker Client 0.0.1 documentation</title>
+    <title>mibidata package &#8212; IONpath MIBIlib 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -218,7 +218,7 @@ according to pre-defined convolution kernels.</dd>
 <div class="section" id="module-mibidata.combine_tiffs">
 <span id="mibidata-combine-tiffs-module"></span><h2>mibidata.combine_tiffs module<a class="headerlink" href="#module-mibidata.combine_tiffs" title="Permalink to this headline">¶</a></h2>
 <p>Combines a folder of single-channel TIFFs into a multiplexed MIBItiff.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.combine_tiffs.merge_mibitiffs">
 <code class="descclassname">mibidata.combine_tiffs.</code><code class="descname">merge_mibitiffs</code><span class="sig-paren">(</span><em>input_folder</em>, <em>out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.merge_mibitiffs" title="Permalink to this definition">¶</a></dt>
@@ -285,7 +285,7 @@ image.</li>
 <div class="section" id="module-mibidata.mibi_image">
 <span id="mibidata-mibi-image-module"></span><h2>mibidata.mibi_image module<a class="headerlink" href="#module-mibidata.mibi_image" title="Permalink to this headline">¶</a></h2>
 <p>Base module for working with MIBI images.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="class">
 <dt id="mibidata.mibi_image.MibiImage">
 <em class="property">class </em><code class="descclassname">mibidata.mibi_image.</code><code class="descname">MibiImage</code><span class="sig-paren">(</span><em>data</em>, <em>channels</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage" title="Permalink to this definition">¶</a></dt>
@@ -883,7 +883,7 @@ target name.</td>
 <div class="section" id="module-mibidata.panels">
 <span id="mibidata-panels-module"></span><h2>mibidata.panels module<a class="headerlink" href="#module-mibidata.panels" title="Permalink to this headline">¶</a></h2>
 <p>Utility for working with panels saved as CSV files.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.panels.read_csv">
 <code class="descclassname">mibidata.panels.</code><code class="descname">read_csv</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.read_csv" title="Permalink to this definition">¶</a></dt>
@@ -925,7 +925,7 @@ of the same mass.</td>
 <div class="section" id="module-mibidata.pseudodepths">
 <span id="mibidata-pseudodepths-module"></span><h2>mibidata.pseudodepths module<a class="headerlink" href="#module-mibidata.pseudodepths" title="Permalink to this headline">¶</a></h2>
 <p>Splits single-depth MIBI scans into pseudo Depth Profiles.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.pseudodepths.divide">
 <code class="descclassname">mibidata.pseudodepths.</code><code class="descname">divide</code><span class="sig-paren">(</span><em>msdf_file</em>, <em>num_scans</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.pseudodepths.divide" title="Permalink to this definition">¶</a></dt>
@@ -982,7 +982,7 @@ of the number of cycles per scan.</p>
 <div class="section" id="module-mibidata.runs">
 <span id="mibidata-runs-module"></span><h2>mibidata.runs module<a class="headerlink" href="#module-mibidata.runs" title="Permalink to this headline">¶</a></h2>
 <p>Utilities for working with MIBI run metadata.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.runs.parse_xml">
 <code class="descclassname">mibidata.runs.</code><code class="descname">parse_xml</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.runs.parse_xml" title="Permalink to this definition">¶</a></dt>
@@ -1162,7 +1162,7 @@ region.</dd>
 <div class="section" id="module-mibidata.tiff">
 <span id="mibidata-tiff-module"></span><h2>mibidata.tiff module<a class="headerlink" href="#module-mibidata.tiff" title="Permalink to this headline">¶</a></h2>
 <p>Read and write to and from IONpath MIBItiff files.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.tiff.write">
 <code class="descclassname">mibidata.tiff.</code><code class="descname">write</code><span class="sig-paren">(</span><em>filename</em>, <em>image</em>, <em>sed=None</em>, <em>optical=None</em>, <em>ranges=None</em>, <em>multichannel=True</em>, <em>dtype=None</em>, <em>write_float=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.write" title="Permalink to this definition">¶</a></dt>
@@ -1292,7 +1292,7 @@ whose value is a list of (mass, target) tuples.</td>
 <div class="section" id="module-mibidata.util">
 <span id="mibidata-util-module"></span><h2>mibidata.util module<a class="headerlink" href="#module-mibidata.util" title="Permalink to this headline">¶</a></h2>
 <p>Common convenience functions used in mibidata module.</p>
-<p>Copyright (C) 2019 Ionpath, Inc.  All rights reserved.</p>
+<p>Copyright (C) 2020 Ionpath, Inc.  All rights reserved.</p>
 <dl class="function">
 <dt id="mibidata.util.encode_strings">
 <code class="descclassname">mibidata.util.</code><code class="descname">encode_strings</code><span class="sig-paren">(</span><em>string_list</em>, <em>encoding='utf-8'</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.encode_strings" title="Permalink to this definition">¶</a></dt>
@@ -1422,7 +1422,7 @@ Optional; default is False (i.e. radians).</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">IONpath MIBItracker Client</a></h1>
+<h1 class="logo"><a href="index.html">IONpath MIBIlib</a></h1>
 
 
 
@@ -1465,7 +1465,7 @@ Optional; default is False (i.e. radians).</li>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, IONpath Inc..
+      &copy;2020, IONpath Inc..
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
