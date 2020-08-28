@@ -1,4 +1,4 @@
-name: mibitracker-client
+name: mibilib
 channels:
 - conda-forge
 - defaults
