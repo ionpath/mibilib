@@ -43,7 +43,7 @@ pip install git+git://github.com/ionpath/master
 
 ## Usage
 To use the MIBItracker API, you will need to use the backend url listed in the
-About page which can be accessed after you have logged in from the menu
+About page. This can be accessed after you have logged in from the menu
 under your username in the upper right of the window.
 ```python
 from mibitracker.request_helpers import MibiRequests
