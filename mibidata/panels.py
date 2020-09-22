@@ -46,10 +46,21 @@ def read_csv(path):
             except IndexError:
                 end = last_line
 
-            batch = pd.read_csv(path, skiprows=start,
-                                skipfooter=(last_line - end),
-                                engine='python',
-                                encoding='utf-8')[['Mass', 'Target']]
+            batch = pd.read_csv(
+                path, skiprows=start, skipfooter=(last_line - end),
+                engine='python', encoding='utf-8',
+                dtype={
+                    'ID (Lot)': str,
+                    'Target': str,
+                    'Clone': str,
+                    'Mass': int,
+                    'Element': str,
+                    'Manufactured': str,
+                    'Stock': float,
+                    'Titer': float,
+                    'Volume (μL)': float,
+                    'Staining Batch': int,
+                })
 
             # Remove empty rows if they exist
             df.append(batch.dropna())
