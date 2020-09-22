@@ -39,7 +39,7 @@ g2d.dispose()
 
 new ImagePlus('Labels', labelImage).show()
 
-def name = getProjectEntry().getImageName()
-def path = buildFilePath(PROJECT_BASE_DIR)
-def fileoutput = new File(path, 'labels.png')
+def projectDirectory = getProjectBaseDirectory()
+def imageName = getProjectEntry().getImageName()
+def fileoutput = new File(projectDirectory, imageName + '-labels.png')
 ImageIO.write(labelImage, 'png', fileoutput)
