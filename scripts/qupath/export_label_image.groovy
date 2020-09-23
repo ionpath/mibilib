@@ -40,6 +40,17 @@ g2d.dispose()
 new ImagePlus('Labels', labelImage).show()
 
 def projectDirectory = getProjectBaseDirectory()
-def imageName = getProjectEntry().getImageName()
+def imageName = getProjectEntry().getOriginalImageName()
+// QuPath defaults to '[image name].tiff - [image name].tiff SIMS' as image name
+// Try to make the output file name a little simpler.
+def nameParts = imageName.split('.tiff - ')
+def outputName = ''
+if (nameParts.size() == 2) {
+    outputName = nameParts[0]
+}
+// Otherwise, it was renamed by user.
+else {
+    outputName = imageName
+}
 def fileoutput = new File(projectDirectory, imageName + '-labels.png')
 ImageIO.write(labelImage, 'png', fileoutput)
