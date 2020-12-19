@@ -1,6 +1,6 @@
 .. Ionpath's mibitracker-client documentation master file.
 
-Welcome to IONpath's mibitracker-client documentation!
+Welcome to IONpath's mibilib documentation!
 ======================================================
 
 Contents:
