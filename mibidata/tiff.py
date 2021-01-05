@@ -380,7 +380,6 @@ def _convert_from_previous(description):
     if not description.get('mibi.fov_name') and description.get(
             'mibi.description'):
         description['mibi.fov_name'] = description.pop('mibi.description')
-    # TODO: Clean up repetition between this and the same MibiImage method
     if description.get('mibi.folder') and not description.get('mibi.fov_id'):
         description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
         warnings.warn(
@@ -413,7 +412,7 @@ def _get_page_data(page, description, metadata, channels):
         metadata.update(_page_metadata(page, description))
 
 def info(filename):
-    """Gets the SIMS pages' metadata from a MibiTiff file.
+    """Gets the metadata from a MIBItiff file.
 
     Args:
         filename: The path to the TIFF.
