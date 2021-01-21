@@ -1,6 +1,6 @@
 """Constants used in mibidata module.
 
-Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2021 Ionpath, Inc.  All rights reserved."""
 
 COLORS = {
     'Cyan': (0.0, 1.0, 1.0),

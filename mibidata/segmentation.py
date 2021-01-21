@@ -1,6 +1,6 @@
 """Utilities for working with segmentation data.
 
-Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2021 Ionpath, Inc.  All rights reserved."""
 
 import warnings
 

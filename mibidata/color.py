@@ -1,6 +1,6 @@
 """Color transformation and composites.
 
-Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2021 Ionpath, Inc.  All rights reserved."""
 
 import numpy as np
 from scipy import ndimage

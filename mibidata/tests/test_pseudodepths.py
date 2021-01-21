@@ -1,6 +1,6 @@
 """Tests for pseudodepths.py
 
-Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2021 Ionpath, Inc.  All rights reserved."""
 
 import os
 import struct
