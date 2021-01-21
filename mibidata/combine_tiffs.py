@@ -1,6 +1,6 @@
 """Combines a folder of single-channel TIFFs into a multiplexed MIBItiff.
 
-Copyright (C) 2020 Ionpath, Inc.  All rights reserved."""
+Copyright (C) 2021 Ionpath, Inc.  All rights reserved."""
 
 import argparse
 import datetime
