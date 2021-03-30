@@ -138,6 +138,23 @@ class TestMibiImage(unittest.TestCase):
         self.assertEqual(image.fov_id, 'Point1')
         self.assertEqual(image.folder, 'Point1/RowNumber0/Depth_Profile0')
 
+    def test_set_fov_id_no_folder(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, fov_id='FOV1')
+        image.set_fov_id('FOV2')
+        self.assertEqual(image.fov_id, 'FOV2')
+        self.assertEqual(image.folder, 'FOV2')
+
+    def test_set_fov_id_bad_folder(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, fov_id='FOV1')
+        with self.assertRaises(ValueError):
+            image.set_fov_id('FOV2', 'FOV3')
+
+    def test_set_fov_id_with_folder(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS,
+                             folder='Point1/RowNumber0/Depth_Profile0')
+        image.set_fov_id('Point2', 'Point2/RowNumber0/Depth_Profile0')
+        self.assertEqual(image.fov_id, 'Point2')
+        self.assertEqual(image.folder, 'Point2/RowNumber0/Depth_Profile0')
 
     def test_convert_from_non_encoded_new_aperture(self):
         with warnings.catch_warnings(record=True) as w:

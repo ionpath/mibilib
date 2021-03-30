@@ -280,8 +280,9 @@ class MibiImage():
                 self._fov_id = fov
             elif self.fov_id != fov:
                 raise ValueError('fov_id must match folder, but here '
-                                 'fov_id={} and you are trying to set folder '
-                                 'to {}.'.format(self.fov_id, value))
+                                 f'fov_id={self.fov_id} and you are trying to '
+                                 f'set folder to {value}. Use the `set_fov_id` '
+                                 'method instead.')
             self._folder = value
 
     @property
@@ -295,9 +296,29 @@ class MibiImage():
             self._folder = value
         elif value != self.folder.split('/')[0]:
             raise ValueError('fov_id must match folder, but here '
-                             'folder={} and you are trying to set fov_id '
-                             'to {}.'.format(self.folder, value))
+                             f'folder={self.folder} and you are trying to set '
+                             f'fov_id to {value}. Use the `set_fov_id` '
+                             'method instead.')
         self._fov_id = value
+
+    def set_fov_id(self, fov_id, folder=None):
+        """Sets the fov_id and optionally updates the folder to match.
+
+        Args:
+            fov_id: The fov id within the run such as FOV1, or if from a beta
+                system Point1.
+            folder: For compatibility with beta systems, the folder containing
+                the fov data, such as Point1/RowNumber0/Depth_Profile0. If
+                omitted, this will default to match the fov id.
+        """
+        if folder:
+            if folder.split('/')[0] != fov_id:
+                raise ValueError('fov_id must match the top level folder.')
+            else:
+                self._folder = folder
+        if folder is None and self.folder.split('/')[0] != fov_id:
+            self._folder = fov_id
+        self._fov_id = fov_id
 
     @property
     def aperture(self):
