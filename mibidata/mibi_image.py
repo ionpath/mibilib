@@ -314,8 +314,7 @@ class MibiImage():
         if folder:
             if folder.split('/')[0] != fov_id:
                 raise ValueError('fov_id must match the top level folder.')
-            else:
-                self._folder = folder
+            self._folder = folder
         if folder is None and self.folder.split('/')[0] != fov_id:
             self._folder = fov_id
         self._fov_id = fov_id
