@@ -98,7 +98,7 @@ class TestMibiImage(unittest.TestCase):
     def test_no_pixel_size(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         with self.assertRaises(ValueError):
-            image.pixel_size
+            _ = image.pixel_size
 
     def test_set_channels(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
