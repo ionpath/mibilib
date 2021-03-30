@@ -6,7 +6,7 @@ tested by running a local instance of the MIBItracker to ensure proper
 integration. A set of examples can be found in
 mibitracker/testing/MibiRequestsTesting.ipynb.
 
-Copyright (C) 2020 Ionpath, Inc.  All rights reserved.
+Copyright (C) 2021 Ionpath, Inc.  All rights reserved.
 """
 
 import datetime
