@@ -572,6 +572,27 @@ for deletion.</p>
 <code class="descname">fov_id</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.fov_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="mibidata.mibi_image.MibiImage.set_fov_id">
+<code class="descname">set_fov_id</code><span class="sig-paren">(</span><em>fov_id</em>, <em>folder=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.set_fov_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the fov_id and optionally updates the folder to match.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fov_id</strong> – The fov id within the run such as FOV1, or if from a beta
+system Point1.</li>
+<li><strong>folder</strong> – For compatibility with beta systems, the folder containing
+the fov data, such as Point1/RowNumber0/Depth_Profile0. If
+omitted, this will default to match the fov id.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="mibidata.mibi_image.MibiImage.aperture">
 <code class="descname">aperture</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.aperture" title="Permalink to this definition">¶</a></dt>
