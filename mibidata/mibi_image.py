@@ -254,6 +254,13 @@ class MibiImage():
             delattr(self, attr)
             self._user_defined_attributes.remove(attr)
 
+    @property
+    def pixel_size(self):
+        """Returns the diameter of a pixel in microns."""
+        # pylint: disable=no-member
+        if not self.size:
+            raise ValueError('Pixel size not available if FOV size is not set.')
+        return self.size / self.data.shape[0]
 
     @property
     def point_name(self):

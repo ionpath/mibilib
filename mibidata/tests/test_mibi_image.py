@@ -90,6 +90,16 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, date=date)
         self.assertEqual(image.date, date)
 
+    def test_pixel_size(self):
+        size = 500
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS, size=size)
+        self.assertEqual(image.pixel_size, size / 2)  # test data is 2 x 2 x 3
+
+    def test_no_pixel_size(self):
+        image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
+        with self.assertRaises(ValueError):
+            _ = image.pixel_size
+
     def test_set_channels(self):
         image = mi.MibiImage(TEST_DATA, TUPLE_LABELS)
         image.channels = TUPLE_LABELS
