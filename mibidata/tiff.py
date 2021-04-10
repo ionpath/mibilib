@@ -129,8 +129,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if ranges is None:
         ranges = [(0, m) for m in to_save.max(axis=(0, 1))]
 
-    constant_tags = [
-        # SOFTWARE_TAG,
+    coordinates = [
         (286, '2i', 1, _micron_to_cm(image.coordinates[0])),  # x-position
         (287, '2i', 1, _micron_to_cm(image.coordinates[1])),  # y-position
     ]
@@ -171,7 +170,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 )
                 min_value = (340, range_dtype, 1, ranges[i][0])
                 max_value = (341, range_dtype, 1, ranges[i][1])
-                page_tags = constant_tags + [page_name, min_value, max_value]
+                page_tags = coordinates + [page_name, min_value, max_value]
 
                 infile.write(
                     to_save[:, :, i], compress=6, resolution=resolution,
@@ -186,7 +185,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                                   'CENTIMETER')
 
                 page_name = (285, 's', 0, 'SED')
-                page_tags = constant_tags + [page_name]
+                page_tags = coordinates + [page_name]
                 infile.write(
                     sed, compress=6, resolution=sed_resolution,
                     extratags=page_tags, metadata={'image.type': 'SED'},
@@ -216,7 +215,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 image.targets[i], image.masses[i]))
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
-            page_tags = constant_tags + [page_name, min_value, max_value]
+            page_tags = coordinates + [page_name, min_value, max_value]
 
             target_filename = os.path.join(
                 filename, '{}.tiff'.format(
@@ -324,7 +323,6 @@ def _include_page(description, masses, targets):
 def _check_software(file):
     """Checks the software version of an open TIF file."""
     software = file.pages[0].tags.get('Software')
-    print(software.value)
     if not software or not software.value.startswith('IonpathMIBI'):
         raise ValueError('File is not of type IonpathMIBI.')
 
