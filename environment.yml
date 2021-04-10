@@ -23,5 +23,6 @@ dependencies:
     - setuptools==40.4.0
     - sphinx==1.7.9
     - sphinx-argparse==0.2.2
+    - tifffile==2021.4.8
     - tqdm==4.31.1
     - tox==3.7.0
