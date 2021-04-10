@@ -649,14 +649,10 @@ class MibiImage():
             dtype = float
 
         def _resize():
-            with warnings.catch_warnings():
-                warnings.filterwarnings(
-                    'ignore',
-                    message='Anti-aliasing will be enabled by default.*')
-                return transform.resize(
-                    self.data, (size[0], size[1], shape[2]), order=3,
-                    mode='edge', preserve_range=True,
-                    anti_aliasing=False).astype(dtype)
+            return transform.resize(
+                self.data, (size[0], size[1], shape[2]), order=3,
+                mode='edge', preserve_range=True,
+                anti_aliasing=False).astype(dtype)
 
         if copy:
             return MibiImage(_resize(), self.channels, **self.metadata())
