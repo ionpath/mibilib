@@ -11,7 +11,7 @@ import warnings
 
 import numpy as np
 from skimage import io as skio, img_as_ubyte, transform
-from skimage.external.tifffile import TiffFile
+from tifffile import TiffFile
 
 from mibidata import mibi_image as mi
 from mibidata import tiff, util
@@ -153,8 +153,8 @@ class TestWriteReadTiff(unittest.TestCase):
         tiff.write(self.filename, self.float_image)
         with TiffFile(self.filename) as tif:
             for i, page in enumerate(tif.pages):
-                self.assertEqual(page.tags['smin_sample_value'].value, 0)
-                self.assertEqual(page.tags['smax_sample_value'].value,
+                self.assertEqual(page.tags['SMinSampleValue'].value, 0)
+                self.assertEqual(page.tags['SMaxSampleValue'].value,
                                  self.float_image.data[:, :, i].max())
 
     def test_custom_ranges(self):
@@ -162,9 +162,9 @@ class TestWriteReadTiff(unittest.TestCase):
         tiff.write(self.filename, self.float_image, ranges=ranges)
         with TiffFile(self.filename) as tif:
             for i, page in enumerate(tif.pages):
-                self.assertEqual(page.tags['smin_sample_value'].value,
+                self.assertEqual(page.tags['SMinSampleValue'].value,
                                  ranges[i][0])
-                self.assertEqual(page.tags['smax_sample_value'].value,
+                self.assertEqual(page.tags['SMaxSampleValue'].value,
                                  ranges[i][1])
 
 

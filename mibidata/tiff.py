@@ -10,7 +10,7 @@ import os
 import warnings
 
 import numpy as np
-from skimage.external.tifffile import TiffFile, TiffWriter
+from tifffile import TiffFile, TiffWriter
 
 from mibidata import mibi_image as mi, util
 
@@ -28,8 +28,6 @@ _DATETIME_FORMAT = '%Y:%m:%d %H:%M:%S'
 _MICRONS_PER_CM = 10000
 # Max denominator for rational arguments in tifffile.py
 _MAX_DENOMINATOR = 1000000
-# Encoding of tiff tags.
-ENCODING = 'utf-8'
 
 REQUIRED_METADATA_ATTRIBUTES = ('fov_id', 'fov_name', 'run', 'folder',
                                 'dwell', 'scans', 'mass_gain', 'mass_offset',
@@ -131,13 +129,14 @@ def write(filename, image, sed=None, optical=None, ranges=None,
     if ranges is None:
         ranges = [(0, m) for m in to_save.max(axis=(0, 1))]
 
-    coordinates = [
+    constant_tags = [
+        # SOFTWARE_TAG,
         (286, '2i', 1, _micron_to_cm(image.coordinates[0])),  # x-position
         (287, '2i', 1, _micron_to_cm(image.coordinates[1])),  # y-position
     ]
     resolution = (image.data.shape[0] * 1e4 / float(image.size),
                   image.data.shape[1] * 1e4 / float(image.size),
-                  'cm')
+                  'CENTIMETER')
 
     # The mibi. prefix is added to attributes defined in the spec.
     # Other user-defined attributes are included too but without the prefix.
@@ -158,7 +157,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         targets = list(image.targets)
         util.sort_channel_names(targets)
         indices = image.channel_inds(targets)
-        with TiffWriter(filename, software=SOFTWARE_VERSION) as infile:
+        with TiffWriter(filename) as infile:
             for i in indices:
                 metadata = description.copy()
                 metadata.update({
@@ -172,26 +171,29 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 )
                 min_value = (340, range_dtype, 1, ranges[i][0])
                 max_value = (341, range_dtype, 1, ranges[i][1])
-                page_tags = coordinates + [page_name, min_value, max_value]
+                page_tags = constant_tags + [page_name, min_value, max_value]
 
-                infile.save(
+                infile.write(
                     to_save[:, :, i], compress=6, resolution=resolution,
-                    extratags=page_tags, metadata=metadata, datetime=image.date)
+                    extratags=page_tags, metadata=metadata, datetime=image.date,
+                    software=SOFTWARE_VERSION)
             if sed is not None:
                 if sed.ndim > 2:
                     sed = sed[:, :, 0]
 
                 sed_resolution = (sed.shape[0] * 1e4 / float(image.size),
                                   sed.shape[1] * 1e4 / float(image.size),
-                                  'cm')
+                                  'CENTIMETER')
 
                 page_name = (285, 's', 0, 'SED')
-                page_tags = coordinates + [page_name]
-                infile.save(sed, compress=6, resolution=sed_resolution,
-                            extratags=page_tags, metadata={'image.type': 'SED'})
+                page_tags = constant_tags + [page_name]
+                infile.write(
+                    sed, compress=6, resolution=sed_resolution,
+                    extratags=page_tags, metadata={'image.type': 'SED'},
+                    software=SOFTWARE_VERSION)
             if optical is not None:
-                infile.save(optical, compress=6,
-                            metadata={'image.type': 'Optical'})
+                infile.write(optical, compress=6, software=SOFTWARE_VERSION,
+                             metadata={'image.type': 'Optical'},)
                 label_coordinates = (
                     _TOP_LABEL_COORDINATES if image.coordinates[1] > 0 else
                     _BOTTOM_LABEL_COORDINATES)
@@ -199,8 +201,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     optical[label_coordinates[0][0]:label_coordinates[0][1],
                             label_coordinates[1][0]:label_coordinates[1][1]],
                     0, 1))
-                infile.save(slide_label, compress=6,
-                            metadata={'image.type': 'Label'})
+                infile.write(slide_label, compress=6, software=SOFTWARE_VERSION,
+                             metadata={'image.type': 'Label'})
 
     else:
         for i in range(image.data.shape[2]):
@@ -214,19 +216,18 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 image.targets[i], image.masses[i]))
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
-            page_tags = coordinates + [page_name, min_value, max_value]
+            page_tags = constant_tags + [page_name, min_value, max_value]
 
             target_filename = os.path.join(
                 filename, '{}.tiff'.format(
                     util.format_for_filename(image.targets[i])))
 
-            with TiffWriter(target_filename,
-                            software=SOFTWARE_VERSION) as infile:
+            with TiffWriter(target_filename) as infile:
 
-                infile.save(
+                infile.write(
                     to_save[:, :, i], compress=6, resolution=resolution,
                     metadata=metadata, datetime=image.date,
-                    extratags=page_tags)
+                    extratags=page_tags, software=SOFTWARE_VERSION)
 
 
 def read(file, sims=True, sed=False, optical=False, label=False,
@@ -322,9 +323,9 @@ def _include_page(description, masses, targets):
 
 def _check_software(file):
     """Checks the software version of an open TIF file."""
-    software = file.pages[0].tags.get('software')
-    if not software or not software.value.decode(ENCODING).startswith(
-            'IonpathMIBI'):
+    software = file.pages[0].tags.get('Software')
+    print(software.value)
+    if not software or not software.value.startswith('IonpathMIBI'):
         raise ValueError('File is not of type IonpathMIBI.')
 
 
@@ -332,24 +333,22 @@ def _page_description(page):
     """Loads and decodes the JSON description and image type in a
        TIFF page.
     """
-    description = json.loads(
-        page.tags['image_description'].value.decode(ENCODING))
+    description = json.loads(page.tags['ImageDescription'].value)
     image_type = description['image.type'].lower()
     return description, image_type
 
 def _page_metadata(page, description):
     """Parses the page metadata into a dictionary."""
-    assert page.tags['resolution_unit'].value == 3
-    x_resolution = page.tags['x_resolution'].value[0] / \
-                   page.tags['x_resolution'].value[1]
-    y_resolution = page.tags['y_resolution'].value[0] / \
-                   page.tags['y_resolution'].value[1]
+    assert page.tags['ResolutionUnit'].value == 3
+    x_resolution = page.tags['XResolution'].value[0] / \
+                   page.tags['XResolution'].value[1]
+    y_resolution = page.tags['YResolution'].value[0] / \
+                   page.tags['YResolution'].value[1]
     assert x_resolution == y_resolution, \
         'x-resolution and y-resolution are not equal'
-    size = page.tags['image_width'].value / x_resolution * 1e4
+    size = page.tags['ImageWidth'].value / x_resolution * 1e4
     date = datetime.datetime.strptime(
-        page.tags['datetime'].value.decode(ENCODING),
-        _DATETIME_FORMAT)
+        page.tags['DateTime'].value, _DATETIME_FORMAT)
 
     # check version for backwards compatibility
     _convert_from_previous(description)
@@ -363,8 +362,8 @@ def _page_metadata(page, description):
 
     metadata.update({
         'coordinates': (
-            _cm_to_micron(page.tags['x_position'].value),
-            _cm_to_micron(page.tags['y_position'].value)),
+            _cm_to_micron(page.tags['XPosition'].value),
+            _cm_to_micron(page.tags['YPosition'].value)),
         'date': date,
         'size': size})
 
