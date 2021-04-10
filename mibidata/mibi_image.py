@@ -635,18 +635,18 @@ class MibiImage():
         """
         shape = self.data.shape
         try:
-            ratio = np.float(size[1]) / size[0]
+            ratio = float(size[1]) / size[0]
         except TypeError:
             ratio = 1
             size = (size, size)
-        if ratio != np.float(shape[1]) / shape[0]:
+        if ratio != float(shape[1]) / shape[0]:
             raise ValueError(
                 'The input image layers have shape %s and cannot be resized '
                 'to %s without changing the aspect ratio.' % (shape, size))
         if preserve_type:
             dtype = self.data.dtype
         else:
-            dtype = np.float
+            dtype = float
 
         def _resize():
             with warnings.catch_warnings():
@@ -696,7 +696,7 @@ class MibiImage():
         # so that the dtype for saved images is consistent.
         dmin = data.min()
         dmax = data.max()
-        if (data.dtype in (np.uint8, np.uint16, np.bool) or
+        if (data.dtype in (np.uint8, np.uint16, bool) or
                 np.issubdtype(data.dtype, np.integer)):
             # save as uint8 or uint 16 if already in those ranges
             if dmin >= 0 and dmax < 2 ** 8:

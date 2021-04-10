@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_equal
 import pandas as pd
-import pandas.util.testing as pdt
+import pandas.testing as pdt
 
 from mibidata import mibi_image as mi, segmentation
 

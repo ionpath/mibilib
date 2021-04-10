@@ -343,7 +343,7 @@ class TestWriteReadTiff(unittest.TestCase):
             tiff.write(self.filename, self.float_image, multichannel=True,
                        dtype=dtype)
 
-        unsupported_types = ['abcdef', np.str, np.bool, np.uint8, np.float64]
+        unsupported_types = ['abcdef', str, bool, np.uint8, np.float64]
         for dtype in unsupported_types:
             with self.assertRaises(ValueError):
                 tiff.write(self.filename, self.float_image, multichannel=True,

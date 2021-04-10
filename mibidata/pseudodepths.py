@@ -73,11 +73,11 @@ def divide(msdf_file, num_scans, path=None):
                 handle.write(header)
             # Adding a dimension to the SAT for each psuedo-depth, since
             # splitting them up will require creating a new SAT for each.
-            depth_sat = np.zeros((num_spectra, 2, num_scans), np.int)
+            depth_sat = np.zeros((num_spectra, 2, num_scans), int)
             buffer = infile.read(SAT_ENTRY_SIZE * num_spectra)
             sat = np.array(
                 [i for i in struct.iter_unpack(SAT_ENTRY_FORMAT, buffer)],
-                np.int)
+                int)
             # Skip after to after SAT in new files; will update it later.
             after_sat = infile.tell()
             for handle in handles:

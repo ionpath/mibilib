@@ -6,8 +6,6 @@ import os
 import re
 import xml.etree.ElementTree as ElementTree
 
-import numpy as np
-
 MASS_CALIBRATION_PARAMETERS = ('TimeResolution', 'MassGain', 'MassOffset',
                                'MassRange', 'XSize', 'YSize')
 FOV_PATTERN = re.compile('^(Depth_Profile|Chemical_Image)$')
@@ -54,7 +52,7 @@ def parse_xml(path):
                     # case the run is stopped prematurely and the values are not
                     # written out for subsequent FOVs.
                     if not param in calibration:
-                        calibration[param] = np.float(item.attrib.get(param))
+                        calibration[param] = float(item.attrib.get(param))
                 fovs.append({
                     'run': run,
                     'folder': folder,

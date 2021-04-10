@@ -200,7 +200,7 @@ class TestMibiImage(unittest.TestCase):
 
     def test_dtype_inequality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
-        second = mi.MibiImage(TEST_DATA.astype(np.float), STRING_LABELS)
+        second = mi.MibiImage(TEST_DATA.astype(float), STRING_LABELS)
         self.assertFalse(first == second)
 
     def test_label_inequality(self):
@@ -557,7 +557,7 @@ class TestExportGrayscales(unittest.TestCase):
         self._test_export_image_helper(data, data)
 
     def test_export_bool_image(self):
-        data = np.random.randint(0, 1, (10, 10, 2)).astype(np.bool)
+        data = np.random.randint(0, 1, (10, 10, 2)).astype(bool)
         self._test_export_image_helper(data, data)
 
     def test_export_int_below_uint16_range_image(self):
@@ -584,7 +584,7 @@ class TestExportGrayscales(unittest.TestCase):
             im.export_pngs('path')
 
     def test_export_other_type(self):
-        array = np.random.randint(0, 10, (10, 10, 2)).astype(np.complex)
+        array = np.random.randint(0, 10, (10, 10, 2)).astype(complex)
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(TypeError):
             im.export_pngs('path')
