@@ -11,7 +11,7 @@ setup(name='mibilib',
       url='https://github.com/ionpath/mibilib',
       description='Python utilities for IONpath MIBItracker and MIBItiff data',
       license='GNU General Public License v3.0',
-      python_requires='~=3.6',
+      python_requires='~=3.7.3',
       install_requires=[
           'matplotlib==3.3.2',
           'numpy==1.20.0',
