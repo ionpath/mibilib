@@ -24,7 +24,7 @@ HEADER = (1, 8, NUM_PIXELS)
 # pixel_lengths = np.random.randint(9, 20, 16)
 # DATA = []
 # for pl in pixel_lengths:
-#     entries = np.zeros(pl, np.int)
+#     entries = np.zeros(pl, int)
 #     num_counts = pl - 9
 #     inds = np.random.choice(np.arange(pl), num_counts, replace=False)
 #     bins = np.random.randint(1, 8, num_counts)
@@ -58,7 +58,7 @@ class TestMsdf(unittest.TestCase):
         fh, fn = tempfile.mkstemp()
         cls.msdf = fn
         os.close(fh)
-        sat = np.zeros((NUM_PIXELS, 2), np.int)
+        sat = np.zeros((NUM_PIXELS, 2), int)
         cls.header = struct.pack(pseudodepths.HEADER_FORMAT, 1, 8, NUM_PIXELS)
         with open(fn, 'wb') as infile:
             infile.write(cls.header)

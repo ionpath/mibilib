@@ -200,7 +200,7 @@ class TestMibiImage(unittest.TestCase):
 
     def test_dtype_inequality(self):
         first = mi.MibiImage(TEST_DATA, STRING_LABELS)
-        second = mi.MibiImage(TEST_DATA.astype(np.float), STRING_LABELS)
+        second = mi.MibiImage(TEST_DATA.astype(float), STRING_LABELS)
         self.assertFalse(first == second)
 
     def test_label_inequality(self):
@@ -462,21 +462,24 @@ class TestMibiImage(unittest.TestCase):
         image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
         data = image.data
         image.resize(3)
-        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge')
+        expected = transform.resize(
+            data, (3, 3, 3), order=3, mode='edge', anti_aliasing=False)
         self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
 
     def test_resize_tuple_without_copy(self):
         image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
         data = image.data
         image.resize((3, 3))
-        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge')
+        expected = transform.resize(
+            data, (3, 3, 3), order=3, mode='edge', anti_aliasing=False)
         self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
 
     def test_resize_integer_with_copy(self):
         image = mi.MibiImage(np.random.rand(5, 5, 3), STRING_LABELS)
         image_copy = mi.MibiImage(image.data.copy(), STRING_LABELS)
         resized = image.resize(3, copy=True)
-        expected = transform.resize(image.data, (3, 3, 3), order=3, mode='edge')
+        expected = transform.resize(
+            image.data, (3, 3, 3), order=3, mode='edge', anti_aliasing=False)
         self.assertTrue(resized == mi.MibiImage(expected, STRING_LABELS))
         self.assertTrue(image == image_copy)
 
@@ -486,8 +489,9 @@ class TestMibiImage(unittest.TestCase):
             STRING_LABELS)
         data = image.data
         image.resize(3, preserve_type=True)
-        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge',
-                                    preserve_range=True).astype(np.uint8)
+        expected = transform.resize(
+            data, (3, 3, 3), order=3, mode='edge', anti_aliasing=False,
+            preserve_range=True).astype(np.uint8)
         self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
 
     def test_resize_preserve_float_dtype(self):
@@ -496,7 +500,8 @@ class TestMibiImage(unittest.TestCase):
         image.resize(3, preserve_type=True)
         # The return value should not be affected by whether the
         # dtype is preserved if the input data are floats in the unit interval.
-        expected = transform.resize(data, (3, 3, 3), order=3, mode='edge')
+        expected = transform.resize(
+            data, (3, 3, 3), order=3, mode='edge', anti_aliasing=False)
         self.assertTrue(image == mi.MibiImage(expected, STRING_LABELS))
 
     def test_resize_to_larger(self):
@@ -557,7 +562,7 @@ class TestExportGrayscales(unittest.TestCase):
         self._test_export_image_helper(data, data)
 
     def test_export_bool_image(self):
-        data = np.random.randint(0, 1, (10, 10, 2)).astype(np.bool)
+        data = np.random.randint(0, 1, (10, 10, 2)).astype(bool)
         self._test_export_image_helper(data, data)
 
     def test_export_int_below_uint16_range_image(self):
@@ -584,7 +589,7 @@ class TestExportGrayscales(unittest.TestCase):
             im.export_pngs('path')
 
     def test_export_other_type(self):
-        array = np.random.randint(0, 10, (10, 10, 2)).astype(np.complex)
+        array = np.random.randint(0, 10, (10, 10, 2)).astype(complex)
         im = mi.MibiImage(array, ['1', '2'])
         with self.assertRaises(TypeError):
             im.export_pngs('path')
