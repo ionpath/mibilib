@@ -1,3 +1,5 @@
+''' Unit tests for tiling module. '''
+
 import os
 import unittest
 import tempfile
@@ -696,15 +698,17 @@ FOV_LIST_JSON_TILED_EXPECTED = {
 }
 
 class TestTiling(unittest.TestCase):
+    ''' Unit tests for tiling module. '''
     def test_tile(self):
+        ''' Test the tile function. '''
         with tempfile.TemporaryDirectory() as tmpdir:
             fov_list_file = os.path.join(tmpdir, 'fov-list.json')
-            with open(fov_list_file, 'w') as f:
-                json.dump(FOV_LIST_JSON_ORIG, f)
+            with open(fov_list_file, 'w') as json_file:
+                json.dump(FOV_LIST_JSON_ORIG, json_file)
             tiling.tile(fov_list_file, 5, 5, 0.1)
             fov_list_file_tiled = os.path.join(tmpdir, 'fov-list-5x5.json')
-            with open(fov_list_file_tiled, 'r') as f:
-                fov_list_json_tiled_actual = json.load(f)
+            with open(fov_list_file_tiled, 'r') as json_file:
+                fov_list_json_tiled_actual = json.load(json_file)
             np.testing.assert_array_equal(
                 fov_list_json_tiled_actual['fovs'],
                 FOV_LIST_JSON_TILED_EXPECTED['fovs'])
