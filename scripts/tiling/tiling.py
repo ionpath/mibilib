@@ -3,6 +3,7 @@ generated from a single FOV json.
 """
 
 import os
+import sys
 import json
 import datetime
 import argparse
@@ -48,11 +49,11 @@ def tile(fov_list_json_file, xn, yn, overlap):
         json.dump(fov_list, f, indent=4)
 
 
-def get_parser(argv):
+def get_parser():
     ''' Generates the command line argument parser. '''
     parser = argparse.ArgumentParser(
-        description='Generate an MIBIcontrol-importable FOV list json file that '
-                    'contains a grid of FOVs. Example usage: \n'
+        description='Generate an MIBIcontrol-importable FOV list json file '
+                    'that contains a grid of FOVs. Example usage: \n'
                     'python tiling.py fov-list.json 5 5 0.1')
     parser.add_argument(
         'fov_list_json_file', type=str,
