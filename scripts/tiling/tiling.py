@@ -10,7 +10,7 @@ import argparse
 import copy
 import numpy as np
 
-def tile(fov_list_json_file, xn, yn, overlap):
+def tile(fov_list_json_file, xn, yn, overlap_x, overlap_y):
     ''' Using a template json file, creates another fov json that includes
     the tiled version of the original FOV.
     Args:
@@ -18,7 +18,10 @@ def tile(fov_list_json_file, xn, yn, overlap):
             resulting tiled json is created in the same directory as this file.
         xn: The number of tiles in the x direction.
         yn: The number of tiles in the y direction.
-        overlap: The degree of overlap between tiles. Must be between 0-1.
+        overlap_x: The degree of overlap between tiles in the x direction.
+            Must be between -1 and 1. Negative values result in spacing between
+            the FOVs.
+        overlap_y: The degree of overlap between tiles in the y direction.
     '''
 
     with open(fov_list_json_file, 'r') as f:
@@ -33,11 +36,12 @@ def tile(fov_list_json_file, xn, yn, overlap):
     fov_size = fov_list_single['fovs'][0]['fovSizeMicrons']
     x = fov_list_single['fovs'][0]['centerPointMicrons']['x']
     y = fov_list_single['fovs'][0]['centerPointMicrons']['y']
-    overlap_microns = fov_size * overlap
+    overlap_x_microns = fov_size * overlap_x
+    overlap_y_microns = fov_size * overlap_y
     for xi in np.arange(xn):
         for yi in np.arange(yn):
-            cur_x = x + xi * (fov_size - overlap_microns)
-            cur_y = y + yi * (fov_size - overlap_microns)
+            cur_x = x + xi * (fov_size - overlap_x_microns)
+            cur_y = y + yi * (fov_size - overlap_y_microns)
             fov = copy.deepcopy(fov_list_single['fovs'][0])
             fov['centerPointMicrons']['x'] = cur_x
             fov['centerPointMicrons']['y'] = cur_y
@@ -64,7 +68,10 @@ def get_parser():
              'single FOV in the original fov-list.json file.')
     parser.add_argument('xn', type=int, help='Number of FOVs in x-dir.')
     parser.add_argument('yn', type=int, help='Number of FOVs in y-dir.')
-    parser.add_argument('overlap', type=float, help='Overlap between 0-1.')
+    parser.add_argument(
+        'overlap_x', type=float, help='X Overlap between -1 to 1.')
+    parser.add_argument(
+        'overlap_y', type=float, help='Y Overlap between -1 to 1.')
     return parser
 
 if __name__ == '__main__':

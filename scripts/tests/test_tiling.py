@@ -705,7 +705,7 @@ class TestTiling(unittest.TestCase):
             fov_list_file = os.path.join(tmpdir, 'fov-list.json')
             with open(fov_list_file, 'w') as json_file:
                 json.dump(FOV_LIST_JSON_ORIG, json_file)
-            tiling.tile(fov_list_file, 5, 5, 0.1)
+            tiling.tile(fov_list_file, 5, 5, 0.1, 0.1)
             fov_list_file_tiled = os.path.join(tmpdir, 'fov-list-5x5.json')
             with open(fov_list_file_tiled, 'r') as json_file:
                 fov_list_json_tiled_actual = json.load(json_file)
