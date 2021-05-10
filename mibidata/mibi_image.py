@@ -487,9 +487,26 @@ class MibiImage():
                     f'with targets only (no masses were given), available ' \
                     f'targets are {self._channels}'
             else:
-                error_msg = f'Subset of channels, targets or massses not ' \
-                    f'found matching {channels}, available targets are ' \
-                    f'{self._channels}'
+                missing_channels = []
+                matches = []                
+                keys = [channel[1] for channel in self._channels]
+                
+                # check for missing channels
+                # match on case-insensitive substring
+                for channel in channels:
+                    if channel in keys or len(channel)<3:                    
+                        continue
+                    missing_channels.append(channel)
+                    matches += [match for match in keys if channel.lower() in \
+                        match.lower()]
+                                
+                error_msg = f'Channels, targets or masses not found ' \
+                    f'matching {missing_channels}. '
+
+                if len(matches):
+                    error_msg += f'Did you mean {matches}? '
+                    
+                error_msg += f'Available targets are {keys}.'
             raise KeyError(error_msg)
 
     def slice_data(self, channels):
