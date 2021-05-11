@@ -494,9 +494,11 @@ class MibiImage():
                 # check for missing channels
                 # match on case-insensitive substring
                 for channel in channels:
-                    if channel in keys or len(channel)<3:                    
+                    if channel in keys:                    
                         continue
                     missing_channels.append(channel)
+                    if len(channel) < 3:
+                        continue
                     matches += [match for match in keys if channel.lower() in \
                         match.lower()]
                                 
