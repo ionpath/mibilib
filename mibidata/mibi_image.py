@@ -488,26 +488,26 @@ class MibiImage():
                     f'targets are {self._channels}'
             else:
                 missing_channels = []
-                matches = []                
+                matches = []
                 keys = [channel[1] for channel in self._channels]
-                
+
                 # check for missing channels
                 # match on case-insensitive substring
                 for channel in channels:
-                    if channel in keys:                    
+                    if channel in keys:
                         continue
                     missing_channels.append(channel)
                     if len(channel) < 3:
                         continue
                     matches += [match for match in keys if channel.lower() in \
                         match.lower()]
-                                
+
                 error_msg = f'Channels, targets or masses not found ' \
                     f'matching {missing_channels}. '
 
-                if len(matches):
+                if matches:
                     error_msg += f'Did you mean {matches}? '
-                    
+
                 error_msg += f'Available targets are {keys}.'
             raise KeyError(error_msg)
 
