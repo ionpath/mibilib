@@ -24,6 +24,8 @@ LABEL = (img_as_ubyte(transform.rotate(
     CAROUSEL[X_COORD[0]:X_COORD[1], Y_COORD[0]:Y_COORD[1]], 270)))
 CHANNELS = ((1, 'Target1'), (2, 'Target2'), (3, 'Target3'),
             (4, 'Target4'), (5, 'Target5'))
+CHANNELS_NON_ASCII = ((1, 'Targetµ'), (2, 'Targetβ'), (3, 'Targetγ'),
+            (4, 'Targetπ'), (5, 'Targetτ'))
 METADATA = {
     'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
@@ -74,6 +76,8 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def setUp(self):
         self.float_image = mi.MibiImage(DATA, CHANNELS, **METADATA)
+        self.float_image_non_ascii = mi.MibiImage(
+            DATA, CHANNELS_NON_ASCII, **METADATA)
         self.int_image = mi.MibiImage(
             DATA.astype(np.uint16), CHANNELS, **METADATA)
         self.image_user_defined_metadata = mi.MibiImage(DATA, CHANNELS,
@@ -337,6 +341,22 @@ class TestWriteReadTiff(unittest.TestCase):
             self.assertTupleEqual(tif.channels, (CHANNELS[i], ))
             self.assertEqual(tif.data.dtype, np.float32)
 
+    def test_write_single_channel_tiffs_non_ascii(self):
+
+        basepath = os.path.split(self.filename)[0]
+
+        tiff.write(basepath, self.float_image_non_ascii, multichannel=False)
+
+        for i, (_, channel) in enumerate(CHANNELS_NON_ASCII):
+            formatted = util.format_for_filename(channel)
+            filename = os.path.join(basepath, '{}.tiff'.format(formatted))
+
+            tif = tiff.read(filename)
+
+            np.testing.assert_equal(np.squeeze(tif.data), DATA[:, :, i])
+            self.assertTupleEqual(tif.channels, (CHANNELS_NON_ASCII[i], ))
+            self.assertEqual(tif.data.dtype, np.float32)
+
     def test_tiff_dtype_correct_arguments(self):
         supported_dtypes = [np.float32, np.uint16]
         for dtype in supported_dtypes:
@@ -361,6 +381,15 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(image.data.dtype, np.float32)
         np.testing.assert_equal(
             image.data, self.float_image.data.astype(np.float32))
+
+    def test_write_float32_from_float32_tiff_dtype_none_non_ascii(self):
+        tiff.write(self.filename, self.float_image_non_ascii, multichannel=True)
+        image = tiff.read(self.filename)
+        self.assertEqual(image.data.dtype, np.float32)
+        np.testing.assert_equal(
+            image.data, self.float_image_non_ascii.data.astype(np.float32))
+        np.testing.assert_equal(
+            image.channels, self.float_image_non_ascii.channels)
 
     def test_write_float32_from_float32_dtype_np_float32(self):
         tiff.write(self.filename, self.float_image, multichannel=True,
