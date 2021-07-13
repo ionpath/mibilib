@@ -25,7 +25,7 @@ LABEL = (img_as_ubyte(transform.rotate(
 CHANNELS = ((1, 'Target1'), (2, 'Target2'), (3, 'Target3'),
             (4, 'Target4'), (5, 'Target5'))
 CHANNELS_NON_ASCII = ((1, 'Targetµ'), (2, 'Targetβ'), (3, 'Targetγ'),
-            (4, 'Targetπ'), (5, 'Targetτ'))
+                      (4, 'Targetπ'), (5, 'Targetτ'))
 METADATA = {
     'run': '20180703_1234_test', 'date': '2017-09-16T15:26:00',
     'coordinates': (12345, -67890), 'size': 500., 'slide': '857',
