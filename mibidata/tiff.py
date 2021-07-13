@@ -165,7 +165,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     'channel.target': image.targets[i],
                 })
                 page_name = (
-                    285, 's', 0, '{} ({})'.format(image.targets[i],
+                    285, 's', 0, '{} ({})'.format(image.targets[i].encode(),
                                                   image.masses[i])
                 )
                 min_value = (340, range_dtype, 1, ranges[i][0])
