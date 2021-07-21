@@ -17,13 +17,13 @@ import shutil
 import tempfile
 import unittest
 
+import numpy as np
 from mock import patch
 import requests
 from requests.exceptions import HTTPError
 
-from mibidata import tiff
+from mibidata import tiff, mibi_image as mi
 from mibitracker import request_helpers
-
 
 class TestMibiRequests(unittest.TestCase):
 
@@ -191,7 +191,7 @@ class TestMibiRequests(unittest.TestCase):
                     method_to_call('http://example.com')
 
     @patch.object(request_helpers.MibiRequests, '_upload_mibitiff')
-    def test_upload_mibitiff_with_run_id(self, mock_upload):  # pylint: disable=unused-argument
+    def test_upload_mibitiff_with_run_id(self, mock_upload): # pylint: disable=unused-argument
         buf = io.BytesIO()
         response = {
             'location': 'some_path',
@@ -218,7 +218,7 @@ class TestMibiRequests(unittest.TestCase):
             self.mtu.upload_mibitiff(buf, None)
 
     @patch.object(request_helpers.MibiRequests, '_upload_channel')
-    def test_upload_channel_missing_filename(self, mock_upload):  # pylint: disable=unused-argument
+    def test_upload_channel_missing_filename(self, mock_upload): # pylint: disable=unused-argument
         buf = io.BytesIO()
         with self.assertRaises(ValueError):
             self.mtu.upload_channel(1, buf)
@@ -271,6 +271,17 @@ class TestMibiRequests(unittest.TestCase):
             'https://mibitracker-instance.ionpath.com/images/1/upload_channel/',
             files=expected_files, timeout=request_helpers.SESSION_TIMEOUT
         )
+
+    @patch.object(request_helpers.MibiRequests, 'upload_channel')
+    def test_upload_channel_from_mibiimage(self, mock_upload):
+        channel_label = 'dsDNA'
+        mock_image = mi.MibiImage(np.arange(4, dtype='uint16').reshape(2, 2, 1),
+                                  [channel_label])
+        mock_image = mock_image[channel_label] # without slicing, skimage gives
+        # an error of incompatibility with numpy types
+        self.mtu.upload_channel_from_mibiimage(mock_image, channel_label, 1)
+        self.assertEqual(mock_upload.call_args[0][0], 1)
+        self.assertEqual(mock_upload.call_args[0][2], channel_label + '.png')
 
     @patch.object(tiff, 'read')
     @patch.object(request_helpers.MibiRequests, 'download_file')

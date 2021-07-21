@@ -493,6 +493,25 @@ class MibiRequests():
                                      'object that does not have a name')
             return self._upload_channel(image_id, image_file, filename)
 
+    def upload_channel_from_mibiimage(self, image, channel_label, image_id):
+        """Uploads a channel from a MibiImage to the MibiTracker.
+
+        The image passed as argument should contain only the channel that needs
+        to be uploaded.
+
+        Args:
+            image: a MibiImage with the channel to upload.
+            channel_label: the name of the channel to upload.
+            image_id: The integer id of the image to associate the channel with.
+
+        Returns:
+            The response from the MibiTracker after uploading the file.
+        """
+        buf = io.BytesIO()
+        skio.imsave(buf, image)
+        buf.seek(0)
+        return self.upload_channel(image_id, buf, f'{channel_label}.png')
+
     def run_images(self, run_label):
         """Gets a JSON array of image metadata from a given run label.
 
@@ -549,9 +568,9 @@ class MibiRequests():
 
         len_results = len(results)
         if len_results == 0:
-            warnings.warn(f'No images found matching run label: {run_label}, '
-                          f'fov_id: {fov_id}. Checking run name '
-                          f'instead.')
+            message = (f'No images found matching run label: {run_label}, '
+                       f'fov_id: {fov_id}. Checking run name instead.')
+            warnings.warn(message)
             results = self.get(
                 '/images/',
                 params={
@@ -562,12 +581,11 @@ class MibiRequests():
 
         len_results = len(results)
         if len_results == 0:
-            raise MibiTrackerError(
-                f'No images found matching run {run_label} {fov_id}.')
+            message = f'No images found matching run {run_label} {fov_id}.'
+            raise MibiTrackerError(message)
         if len_results > 1:
-            raise MibiTrackerError(
-                f'Multiple images match run {run_label} {fov_id}.'
-            )
+            message = f'Multiple images match run {run_label} {fov_id}.'
+            raise MibiTrackerError(message)
 
         return results[0]['id']
 
