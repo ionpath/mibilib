@@ -460,8 +460,8 @@ class TestWriteReadTiff(unittest.TestCase):
         big_float_image = mi.MibiImage(data, CHANNELS_NON_ASCII, **METADATA)
         tiff.write(
             self.filename, big_float_image, multichannel=True, dtype=np.float32)
-        bftools_url = ('https://downloads.openmicroscopy.org/latest/'
-                       'bio-formats5.8/artifacts/bftools.zip')
+        bftools_url = ('https://downloads.openmicroscopy.org/bio-formats/'
+                       '6.7.0/artifacts/bftools.zip')
         bftools_zip = os.path.basename(bftools_url)
         self.assertEqual(os.system(f'wget {bftools_url}'), 0)
         self.assertEqual(os.system(f'unzip {bftools_zip}'), 0)
