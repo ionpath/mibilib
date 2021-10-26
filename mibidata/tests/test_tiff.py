@@ -454,7 +454,10 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(image.data.dtype, np.uint16)
 
     def test_bioformats(self):
-        tiff.write(self.filename, self.float_image, multichannel=True,
+        n = 1024
+        data = np.random.randint(0, 255, (n, n, len(CHANNELS))).astype(float)
+        big_float_image = mi.MibiImage(data, CHANNELS, **METADATA)
+        tiff.write(self.filename, big_float_image, multichannel=True,
             dtype=np.float32)
         bftools_url = ('https://downloads.openmicroscopy.org/latest/'
                         'bio-formats5.8/artifacts/bftools.zip')
