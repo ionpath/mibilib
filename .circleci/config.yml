@@ -28,6 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            sudo apt-get install openjdk-6-jdk
             ~/miniconda/envs/mibilib/bin/coverage run -m py.test mibitracker mibidata scripts
             ~/miniconda/envs/mibilib/bin/coverage html -i --omit=*/tests/*
       - run:
