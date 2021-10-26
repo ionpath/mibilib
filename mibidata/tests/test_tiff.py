@@ -453,6 +453,19 @@ class TestWriteReadTiff(unittest.TestCase):
         np.testing.assert_equal(image.data, uint8_image.data.astype(np.uint16))
         self.assertEqual(image.data.dtype, np.uint16)
 
+    def test_bioformats(self):
+        tiff.write(self.filename, self.float_image, multichannel=True,
+            dtype=np.float32)
+        bftools_url = ('https://downloads.openmicroscopy.org/latest/'
+                        'bio-formats5.8/artifacts/bftools.zip')
+        bftools_zip = os.path.basename(bftools_url)
+        self.self.assertEqual(os.system(f'wget {bftools_url}'), 0)
+        self.self.assertEqual(os.system(f'unzip {bftools_zip}'), 0)
+        self.self.assertEqual(os.system(f'rm {bftools_zip}'), 0)
+        self.self.assertEqual(os.system(
+            f'./bftools/bfconvert {self.filename} converted.tiff'),0)
+        self.self.assertEqual(os.system(f'rm -rf bftools'), 0)
+        self.self.assertEqual(os.system(f'rm converted.tiff'), 0)
 
 if __name__ == '__main__':
     unittest.main()
