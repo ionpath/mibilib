@@ -455,8 +455,9 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def test_bioformats(self):
         n = 1024
-        data = np.random.randint(0, 255, (n, n, len(CHANNELS))).astype(float)
-        big_float_image = mi.MibiImage(data, CHANNELS, **METADATA)
+        data = np.random.randint(
+            0, 255, (n, n, len(CHANNELS_NON_ASCII))).astype(float)
+        big_float_image = mi.MibiImage(data, CHANNELS_NON_ASCII, **METADATA)
         tiff.write(self.filename, big_float_image, multichannel=True,
             dtype=np.float32)
         bftools_url = ('https://downloads.openmicroscopy.org/latest/'
