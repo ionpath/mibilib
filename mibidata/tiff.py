@@ -173,7 +173,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 page_tags = coordinates + [page_name, min_value, max_value]
 
                 infile.write(
-                    to_save[:, :, i], compress=6, resolution=resolution,
+                    to_save[:, :, i], compress=0, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date,
                     software=SOFTWARE_VERSION)
             if sed is not None:
@@ -187,11 +187,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 page_name = (285, 's', 0, 'SED')
                 page_tags = coordinates + [page_name]
                 infile.write(
-                    sed, compress=6, resolution=sed_resolution,
+                    sed, compress=0, resolution=sed_resolution,
                     extratags=page_tags, metadata={'image.type': 'SED'},
                     software=SOFTWARE_VERSION)
             if optical is not None:
-                infile.write(optical, compress=6, software=SOFTWARE_VERSION,
+                infile.write(optical, compress=0, software=SOFTWARE_VERSION,
                              metadata={'image.type': 'Optical'},)
                 label_coordinates = (
                     _TOP_LABEL_COORDINATES if image.coordinates[1] > 0 else
@@ -200,7 +200,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     optical[label_coordinates[0][0]:label_coordinates[0][1],
                             label_coordinates[1][0]:label_coordinates[1][1]],
                     0, 1))
-                infile.write(slide_label, compress=6, software=SOFTWARE_VERSION,
+                infile.write(slide_label, compress=0, software=SOFTWARE_VERSION,
                              metadata={'image.type': 'Label'})
 
     else:
@@ -224,7 +224,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             with TiffWriter(target_filename) as infile:
 
                 infile.write(
-                    to_save[:, :, i], compress=6, resolution=resolution,
+                    to_save[:, :, i], compress=0, resolution=resolution,
                     metadata=metadata, datetime=image.date,
                     extratags=page_tags, software=SOFTWARE_VERSION)
 
