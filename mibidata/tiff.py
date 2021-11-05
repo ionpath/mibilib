@@ -173,9 +173,9 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 page_tags = coordinates + [page_name, min_value, max_value]
 
                 infile.write(
-                    to_save[:, :, i], compress=0, resolution=resolution,
+                    to_save[:, :, i], compress=6, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date,
-                    software=SOFTWARE_VERSION)
+                    software=SOFTWARE_VERSION, rowsperstrip=to_save.shape[0])
             if sed is not None:
                 if sed.ndim > 2:
                     sed = sed[:, :, 0]
@@ -187,12 +187,13 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 page_name = (285, 's', 0, 'SED')
                 page_tags = coordinates + [page_name]
                 infile.write(
-                    sed, compress=0, resolution=sed_resolution,
+                    sed, compress=6, resolution=sed_resolution,
                     extratags=page_tags, metadata={'image.type': 'SED'},
-                    software=SOFTWARE_VERSION)
+                    software=SOFTWARE_VERSION, rowsperstrip=sed.shape[0])
             if optical is not None:
-                infile.write(optical, compress=0, software=SOFTWARE_VERSION,
-                             metadata={'image.type': 'Optical'},)
+                infile.write(optical, compress=6, software=SOFTWARE_VERSION,
+                             metadata={'image.type': 'Optical'},
+                             rowsperstrip=optical.shape[0])
                 label_coordinates = (
                     _TOP_LABEL_COORDINATES if image.coordinates[1] > 0 else
                     _BOTTOM_LABEL_COORDINATES)
@@ -200,8 +201,9 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     optical[label_coordinates[0][0]:label_coordinates[0][1],
                             label_coordinates[1][0]:label_coordinates[1][1]],
                     0, 1))
-                infile.write(slide_label, compress=0, software=SOFTWARE_VERSION,
-                             metadata={'image.type': 'Label'})
+                infile.write(slide_label, compress=6, software=SOFTWARE_VERSION,
+                             metadata={'image.type': 'Label'},
+                             rowsperstrip=slide_label.shape[0])
 
     else:
         for i in range(image.data.shape[2]):
@@ -224,9 +226,10 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             with TiffWriter(target_filename) as infile:
 
                 infile.write(
-                    to_save[:, :, i], compress=0, resolution=resolution,
+                    to_save[:, :, i], compress=6, resolution=resolution,
                     metadata=metadata, datetime=image.date,
-                    extratags=page_tags, software=SOFTWARE_VERSION)
+                    extratags=page_tags, software=SOFTWARE_VERSION,
+                    rowsperstrip=to_save.shape[0])
 
 
 def read(file, sims=True, sed=False, optical=False, label=False,
