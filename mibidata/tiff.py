@@ -165,7 +165,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     'channel.target': image.targets[i],
                 })
                 page_name = (
-                    285, 's', 0, '{} ({})'.format(image.targets[i].encode(),
+                    285, 's', 0, '{} ({})'.format(image.targets[i],
                                                   image.masses[i])
                 )
                 min_value = (340, range_dtype, 1, ranges[i][0])
@@ -214,7 +214,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 'channel.target': image.targets[i],
             })
             page_name = (285, 's', 0, '{} ({})'.format(
-                image.targets[i].encode(), image.masses[i]))
+                image.targets[i], image.masses[i]))
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
             page_tags = coordinates + [page_name, min_value, max_value]
