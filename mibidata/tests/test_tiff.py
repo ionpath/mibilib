@@ -171,6 +171,15 @@ class TestWriteReadTiff(unittest.TestCase):
                 self.assertEqual(page.tags['SMaxSampleValue'].value,
                                  ranges[i][1])
 
+    def test_page_names_non_ascii(self):
+        tiff.write(self.filename, self.float_image_non_ascii, multichannel=True)
+        image = tiff.read(self.filename)
+        with TiffFile(self.filename) as tif:
+            for page_ind, page in enumerate(tif.pages):
+                page_name_actual = page.tags['PageName'].value
+                page_name_expected = CHANNELS_NON_ASCII[page_ind][1] + \
+                    ' (' + str(CHANNELS_NON_ASCII[page_ind][0]) + ')'
+                self.assertEqual(page_name_actual, page_name_expected)
 
     def test_sims_and_sed(self):
         tiff.write(self.filename, self.float_image, sed=SED)
