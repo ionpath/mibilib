@@ -173,7 +173,6 @@ class TestWriteReadTiff(unittest.TestCase):
 
     def test_page_names_non_ascii(self):
         tiff.write(self.filename, self.float_image_non_ascii, multichannel=True)
-        image = tiff.read(self.filename)
         with TiffFile(self.filename) as tif:
             for page_ind, page in enumerate(tif.pages):
                 page_name_actual = page.tags['PageName'].value
