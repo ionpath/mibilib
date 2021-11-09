@@ -164,10 +164,14 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     'channel.mass': int(image.masses[i]),
                     'channel.target': image.targets[i],
                 })
-                page_name = (
-                    285, 's', 0, '{} ({})'.format(image.targets[i].encode(),
-                                                  image.masses[i])
-                )
+
+                # Converting to bytes string to support non-ascii characters
+                page_name_string = image.targets[i].encode()
+                page_name_string += ' ('.encode()
+                page_name_string += str(image.masses[i]).encode()
+                page_name_string += ')'.encode()
+
+                page_name = (285, 's', 0, page_name_string)
                 min_value = (340, range_dtype, 1, ranges[i][0])
                 max_value = (341, range_dtype, 1, ranges[i][1])
                 page_tags = coordinates + [page_name, min_value, max_value]
@@ -213,8 +217,12 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 'channel.mass': int(image.masses[i]),
                 'channel.target': image.targets[i],
             })
-            page_name = (285, 's', 0, '{} ({})'.format(
-                image.targets[i].encode(), image.masses[i]))
+            # Converting to bytes string to support non-ascii characters
+            page_name_string = image.targets[i].encode()
+            page_name_string += ' ('.encode()
+            page_name_string += str(image.masses[i]).encode()
+            page_name_string += ')'.encode()
+            page_name = (285, 's', 0, page_name_string)
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
             page_tags = coordinates + [page_name, min_value, max_value]
