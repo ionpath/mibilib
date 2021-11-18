@@ -176,6 +176,9 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 max_value = (341, range_dtype, 1, ranges[i][1])
                 page_tags = coordinates + [page_name, min_value, max_value]
 
+                # Adding rowsperstrip parameter to prevent using the
+                # auto-calculated value. The auto-calculated value results in
+                # the "STRIP_OFFSETS directory entry is the wrong type" error.
                 infile.write(
                     to_save[:, :, i], compress=6, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date,
