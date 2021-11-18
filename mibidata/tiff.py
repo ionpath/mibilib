@@ -174,7 +174,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     'channel.target': image.targets[i],
                 })
 
-                page_name_string = _page_name_string(image.targets[i], image.masses[i])
+                page_name_string = _page_name_string(
+                    image.targets[i], image.masses[i])
                 page_name = (285, 's', 0, page_name_string)
                 min_value = (340, range_dtype, 1, ranges[i][0])
                 max_value = (341, range_dtype, 1, ranges[i][1])
@@ -225,7 +226,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 'channel.target': image.targets[i],
             })
             # Converting to bytes string to support non-ascii characters
-            page_name_string = _page_name_string(image.targets[i], image.masses[i])
+            page_name_string = _page_name_string(
+                image.targets[i], image.masses[i])
             page_name = (285, 's', 0, page_name_string)
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
