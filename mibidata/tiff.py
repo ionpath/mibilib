@@ -45,6 +45,15 @@ def _cm_to_micron(arg):
     """Converts cm fraction to microns (1cm = 1e4 microns)."""
     return float(arg[0]) / float(arg[1]) * _MICRONS_PER_CM
 
+def _page_name_string(target, mass):
+    """ Get the formatted page name string from target and mass.
+    Uses bytes string to support non-ascii characters.
+    """
+    page_name_string = target.encode()
+    page_name_string += ' ('.encode()
+    page_name_string += str(mass).encode()
+    page_name_string += ')'.encode()
+    return page_name_string
 
 # pylint: disable=too-many-branches,too-many-statements
 def write(filename, image, sed=None, optical=None, ranges=None,
@@ -165,12 +174,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     'channel.target': image.targets[i],
                 })
 
-                # Converting to bytes string to support non-ascii characters
-                page_name_string = image.targets[i].encode()
-                page_name_string += ' ('.encode()
-                page_name_string += str(image.masses[i]).encode()
-                page_name_string += ')'.encode()
-
+                page_name_string = _page_name_string(image.targets[i], image.masses[i])
                 page_name = (285, 's', 0, page_name_string)
                 min_value = (340, range_dtype, 1, ranges[i][0])
                 max_value = (341, range_dtype, 1, ranges[i][1])
@@ -221,10 +225,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 'channel.target': image.targets[i],
             })
             # Converting to bytes string to support non-ascii characters
-            page_name_string = image.targets[i].encode()
-            page_name_string += ' ('.encode()
-            page_name_string += str(image.masses[i]).encode()
-            page_name_string += ')'.encode()
+            page_name_string = _page_name_string(image.targets[i], image.masses[i])
             page_name = (285, 's', 0, page_name_string)
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
