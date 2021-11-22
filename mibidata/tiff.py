@@ -45,6 +45,15 @@ def _cm_to_micron(arg):
     """Converts cm fraction to microns (1cm = 1e4 microns)."""
     return float(arg[0]) / float(arg[1]) * _MICRONS_PER_CM
 
+def _page_name_string(target, mass):
+    """ Get the formatted page name string from target and mass.
+    Uses bytes string to support non-ascii characters.
+    """
+    page_name_string = target.encode()
+    page_name_string += ' ('.encode()
+    page_name_string += str(mass).encode()
+    page_name_string += ')'.encode()
+    return page_name_string
 
 # pylint: disable=too-many-branches,too-many-statements
 def write(filename, image, sed=None, optical=None, ranges=None,
@@ -164,18 +173,21 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     'channel.mass': int(image.masses[i]),
                     'channel.target': image.targets[i],
                 })
-                page_name = (
-                    285, 's', 0, '{} ({})'.format(image.targets[i].encode(),
-                                                  image.masses[i])
-                )
+
+                page_name_string = _page_name_string(
+                    image.targets[i], image.masses[i])
+                page_name = (285, 's', 0, page_name_string)
                 min_value = (340, range_dtype, 1, ranges[i][0])
                 max_value = (341, range_dtype, 1, ranges[i][1])
                 page_tags = coordinates + [page_name, min_value, max_value]
 
+                # Adding rowsperstrip parameter to prevent using the
+                # auto-calculated value. The auto-calculated value results in
+                # the "STRIP_OFFSETS directory entry is the wrong type" error.
                 infile.write(
                     to_save[:, :, i], compress=6, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date,
-                    software=SOFTWARE_VERSION)
+                    software=SOFTWARE_VERSION, rowsperstrip=to_save.shape[0])
             if sed is not None:
                 if sed.ndim > 2:
                     sed = sed[:, :, 0]
@@ -189,10 +201,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 infile.write(
                     sed, compress=6, resolution=sed_resolution,
                     extratags=page_tags, metadata={'image.type': 'SED'},
-                    software=SOFTWARE_VERSION)
+                    software=SOFTWARE_VERSION, rowsperstrip=sed.shape[0])
             if optical is not None:
                 infile.write(optical, compress=6, software=SOFTWARE_VERSION,
-                             metadata={'image.type': 'Optical'},)
+                             metadata={'image.type': 'Optical'},
+                             rowsperstrip=optical.shape[0])
                 label_coordinates = (
                     _TOP_LABEL_COORDINATES if image.coordinates[1] > 0 else
                     _BOTTOM_LABEL_COORDINATES)
@@ -201,7 +214,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                             label_coordinates[1][0]:label_coordinates[1][1]],
                     0, 1))
                 infile.write(slide_label, compress=6, software=SOFTWARE_VERSION,
-                             metadata={'image.type': 'Label'})
+                             metadata={'image.type': 'Label'},
+                             rowsperstrip=slide_label.shape[0])
 
     else:
         for i in range(image.data.shape[2]):
@@ -211,8 +225,10 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 'channel.mass': int(image.masses[i]),
                 'channel.target': image.targets[i],
             })
-            page_name = (285, 's', 0, '{} ({})'.format(
-                image.targets[i].encode(), image.masses[i]))
+            # Converting to bytes string to support non-ascii characters
+            page_name_string = _page_name_string(
+                image.targets[i], image.masses[i])
+            page_name = (285, 's', 0, page_name_string)
             min_value = (340, range_dtype, 1, ranges[i][0])
             max_value = (341, range_dtype, 1, ranges[i][1])
             page_tags = coordinates + [page_name, min_value, max_value]
@@ -226,7 +242,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 infile.write(
                     to_save[:, :, i], compress=6, resolution=resolution,
                     metadata=metadata, datetime=image.date,
-                    extratags=page_tags, software=SOFTWARE_VERSION)
+                    extratags=page_tags, software=SOFTWARE_VERSION,
+                    rowsperstrip=to_save.shape[0])
 
 
 def read(file, sims=True, sed=False, optical=False, label=False,

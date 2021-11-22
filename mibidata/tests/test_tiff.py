@@ -171,6 +171,14 @@ class TestWriteReadTiff(unittest.TestCase):
                 self.assertEqual(page.tags['SMaxSampleValue'].value,
                                  ranges[i][1])
 
+    def test_page_names_non_ascii(self):
+        tiff.write(self.filename, self.float_image_non_ascii, multichannel=True)
+        with TiffFile(self.filename) as tif:
+            for page_ind, page in enumerate(tif.pages):
+                page_name_actual = page.tags['PageName'].value
+                page_name_expected = CHANNELS_NON_ASCII[page_ind][1] + \
+                    ' (' + str(CHANNELS_NON_ASCII[page_ind][0]) + ')'
+                self.assertEqual(page_name_actual, page_name_expected)
 
     def test_sims_and_sed(self):
         tiff.write(self.filename, self.float_image, sed=SED)
@@ -453,6 +461,26 @@ class TestWriteReadTiff(unittest.TestCase):
         np.testing.assert_equal(image.data, uint8_image.data.astype(np.uint16))
         self.assertEqual(image.data.dtype, np.uint16)
 
+    def test_bioformats(self):
+        n = 1024
+        data = np.random.randint(
+            0, 255, (n, n, len(CHANNELS_NON_ASCII))).astype(float)
+        big_float_image = mi.MibiImage(data, CHANNELS_NON_ASCII, **METADATA)
+        tiff.write(
+            self.filename, big_float_image, multichannel=True, dtype=np.float32)
+        bftools_url = ('https://downloads.openmicroscopy.org/bio-formats/'
+                       '6.7.0/artifacts/bftools.zip')
+        bftools_zip = os.path.basename(bftools_url)
+        self.assertEqual(os.system(f'wget {bftools_url}'), 0)
+        self.assertEqual(os.system(f'unzip {bftools_zip}'), 0)
+        self.assertEqual(os.system(f'rm {bftools_zip}'), 0)
+        # Using a convert script here since it doesn't need GUI and
+        # still errors out if the MIBItiff cannot be read using the
+        # bioformats plugin.
+        self.assertEqual(os.system(
+            f'./bftools/bfconvert {self.filename} converted.tiff'), 0)
+        self.assertEqual(os.system(f'rm -rf bftools'), 0)
+        self.assertEqual(os.system(f'rm {self.filename} converted.tiff'), 0)
 
 if __name__ == '__main__':
     unittest.main()
