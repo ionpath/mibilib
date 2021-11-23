@@ -8,23 +8,22 @@ mibitracker.mibitracker\_exceptions module
 ------------------------------------------
 
 .. automodule:: mibitracker.mibitracker_exceptions
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibitracker.request\_helpers module
 -----------------------------------
 
 .. automodule:: mibitracker.request_helpers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: mibitracker
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

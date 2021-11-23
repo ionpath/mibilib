@@ -1,20 +1,19 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>mibidata package &#8212; IONpath MIBIlib 0.0.1 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -33,655 +32,604 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="mibidata-package">
+  <section id="mibidata-package">
 <h1>mibidata package<a class="headerlink" href="#mibidata-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
+<section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-mibidata.color">
+</section>
+<section id="module-mibidata.color">
 <span id="mibidata-color-module"></span><h2>mibidata.color module<a class="headerlink" href="#module-mibidata.color" title="Permalink to this headline">¶</a></h2>
 <p>Color transformation and composites.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.color.rgb2hsl">
-<code class="descclassname">mibidata.color.</code><code class="descname">rgb2hsl</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.rgb2hsl" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.color.rgb2hsl">
+<span class="sig-prename descclassname"><span class="pre">mibidata.color.</span></span><span class="sig-name descname"><span class="pre">rgb2hsl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.rgb2hsl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an RGB array to HSL.</p>
 <p>The hue is scaled to [0, 2*pi]; the saturation and lightness to [0, 1].</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as rgb converted to HSL coordinates.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the input array has values outside of the unit
-interval.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array the same shape as rgb converted to HSL coordinates.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raised if the input array has values outside of the unit
+    interval.</p>
+</dd>
+</dl>
 <p class="rubric">References</p>
-<dl class="docutils">
-<dt>HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.</dt>
-<dd><a class="reference external" href="http://en.wikipedia.org/wiki/HSL_and_HSV">http://en.wikipedia.org/wiki/HSL_and_HSV</a>.</dd>
+<dl class="simple">
+<dt>HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.</dt><dd><p><a class="reference external" href="http://en.wikipedia.org/wiki/HSL_and_HSV">http://en.wikipedia.org/wiki/HSL_and_HSV</a>.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.color.hsl2rgb">
-<code class="descclassname">mibidata.color.</code><code class="descname">hsl2rgb</code><span class="sig-paren">(</span><em>hsl</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.hsl2rgb" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.color.hsl2rgb">
+<span class="sig-prename descclassname"><span class="pre">mibidata.color.</span></span><span class="sig-name descname"><span class="pre">hsl2rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hsl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.hsl2rgb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an HSL array to RGB.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hsl</strong> – An NxMx3 array of floats representing an HSL image. The H layer
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>hsl</strong> – An NxMx3 array of floats representing an HSL image. The H layer
 must have values in the range [0, 2*pi]; the S and L layers must
-have values in the unit interval.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as hsl converted to RGB coordinates.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the input array has values outside of the
-expected intervals.</td>
-</tr>
-</tbody>
-</table>
+have values in the unit interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array the same shape as hsl converted to RGB coordinates.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raised if the input array has values outside of the
+    expected intervals.</p>
+</dd>
+</dl>
 <p class="rubric">References</p>
-<dl class="docutils">
-<dt>HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.</dt>
-<dd><a class="reference external" href="http://en.wikipedia.org/wiki/HSL_and_HSV">http://en.wikipedia.org/wiki/HSL_and_HSV</a>.</dd>
+<dl class="simple">
+<dt>HSL_and_HSV. Wikipedia: The Free Encyclopedia. Accessed 09/11/2016.</dt><dd><p><a class="reference external" href="http://en.wikipedia.org/wiki/HSL_and_HSV">http://en.wikipedia.org/wiki/HSL_and_HSV</a>.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.color.rgb2cym">
-<code class="descclassname">mibidata.color.</code><code class="descname">rgb2cym</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.rgb2cym" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.color.rgb2cym">
+<span class="sig-prename descclassname"><span class="pre">mibidata.color.</span></span><span class="sig-name descname"><span class="pre">rgb2cym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.rgb2cym" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an RGB array to CYM.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as rgb converted to CYM colors.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array the same shape as rgb converted to CYM colors.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.color.invert_luminosity">
-<code class="descclassname">mibidata.color.</code><code class="descname">invert_luminosity</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.invert_luminosity" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.color.invert_luminosity">
+<span class="sig-prename descclassname"><span class="pre">mibidata.color.</span></span><span class="sig-name descname"><span class="pre">invert_luminosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.invert_luminosity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inverts the luminosity of an RGB image.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array the same shape as rgb that has had its luminosity inverted.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rgb</strong> – An NxMx3 array of floats in the unit interval.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array the same shape as rgb that has had its luminosity inverted.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.color.composite">
-<code class="descclassname">mibidata.color.</code><code class="descname">composite</code><span class="sig-paren">(</span><em>image</em>, <em>color_map</em>, <em>gamma=0.3333333333333333</em>, <em>min_scaling=10</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.composite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.color.composite">
+<span class="sig-prename descclassname"><span class="pre">mibidata.color.</span></span><span class="sig-name descname"><span class="pre">composite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3333333333333333</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.composite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combines multiple image channels by color into a 3-D array.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>image</strong> – A MibiImage.</li>
-<li><strong>color_map</strong> – A dictionary keyed by color with values of channel names
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – A MibiImage.</p></li>
+<li><p><strong>color_map</strong> – A dictionary keyed by color with values of channel names
 corresponding to a subset of those in the MibiImage. The
 allowed colors are ‘Cyan’, ‘Yellow’, ‘Magenta’, ‘Green’,
-‘Orange’, ‘Violet’, ‘Red’, ‘Blue’ and ‘Gray’.</li>
-<li><strong>gamma</strong> – The value with which to scale the image data. Defaults to 1/3.
-If no gamma correction is desired, set to 1.</li>
-<li><strong>min_scaling</strong> – The minimum number of counts used as the divisor for each
+‘Orange’, ‘Violet’, ‘Red’, ‘Blue’ and ‘Gray’.</p></li>
+<li><p><strong>gamma</strong> – The value with which to scale the image data. Defaults to 1/3.
+If no gamma correction is desired, set to 1.</p></li>
+<li><p><strong>min_scaling</strong> – The minimum number of counts used as the divisor for each
 channel before applying gamma. This intended to prevent images with
-only a few counts from being scaled incorrectly to [0, 1].</li>
+only a few counts from being scaled incorrectly to [0, 1].</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An NxMx3 uint8 array of an RGB image.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An NxMx3 uint8 array of an RGB image.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.color.compose_overlay">
-<code class="descclassname">mibidata.color.</code><code class="descname">compose_overlay</code><span class="sig-paren">(</span><em>image</em>, <em>overlay_settings</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.compose_overlay" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.color.compose_overlay">
+<span class="sig-prename descclassname"><span class="pre">mibidata.color.</span></span><span class="sig-name descname"><span class="pre">compose_overlay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlay_settings</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.color.compose_overlay" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overlays multiple image channels using overlay_settings from MIBItracker.</p>
 <p>The overlay_settings are intended to have the form of a channels.json file
 as downloaded from MIBItracker but they can have any of the of the following
 forms:</p>
 <ol class="arabic simple">
-<li><code class="docutils literal notranslate"><span class="pre">{'image_id':</span> <span class="pre">{'channels':</span> <span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}}</span></code>,</li>
-<li><code class="docutils literal notranslate"><span class="pre">{'channels':</span> <span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}</span></code>,</li>
-<li><code class="docutils literal notranslate"><span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}</span></code>.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{'image_id':</span> <span class="pre">{'channels':</span> <span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}}</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{'channels':</span> <span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{'channel_1':</span> <span class="pre">{'color':</span> <span class="pre">color,</span> <span class="pre">...},</span> <span class="pre">...}</span></code>.</p></li>
 </ol>
 <p>Each channel is expected to have the following fields:</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>‘color’ (required):</dt>
-<dd>One of the following: ‘Cyan’, ‘Yellow’, ‘Magenta’, ‘Green’, ‘Orange’,
-‘Violet’, ‘Red’, ‘Blue’, or ‘Gray’.</dd>
+<li><dl class="simple">
+<dt>‘color’ (required):</dt><dd><p>One of the following: ‘Cyan’, ‘Yellow’, ‘Magenta’, ‘Green’, ‘Orange’,
+‘Violet’, ‘Red’, ‘Blue’, or ‘Gray’.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>‘brightness’ (optional):</dt>
-<dd>float between -1 and 1; defaults to 0.</dd>
+<li><dl class="simple">
+<dt>‘brightness’ (optional):</dt><dd><p>float between -1 and 1; defaults to 0.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>‘intensity_higher’ (optional):</dt>
-<dd>Upper limit of the channel intensity; defaults to maximum counts in the
-channel.</dd>
+<li><dl class="simple">
+<dt>‘intensity_higher’ (optional):</dt><dd><p>Upper limit of the channel intensity; defaults to maximum counts in the
+channel.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>‘intensity_lower’ (optional):</dt>
-<dd>Lower limit of the channel intensity; defaults to 0.</dd>
+<li><dl class="simple">
+<dt>‘intensity_lower’ (optional):</dt><dd><p>Lower limit of the channel intensity; defaults to 0.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>‘blur’ (optional):</dt>
-<dd>integer between 0 and 10. Defines the gaussian blur of the channel
-according to pre-defined convolution kernels.</dd>
+<li><dl class="simple">
+<dt>‘blur’ (optional):</dt><dd><p>integer between 0 and 10. Defines the gaussian blur of the channel
+according to pre-defined convolution kernels.</p>
+</dd>
 </dl>
 </li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>image</strong> – A MibiImage.</li>
-<li><strong>overlay_settings</strong> – Dictionary of MIBItracker visual settings.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – A MibiImage.</p></li>
+<li><p><strong>overlay_settings</strong> – Dictionary of MIBItracker visual settings.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An NxMx3 uint8 array of an RGB image.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An NxMx3 uint8 array of an RGB image.</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.combine_tiffs">
+</section>
+<section id="module-mibidata.combine_tiffs">
 <span id="mibidata-combine-tiffs-module"></span><h2>mibidata.combine_tiffs module<a class="headerlink" href="#module-mibidata.combine_tiffs" title="Permalink to this headline">¶</a></h2>
 <p>Combines a folder of single-channel TIFFs into a multiplexed MIBItiff.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.combine_tiffs.merge_mibitiffs">
-<code class="descclassname">mibidata.combine_tiffs.</code><code class="descname">merge_mibitiffs</code><span class="sig-paren">(</span><em>input_folder</em>, <em>out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.merge_mibitiffs" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.combine_tiffs.merge_mibitiffs">
+<span class="sig-prename descclassname"><span class="pre">mibidata.combine_tiffs.</span></span><span class="sig-name descname"><span class="pre">merge_mibitiffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.merge_mibitiffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merges a folder of single-channel MIBItiff files into a single MIBItiff.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_folder</strong> – Path to a folder containing MIBItiff files. While these
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_folder</strong> – Path to a folder containing MIBItiff files. While these
 files may be single-channel, they are assumed to have accurate and
-consistent MIBI metadata.</li>
-<li><strong>out</strong> – Optionally, a path to a location for saving the combined TIFF. If
-not specified, defaults to ‘combined.tiff’ inside the input folder.</li>
+consistent MIBI metadata.</p></li>
+<li><p><strong>out</strong> – Optionally, a path to a location for saving the combined TIFF. If
+not specified, defaults to ‘combined.tiff’ inside the input folder.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.combine_tiffs.create_mibitiffs">
-<code class="descclassname">mibidata.combine_tiffs.</code><code class="descname">create_mibitiffs</code><span class="sig-paren">(</span><em>input_folder</em>, <em>run_path</em>, <em>point</em>, <em>panel_path</em>, <em>slide</em>, <em>size</em>, <em>run_label=None</em>, <em>instrument=None</em>, <em>tissue=None</em>, <em>aperture=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.create_mibitiffs" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.combine_tiffs.create_mibitiffs">
+<span class="sig-prename descclassname"><span class="pre">mibidata.combine_tiffs.</span></span><span class="sig-name descname"><span class="pre">create_mibitiffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slide</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tissue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aperture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.combine_tiffs.create_mibitiffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combines single-channel TIFFs into a MIBItiff.</p>
 <p>The input TIFFs are not assumed to have any MIBI metadata. If they do, it
 is suggested to use the simpler <a class="reference internal" href="#mibidata.combine_tiffs.merge_mibitiffs" title="mibidata.combine_tiffs.merge_mibitiffs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">merge_mibitiffs()</span></code></a> instead.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_folder</strong> – Path to a folder containing single-channel TIFFs.</li>
-<li><strong>run_path</strong> – Path to a run xml.</li>
-<li><strong>point</strong> – Point name of the image, e.g. Point1 or Point2. This should match
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_folder</strong> – Path to a folder containing single-channel TIFFs.</p></li>
+<li><p><strong>run_path</strong> – Path to a run xml.</p></li>
+<li><p><strong>point</strong> – Point name of the image, e.g. Point1 or Point2. This should match
 the name of folder generated for the raw data as it is listed in the
-run xml file.</li>
-<li><strong>panel_path</strong> – Path to a panel CSV.</li>
-<li><strong>slide</strong> – The slide ID.</li>
-<li><strong>size</strong> – The size of the FOV in microns, i.e. 500.</li>
-<li><strong>run_label</strong> – Optional custom run label for the combined TIFF. If uploading
+run xml file.</p></li>
+<li><p><strong>panel_path</strong> – Path to a panel CSV.</p></li>
+<li><p><strong>slide</strong> – The slide ID.</p></li>
+<li><p><strong>size</strong> – The size of the FOV in microns, i.e. 500.</p></li>
+<li><p><strong>run_label</strong> – Optional custom run label for the combined TIFF. If uploading
 the output to MIBItracker, the run label set here must match the
-label of the MIBItracker run. Defaults to the name of the run xml.</li>
-<li><strong>instrument</strong> – Optionally, the instrument ID.</li>
-<li><strong>tissue</strong> – Optionally, the name of tissue.</li>
-<li><strong>aperture</strong> – Optionally, the name of the aperture or imaging preset.</li>
-<li><strong>out</strong> – Optionally, a path to a location for saving the combined TIFF. If
-not specified, defaults to ‘combined.tiff’ inside the input folder.</li>
-<li><strong>run_label</strong> – Optionally, a custom run label for the <cite>run</cite> property of the
-image.</li>
+label of the MIBItracker run. Defaults to the name of the run xml.</p></li>
+<li><p><strong>instrument</strong> – Optionally, the instrument ID.</p></li>
+<li><p><strong>tissue</strong> – Optionally, the name of tissue.</p></li>
+<li><p><strong>aperture</strong> – Optionally, the name of the aperture or imaging preset.</p></li>
+<li><p><strong>out</strong> – Optionally, a path to a location for saving the combined TIFF. If
+not specified, defaults to ‘combined.tiff’ inside the input folder.</p></li>
+<li><p><strong>run_label</strong> – Optionally, a custom run label for the <cite>run</cite> property of the
+image.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.constants">
+</section>
+<section id="module-mibidata.constants">
 <span id="mibidata-constants-module"></span><h2>mibidata.constants module<a class="headerlink" href="#module-mibidata.constants" title="Permalink to this headline">¶</a></h2>
 <p>Constants used in mibidata module.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-</div>
-<div class="section" id="module-mibidata.mibi_image">
+</section>
+<section id="module-mibidata.mibi_image">
 <span id="mibidata-mibi-image-module"></span><h2>mibidata.mibi_image module<a class="headerlink" href="#module-mibidata.mibi_image" title="Permalink to this headline">¶</a></h2>
 <p>Base module for working with MIBI images.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="class">
-<dt id="mibidata.mibi_image.MibiImage">
-<em class="property">class </em><code class="descclassname">mibidata.mibi_image.</code><code class="descname">MibiImage</code><span class="sig-paren">(</span><em>data</em>, <em>channels</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mibidata.mibi_image.</span></span><span class="sig-name descname"><span class="pre">MibiImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A multiplexed image with labeled channels and metadata.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – An MxMxD numpy array of multiplexed image data, where D is
-the channel index and the frame size of the image is MxM.</li>
-<li><strong>channels</strong> – A tuple of channel names of length D. The names may
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – An MxMxD numpy array of multiplexed image data, where D is
+the channel index and the frame size of the image is MxM.</p></li>
+<li><p><strong>channels</strong> – A tuple of channel names of length D. The names may
 either be strings, or tuples of strings of the format (mass,
-target).</li>
-<li><strong>kwargs</strong> – <p>A mapping of arguments that used to define the image
+target).</p></li>
+<li><p><strong>kwargs</strong> – <p>A mapping of arguments that used to define the image
 metadata. A list of required keys follows; however, the
 user can define other metadata key-value pairs that will be added
 as attributes to the class instance in use.</p>
 <ul>
-<li><dl class="first docutils">
-<dt>run: A string name of the run during which this image was</dt>
-<dd>acquired.</dd>
+<li><dl class="simple">
+<dt>run: A string name of the run during which this image was</dt><dd><p>acquired.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>date: The run date. It can either be a datetime object,</dt>
-<dd>or a string. If a string, it will be parsed according to the
-<code class="docutils literal notranslate"><span class="pre">datetime_format</span></code>.</dd>
+<li><dl class="simple">
+<dt>date: The run date. It can either be a datetime object,</dt><dd><p>or a string. If a string, it will be parsed according to the
+<code class="docutils literal notranslate"><span class="pre">datetime_format</span></code>.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>coordinates: A tuple of (x, y) stage coordinates at which the</dt>
-<dd>image was acquired; stage coordinates should be in microns.</dd>
+<li><dl class="simple">
+<dt>coordinates: A tuple of (x, y) stage coordinates at which the</dt><dd><p>image was acquired; stage coordinates should be in microns.</p>
+</dd>
 </dl>
 </li>
-<li>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</li>
-<li>slide: A string or integer slide ID.</li>
-<li><dl class="first docutils">
-<dt>fov_id: A string identifying the FOV within the run,</dt>
-<dd>i.e. ‘FOV1’ in MIBIcontrol or ‘Point1’ in earlier versions.</dd>
+<li><p>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</p></li>
+<li><p>slide: A string or integer slide ID.</p></li>
+<li><dl class="simple">
+<dt>fov_id: A string identifying the FOV within the run,</dt><dd><p>i.e. ‘FOV1’ in MIBIcontrol or ‘Point1’ in earlier versions.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>fov_name: A user-defined string name for the FOV as assigned</dt>
-<dd>before the run. In prior versions this was called ‘point_name’.</dd>
+<li><dl class="simple">
+<dt>fov_name: A user-defined string name for the FOV as assigned</dt><dd><p>before the run. In prior versions this was called ‘point_name’.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>folder: The folder name for this image as determined by the</dt>
-<dd>acquisition software. For data generated from MIBIcontrol
-software, this will the same as the fov_id.</dd>
+<li><dl class="simple">
+<dt>folder: The folder name for this image as determined by the</dt><dd><p>acquisition software. For data generated from MIBIcontrol
+software, this will the same as the fov_id.</p>
+</dd>
 </dl>
 </li>
-<li>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</li>
-<li>scans: A comma-separated list of image scan numbers.</li>
-<li><dl class="first docutils">
-<dt>aperture: Aperture code (e.g. ‘A’ or ‘B’) matching aperture width</dt>
-<dd>used during image acquisition.</dd>
+<li><p>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</p></li>
+<li><p>scans: A comma-separated list of image scan numbers.</p></li>
+<li><dl class="simple">
+<dt>aperture: Aperture code (e.g. ‘A’ or ‘B’) matching aperture width</dt><dd><p>used during image acquisition.</p>
+</dd>
 </dl>
 </li>
-<li>instrument: A string identifier for the instrument used.</li>
-<li>tissue: A string name of the tissue type.</li>
-<li>panel: A string name of the panel used to stain the tissue.</li>
-<li>version: A string identifier for the software version used.</li>
-<li><dl class="first docutils">
-<dt>datetime_format: The optional format of the date, if given as a</dt>
-<dd>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</dd>
+<li><p>instrument: A string identifier for the instrument used.</p></li>
+<li><p>tissue: A string name of the tissue type.</p></li>
+<li><p>panel: A string name of the panel used to stain the tissue.</p></li>
+<li><p>version: A string identifier for the software version used.</p></li>
+<li><dl class="simple">
+<dt>datetime_format: The optional format of the date, if given as a</dt><dd><p>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</p>
+</dd>
 </dl>
 </li>
-<li>mass_offset: Mass offset parameter used for mass calibration.</li>
-<li>mass_gain: Mass gain used for mass calibration.</li>
-<li>time_resolution: Parameter used for mass calibration.</li>
-<li><dl class="first docutils">
-<dt>miscalibrated: Whether or not there was significant difference</dt>
-<dd>between peak locations after mass recalibration.</dd>
+<li><p>mass_offset: Mass offset parameter used for mass calibration.</p></li>
+<li><p>mass_gain: Mass gain used for mass calibration.</p></li>
+<li><p>time_resolution: Parameter used for mass calibration.</p></li>
+<li><dl class="simple">
+<dt>miscalibrated: Whether or not there was significant difference</dt><dd><p>between peak locations after mass recalibration.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>check_reg: Whether or not the maximum shift between depths is</dt>
-<dd>higher than a threshold.</dd>
+<li><dl class="simple">
+<dt>check_reg: Whether or not the maximum shift between depths is</dt><dd><p>higher than a threshold.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>filename: The name of the instrument file containing the run</dt>
-<dd>metadata.</dd>
+<li><dl class="simple">
+<dt>filename: The name of the instrument file containing the run</dt><dd><p>metadata.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>description: String describing any additional information about</dt>
-<dd>the image.</dd>
-</dl>
-</li>
-</ul>
-</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
-<ul class="last simple">
-<li>the shape of data does not match length of channels.</li>
-<li>the channel names are not unique.</li>
-<li>the masses (if included in channel tuples) are not unique.</li>
-<li>the targets (if included in channel tuples) are not unique.</li>
-<li><dl class="first docutils">
-<dt>the fov_id doesn’t match the point in folder, unless the call</dt>
-<dd>is using the old point name format, in which case, only a
-warning is shown.</dd>
+<li><dl class="simple">
+<dt>description: String describing any additional information about</dt><dd><p>the image.</p>
+</dd>
 </dl>
 </li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.data">
-<code class="descname">data</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.data" title="Permalink to this definition">¶</a></dt>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Raised if
+    
+    * the shape of data does not match length of channels.
+    * the channel names are not unique.
+    * the masses (if included in channel tuples) are not unique.
+    * the targets (if included in channel tuples) are not unique.
+    * the fov_id doesn’t match the point in folder, unless the call
+        is using the old point name format, in which case, only a
+        warning is shown.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>An MxMxD numpy array of multiplexed image data, where D is
 the channel index and the frame size of the image is MxM.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.channels">
-<code class="descname">channels</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.channels" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.channels">
+<span class="sig-name descname"><span class="pre">channels</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.channels" title="Permalink to this definition">¶</a></dt>
 <dd><p>A tuple of channel names of length D. The names may
 either be strings, or tuples of strings of the format (mass,
 target).</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.kwargs">
-<code class="descname">kwargs</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.kwargs" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>A mapping of arguments that used to define the image
 metadata. A list of required keys follows; however, the
 user can define other metadata key-value pairs that will be added
 as attributes to the class instance in use.</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>run: A string name of the run during which this image was</dt>
-<dd>acquired.</dd>
+<li><dl class="simple">
+<dt>run: A string name of the run during which this image was</dt><dd><p>acquired.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>date: The run date. It can either be a datetime object,</dt>
-<dd>or a string. If a string, it will be parsed according to the
-<code class="docutils literal notranslate"><span class="pre">datetime_format</span></code>.</dd>
+<li><dl class="simple">
+<dt>date: The run date. It can either be a datetime object,</dt><dd><p>or a string. If a string, it will be parsed according to the
+<code class="docutils literal notranslate"><span class="pre">datetime_format</span></code>.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>coordinates: A tuple of (x, y) stage coordinates at which the</dt>
-<dd>image was acquired; stage coordinates should be in microns.</dd>
+<li><dl class="simple">
+<dt>coordinates: A tuple of (x, y) stage coordinates at which the</dt><dd><p>image was acquired; stage coordinates should be in microns.</p>
+</dd>
 </dl>
 </li>
-<li>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</li>
-<li>slide: A string or integer slide ID.</li>
-<li><dl class="first docutils">
-<dt>fov_id: A string identifying the FOV within the run,</dt>
-<dd>i.e. ‘FOV1’ in MIBIcontrol or ‘Point1’ in earlier versions.</dd>
+<li><p>size: A float size of the image width/height in  <span class="math notranslate nohighlight">\(\mu m\)</span>.</p></li>
+<li><p>slide: A string or integer slide ID.</p></li>
+<li><dl class="simple">
+<dt>fov_id: A string identifying the FOV within the run,</dt><dd><p>i.e. ‘FOV1’ in MIBIcontrol or ‘Point1’ in earlier versions.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>fov_name: A user-defined string name for the FOV as assigned</dt>
-<dd>before the run. In prior versions this was called ‘point_name’.</dd>
+<li><dl class="simple">
+<dt>fov_name: A user-defined string name for the FOV as assigned</dt><dd><p>before the run. In prior versions this was called ‘point_name’.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>folder: The folder name for this image as determined by the</dt>
-<dd>acquisition software. For data generated from MIBIcontrol
-software, this will the same as the fov_id.</dd>
+<li><dl class="simple">
+<dt>folder: The folder name for this image as determined by the</dt><dd><p>acquisition software. For data generated from MIBIcontrol
+software, this will the same as the fov_id.</p>
+</dd>
 </dl>
 </li>
-<li>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</li>
-<li>scans: A comma-separated list of image scan numbers.</li>
-<li><dl class="first docutils">
-<dt>aperture: Aperture code (e.g. ‘A’ or ‘B’) matching aperture width</dt>
-<dd>used during image acquisition.</dd>
+<li><p>dwell: A float pixel dwell time in <span class="math notranslate nohighlight">\(ms\)</span>.</p></li>
+<li><p>scans: A comma-separated list of image scan numbers.</p></li>
+<li><dl class="simple">
+<dt>aperture: Aperture code (e.g. ‘A’ or ‘B’) matching aperture width</dt><dd><p>used during image acquisition.</p>
+</dd>
 </dl>
 </li>
-<li>instrument: A string identifier for the instrument used.</li>
-<li>tissue: A string name of the tissue type.</li>
-<li>panel: A string name of the panel used to stain the tissue.</li>
-<li>version: A string identifier for the software version used.</li>
-<li><dl class="first docutils">
-<dt>datetime_format: The optional format of the date, if given as a</dt>
-<dd>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</dd>
+<li><p>instrument: A string identifier for the instrument used.</p></li>
+<li><p>tissue: A string name of the tissue type.</p></li>
+<li><p>panel: A string name of the panel used to stain the tissue.</p></li>
+<li><p>version: A string identifier for the software version used.</p></li>
+<li><dl class="simple">
+<dt>datetime_format: The optional format of the date, if given as a</dt><dd><p>string. Defaults to <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%dT%H:%M:%S'</span></code>.</p>
+</dd>
 </dl>
 </li>
-<li>mass_offset: Mass offset parameter used for mass calibration.</li>
-<li>mass_gain: Mass gain used for mass calibration.</li>
-<li>time_resolution: Parameter used for mass calibration.</li>
-<li><dl class="first docutils">
-<dt>miscalibrated: Whether or not there was significant difference</dt>
-<dd>between peak locations after mass recalibration.</dd>
+<li><p>mass_offset: Mass offset parameter used for mass calibration.</p></li>
+<li><p>mass_gain: Mass gain used for mass calibration.</p></li>
+<li><p>time_resolution: Parameter used for mass calibration.</p></li>
+<li><dl class="simple">
+<dt>miscalibrated: Whether or not there was significant difference</dt><dd><p>between peak locations after mass recalibration.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>check_reg: Whether or not the maximum shift between depths is</dt>
-<dd>higher than a threshold.</dd>
+<li><dl class="simple">
+<dt>check_reg: Whether or not the maximum shift between depths is</dt><dd><p>higher than a threshold.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>filename: The name of the instrument file containing the run</dt>
-<dd>metadata.</dd>
+<li><dl class="simple">
+<dt>filename: The name of the instrument file containing the run</dt><dd><p>metadata.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>description: String describing any additional information about</dt>
-<dd>the image.</dd>
+<li><dl class="simple">
+<dt>description: String describing any additional information about</dt><dd><p>the image.</p>
+</dd>
 </dl>
 </li>
 </ul>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.add_attr">
-<code class="descname">add_attr</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.add_attr" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Adds user-defined metadata key-value pairs as attributes to</dt>
-<dd>the class instance in use. If attribute already exists
-for the current instance, raises an error.</dd>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.add_attr">
+<span class="sig-name descname"><span class="pre">add_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.add_attr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Adds user-defined metadata key-value pairs as attributes to</dt><dd><p>the class instance in use. If attribute already exists
+for the current instance, raises an error.</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>kwargs</strong> – A mapping of arguments for a user to add multiple
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – A mapping of arguments for a user to add multiple
 attributes with their respecitve
 values.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if attempts to set an attribute that is already</li>
-<li>defined for this instance.</li>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – Raised if attempts to set an attribute that is already</p></li>
+<li><p><strong>defined for this instance.</strong> – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.remove_attr">
-<code class="descname">remove_attr</code><span class="sig-paren">(</span><em>attributes</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.remove_attr" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.remove_attr">
+<span class="sig-name descname"><span class="pre">remove_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.remove_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes user-defined attributes from the class instance in use.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>attributes</strong> – A single string or a list of user-defined attributes
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attributes</strong> – A single string or a list of user-defined attributes
 for deletion.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
-<ul class="last simple">
-<li>attempts to remove a required attribute.</li>
-<li>an attribute is not defined for this instance.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Raised if
+    
+    * attempts to remove a required attribute.
+    * an attribute is not defined for this instance.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.pixel_size">
-<code class="descname">pixel_size</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.pixel_size" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.pixel_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pixel_size</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.pixel_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the diameter of a pixel in microns.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.point_name">
-<code class="descname">point_name</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.point_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.point_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">point_name</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.point_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns fov_name instead of deprecated point_name.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.folder">
-<code class="descname">folder</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.folder" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.folder">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">folder</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.folder" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.fov_id">
-<code class="descname">fov_id</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.fov_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.fov_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fov_id</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.fov_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.set_fov_id">
-<code class="descname">set_fov_id</code><span class="sig-paren">(</span><em>fov_id</em>, <em>folder=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.set_fov_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.set_fov_id">
+<span class="sig-name descname"><span class="pre">set_fov_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fov_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.set_fov_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the fov_id and optionally updates the folder to match.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fov_id</strong> – The fov id within the run such as FOV1, or if from a beta
-system Point1.</li>
-<li><strong>folder</strong> – For compatibility with beta systems, the folder containing
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fov_id</strong> – The fov id within the run such as FOV1, or if from a beta
+system Point1.</p></li>
+<li><p><strong>folder</strong> – For compatibility with beta systems, the folder containing
 the fov data, such as Point1/RowNumber0/Depth_Profile0. If
-omitted, this will default to match the fov id.</li>
+omitted, this will default to match the fov id.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="mibidata.mibi_image.MibiImage.aperture">
-<code class="descname">aperture</code><a class="headerlink" href="#mibidata.mibi_image.MibiImage.aperture" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.aperture">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">aperture</span></span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.aperture" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="descname">channels</code></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>A tuple of channel names.</p>
 <p>The names may either be strings, or tuples of strings of the format
 (mass, target).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.__eq__">
-<code class="descname">__eq__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.__eq__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.__eq__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks for equality between MibiImage instances.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – A MibiImage.</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Returns: True if both the values of the data array and the metadata of</dt>
-<dd>the other MibiImage are equal to this instance’s; otherwise False.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – A MibiImage.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: True if both the values of the data array and the metadata of</dt><dd><p>the other MibiImage are equal to this instance’s; otherwise False.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.__getitem__">
-<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>channels</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Equivalent to <a class="reference internal" href="#mibidata.mibi_image.MibiImage.slice_data" title="mibidata.mibi_image.MibiImage.slice_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">slice_data()</span></code></a>.</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="mibidata.mibi_image.MibiImage.parse_aperture">
-<em class="property">static </em><code class="descname">parse_aperture</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.parse_aperture" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> – A string representing an aperture code.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An aperture code (e.g. ‘A’ or ‘B’) matching aperture width
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.parse_aperture">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_aperture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.parse_aperture" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – A string representing an aperture code.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An aperture code (e.g. ‘A’ or ‘B’) matching aperture width
 used during image acquisition.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the value parameter cannot be mapped to an</li>
-<li>aperture code.</li>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – Raised if the value parameter cannot be mapped to an</p></li>
+<li><p><strong>aperture code.</strong> – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.metadata" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary of the image’s metadata.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.channel_inds">
-<code class="descname">channel_inds</code><span class="sig-paren">(</span><em>channels</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.channel_inds" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.channel_inds">
+<span class="sig-name descname"><span class="pre">channel_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.channel_inds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the indices of the specified channels on the data’s 2nd axis.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channels</strong> – A single channel, mass or target label; or, a sequence of
-channels, masses, or targets.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A scalar or numpy array of the indices of the specified channels.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code> – Raised if channels are not all found in image.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>channels</strong> – A single channel, mass or target label; or, a sequence of
+channels, masses, or targets.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A scalar or numpy array of the indices of the specified channels.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>KeyError</strong> – Raised if channels are not all found in image.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.slice_data">
-<code class="descname">slice_data</code><span class="sig-paren">(</span><em>channels</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.slice_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.slice_data">
+<span class="sig-name descname"><span class="pre">slice_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.slice_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Selects a subset of data from the MibiImage given selected channels.</p>
 <p>If a single channel is given, the third dimension will be
 stripped and an actual slice of the array will be returned, not a copy.</p>
@@ -689,148 +637,128 @@ stripped and an actual slice of the array will be returned, not a copy.</p>
 length 1, a copy will be returned.</p>
 <p>This method can also be called by indexing with <code class="docutils literal notranslate"><span class="pre">[]</span></code> (i.e.
 <a class="reference internal" href="#mibidata.mibi_image.MibiImage.__getitem__" title="mibidata.mibi_image.MibiImage.__getitem__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code></a>.  See also <a class="reference internal" href="#mibidata.mibi_image.MibiImage.slice_image" title="mibidata.mibi_image.MibiImage.slice_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">slice_image()</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channels</strong> – A single channel, mass or target label; or, a sequence of
-channels, masses, or targets.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A numpy array containing the data sliced from the image.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>channels</strong> – A single channel, mass or target label; or, a sequence of
+channels, masses, or targets.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A numpy array containing the data sliced from the image.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.slice_image">
-<code class="descname">slice_image</code><span class="sig-paren">(</span><em>channels</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.slice_image" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.slice_image">
+<span class="sig-name descname"><span class="pre">slice_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.slice_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a MibiImage from slicing channels of another MibiImage.</p>
 <p>See also: <a class="reference internal" href="#mibidata.mibi_image.MibiImage.slice_data" title="mibidata.mibi_image.MibiImage.slice_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">slice_data()</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channels</strong> – A single channel, mass or target label; or, a sequence of
-channels, masses, or targets.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A new MibiImage instance containing a copy of the data and
-metadata of the selected channels.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>channels</strong> – A single channel, mass or target label; or, a sequence of
+channels, masses, or targets.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new MibiImage instance containing a copy of the data and
+metadata of the selected channels.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.copy" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new MibiImage instance with a copy of the data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A MibiImage instance with a copy of the data and channels.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A MibiImage instance with a copy of the data and channels.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.append">
-<code class="descname">append</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.append" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends another MibiImage’s data and channels.</p>
 <p>Note that only the channels and data will be affected; the initial
 metadata will be preserved.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> – A MibiImage.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
-<ul class="last simple">
-<li>The image has any channels already present on
-instance to which it is being appended.</li>
-<li>The channels to be appended do not match the form of the
-channels of the original image.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>image</strong> – A MibiImage.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Raised if
+    
+    * The image has any channels already present on
+      instance to which it is being appended.
+    * The channels to be appended do not match the form of the
+      channels of the original image.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.remove_channels">
-<code class="descname">remove_channels</code><span class="sig-paren">(</span><em>channels</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.remove_channels" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.remove_channels">
+<span class="sig-name descname"><span class="pre">remove_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.remove_channels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes specified channels from a MibiImage.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>channels</strong> – A list or tuple of labels of channels to remove.</li>
-<li><strong>copy</strong> – Boolean defaulting to <cite>False</cite> for whether to return a new
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channels</strong> – A list or tuple of labels of channels to remove.</p></li>
+<li><p><strong>copy</strong> – Boolean defaulting to <cite>False</cite> for whether to return a new
 MibiImage with the channels’ data removed. If <cite>False</cite>,
 the data, channels, masses and targets attributes of the input
-image are directly altered.</li>
+image are directly altered.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">If <cite>copy=True</cite>, returns a MibiImage with copies of all
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If <cite>copy=True</cite>, returns a MibiImage with copies of all
 channels except those specified to be removed from the initial
 image.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.resize">
-<code class="descname">resize</code><span class="sig-paren">(</span><em>size</em>, <em>copy=False</em>, <em>preserve_type=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.resize" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.resize">
+<span class="sig-name descname"><span class="pre">resize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserve_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.resize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resizes the image.</p>
 <p>This uses a bicubic transformation on each channel, and converts the
 image data to floats in the unit interval according to
 skimage.img_as_float. That means that uint data is scaled out of the
 max of its type, i.e. 255 or 65535. If alternate scaling is desired,
 it should be performed prior to resizing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>size</strong> – An integer or tuple that determines the size of the first
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> – An integer or tuple that determines the size of the first
 two dimensions of the returned image. If an integer,
-it is expanded to the tuple (size, size).</li>
-<li><strong>copy</strong> – Boolean defaulting to <cite>True</cite> for whether to alter the data
-directly.</li>
-<li><strong>preserve_type</strong> – Boolean defaulting to <cite>False</cite> for whether the
+it is expanded to the tuple (size, size).</p></li>
+<li><p><strong>copy</strong> – Boolean defaulting to <cite>True</cite> for whether to alter the data
+directly.</p></li>
+<li><p><strong>preserve_type</strong> – Boolean defaulting to <cite>False</cite> for whether the
 returned data is of the same dtype. If <cite>False</cite>, the data is
 converted to floats in the unit interval according to
 skimage.img_as_float. That means that uint data is scaled out
 of the max of its type, i.e. 255 or 65535. If <cite>True</cite>, the data
 makes a round trip through floats and thus may lose precision
-when it is converted back to its original dtype.</li>
+when it is converted back to its original dtype.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If <cite>copy=False</cite>, returns a MibiImage of the resized data. The
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If <cite>copy=False</cite>, returns a MibiImage of the resized data. The
 dtype is determined by <cite>preserve_type</cite>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the input size would change the aspect ratio
-of the image.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raised if the input size would change the aspect ratio
+    of the image.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.export_pngs">
-<code class="descname">export_pngs</code><span class="sig-paren">(</span><em>path</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.export_pngs" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.export_pngs">
+<span class="sig-name descname"><span class="pre">export_pngs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.export_pngs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves each channel of a MibiImage as a grayscale png.</p>
 <p>If the image data are boolean or integers of any type and are within
 the range of uint8, the values are converted to uint8 before saving.</p>
@@ -840,190 +768,171 @@ before saving.</p>
 <p>Otherwise a TypeError is raised.</p>
 <p>For image data that is float, use <cite>mibitof.tiff.write()</cite> for writing
 as TIFFs, since PNGs do not support float type.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – The path to the folder in which to save the images. This
-folder must already exist.</li>
-<li><strong>size</strong> – If None, the images are saved at full resolution. If an
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The path to the folder in which to save the images. This
+folder must already exist.</p></li>
+<li><p><strong>size</strong> – If None, the images are saved at full resolution. If an
 integer or tuple, the images are resized by passing this
-parameter to <a class="reference internal" href="#mibidata.mibi_image.MibiImage.resize" title="mibidata.mibi_image.MibiImage.resize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resize()</span></code></a>.</li>
+parameter to <a class="reference internal" href="#mibidata.mibi_image.MibiImage.resize" title="mibidata.mibi_image.MibiImage.resize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resize()</span></code></a>.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code> – Raised if the data type and/or range is unsupported.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – Raised if the data type and/or range is unsupported.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="mibidata.mibi_image.MibiImage.rename_targets">
-<code class="descname">rename_targets</code><span class="sig-paren">(</span><em>channel_map</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.rename_targets" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="mibidata.mibi_image.MibiImage.rename_targets">
+<span class="sig-name descname"><span class="pre">rename_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.mibi_image.MibiImage.rename_targets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modifies target names according to the specified map</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel_map</strong> – A dict where each key is an existing target name
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>channel_map</strong> – A dict where each key is an existing target name
 that is to be changed, and the value is the desired new
-target name.</td>
-</tr>
-</tbody>
-</table>
+target name.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.panels">
+</section>
+<section id="module-mibidata.panels">
 <span id="mibidata-panels-module"></span><h2>mibidata.panels module<a class="headerlink" href="#module-mibidata.panels" title="Permalink to this headline">¶</a></h2>
 <p>Utility for working with panels saved as CSV files.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.panels.read_csv">
-<code class="descclassname">mibidata.panels.</code><code class="descname">read_csv</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.read_csv" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.panels.read_csv">
+<span class="sig-prename descclassname"><span class="pre">mibidata.panels.</span></span><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.read_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a panel CSV file into a dataframe.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – The path to the CSV file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing columns ‘Mass’ and ‘Target’.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – The path to the CSV file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe containing columns ‘Mass’ and ‘Target’.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.panels.merge_masses">
-<code class="descclassname">mibidata.panels.</code><code class="descname">merge_masses</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.merge_masses" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.panels.merge_masses">
+<span class="sig-prename descclassname"><span class="pre">mibidata.panels.</span></span><span class="sig-name descname"><span class="pre">merge_masses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.panels.merge_masses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merges ‘Target’ cells of a DataFrame with the same ‘Mass’ value.</p>
 <p>This function merges multiple targets that are conjugated to the same mass
 tag such that the returned DataFrame contains only unique masses. Target
 names are combined using the conventions of :func:’util.natural_sort()’.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> – A DataFrame of the panel containing columns ‘Mass’ and
-‘Target’.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A DataFrame containing columns ‘Mass’ and ‘Target’ with merged targets
-of the same mass.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> – A DataFrame of the panel containing columns ‘Mass’ and
+‘Target’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A DataFrame containing columns ‘Mass’ and ‘Target’ with merged targets
+of the same mass.</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.pseudodepths">
+</section>
+<section id="module-mibidata.pseudodepths">
 <span id="mibidata-pseudodepths-module"></span><h2>mibidata.pseudodepths module<a class="headerlink" href="#module-mibidata.pseudodepths" title="Permalink to this headline">¶</a></h2>
 <p>Splits single-depth MIBI scans into pseudo Depth Profiles.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.pseudodepths.divide">
-<code class="descclassname">mibidata.pseudodepths.</code><code class="descname">divide</code><span class="sig-paren">(</span><em>msdf_file</em>, <em>num_scans</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.pseudodepths.divide" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.pseudodepths.divide">
+<span class="sig-prename descclassname"><span class="pre">mibidata.pseudodepths.</span></span><span class="sig-name descname"><span class="pre">divide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msdf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.pseudodepths.divide" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a pseudo depth profile from a single Image.msdf file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>msdf_file</strong> – The string path to a local msdf file.</li>
-<li><strong>num_scans</strong> – The integer number of pseudo-depths into which to divide
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msdf_file</strong> – The string path to a local msdf file.</p></li>
+<li><p><strong>num_scans</strong> – The integer number of pseudo-depths into which to divide
 this msdf file. This must be a divisor of the number of ToF
-cycles per pixel.</li>
-<li><strong>path</strong> – The string path to the folder into which to write the output
+cycles per pixel.</p></li>
+<li><p><strong>path</strong> – The string path to the folder into which to write the output
 msdf files, which will follow the convention Depth0/Image.msdf,
 Depth1/Image.msdf, etc. If Depth&lt;n&gt;/Image.msdf files already
 exist in this location, they will be overwritten. If no path is
 specified, this will default to creating a folder named
-PseudoDepths in the same directory as the input msdf file.</li>
+PseudoDepths in the same directory as the input msdf file.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>The integer number of ToF cycles per pixel in the</dt>
-<dd><p class="first last">original data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The integer number of ToF cycles per pixel in the</dt><dd><p>original data.</p>
 </dd>
 </dl>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>cycles_per_scan: The integer number of ToF cycles per each output</dt>
-<dd>pseudo-depth.</dd>
+<li><dl class="simple">
+<dt>cycles_per_scan: The integer number of ToF cycles per each output</dt><dd><p>pseudo-depth.</p>
+</dd>
 </dl>
 </li>
 </ul>
 </p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><ul class="simple">
-<li>cycles_per_pixel</li>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>cycles_per_pixel</p></li>
 </ul>
 </p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if the msdf file is not &gt;=6.3.4.0 with ToF cycle
-number encoded, or if the number of scans given is not a divisor
-of the number of cycles per scan.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Raised if the msdf file is not &gt;=6.3.4.0 with ToF cycle
+    number encoded, or if the number of scans given is not a divisor
+    of the number of cycles per scan.</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.runs">
+</section>
+<section id="module-mibidata.runs">
 <span id="mibidata-runs-module"></span><h2>mibidata.runs module<a class="headerlink" href="#module-mibidata.runs" title="Permalink to this headline">¶</a></h2>
 <p>Utilities for working with MIBI run metadata.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.runs.parse_xml">
-<code class="descclassname">mibidata.runs.</code><code class="descname">parse_xml</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.runs.parse_xml" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.runs.parse_xml">
+<span class="sig-prename descclassname"><span class="pre">mibidata.runs.</span></span><span class="sig-name descname"><span class="pre">parse_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.runs.parse_xml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a run XML and return a list of image metadata dicts, plus a
 dict of the mass calibration and other msdf metadata.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – A path to a run XML file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of image metadata dicts for each FOV.
-calibration: A dict containing mass calibration parameters.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">fovs</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – A path to a run XML file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of image metadata dicts for each FOV.
+calibration: A dict containing mass calibration parameters.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fovs</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.segmentation">
+</section>
+<section id="module-mibidata.segmentation">
 <span id="mibidata-segmentation-module"></span><h2>mibidata.segmentation module<a class="headerlink" href="#module-mibidata.segmentation" title="Permalink to this headline">¶</a></h2>
 <p>Utilities for working with segmentation data.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.segmentation.extract_cell_dataframe">
-<code class="descclassname">mibidata.segmentation.</code><code class="descname">extract_cell_dataframe</code><span class="sig-paren">(</span><em>label_image</em>, <em>image=None</em>, <em>mode='total'</em>, <em>num_sectors=8</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.extract_cell_dataframe" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.segmentation.extract_cell_dataframe">
+<span class="sig-prename descclassname"><span class="pre">mibidata.segmentation.</span></span><span class="sig-name descname"><span class="pre">extract_cell_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'total'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.extract_cell_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a dataframe of single-cell statistics from a labeled image.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
 corresponds to the label of an image region, such as a cell or
-other segment.</li>
-<li><strong>image</strong> – Optionally, a MibiImage of an NxM field of view. Defaults to
+other segment.</p></li>
+<li><p><strong>image</strong> – Optionally, a MibiImage of an NxM field of view. Defaults to
 None; if not None, the sum or score (depending on the mode) of each
 channel within each labeled region is returned as column of the
-dataframe. Otherwise, only the regions’ size and area are returned.</li>
-<li><strong>mode</strong> – One of``’total’<code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">``'quadrant'</span></code> or <code class="docutils literal notranslate"><span class="pre">'circular_sectors'</span></code>,
+dataframe. Otherwise, only the regions’ size and area are returned.</p></li>
+<li><p><strong>mode</strong> – One of``’total’<code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">``'quadrant'</span></code> or <code class="docutils literal notranslate"><span class="pre">'circular_sectors'</span></code>,
 defaulting to <code class="docutils literal notranslate"><span class="pre">'total'</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">'total'`,</span> <span class="pre">the</span> <span class="pre">ion</span> <span class="pre">counts</span> <span class="pre">within</span> <span class="pre">each</span> <span class="pre">labeled</span> <span class="pre">region</span> <span class="pre">are</span> <span class="pre">summed.</span>
 <span class="pre">If</span> <span class="pre">``'quadrant'</span></code>, the geometric mean of each regions’s four
@@ -1032,387 +941,341 @@ distribution.
 If <code class="docutils literal notranslate"><span class="pre">'circular_sectors'</span></code>, the geometric mean of each regions’s
 <code class="docutils literal notranslate"><span class="pre">num_sectors</span></code> circular sectors is calculated. This is a
 generalization of the <code class="docutils literal notranslate"><span class="pre">quadrant</span></code> mode.
-The mode is ignored if an image is not specified.</li>
-<li><strong>num_sectors</strong> – number of circular sectors to use in the
-<code class="docutils literal notranslate"><span class="pre">circular_sectors</span></code> mode. Optional, default is 8.</li>
+The mode is ignored if an image is not specified.</p></li>
+<li><p><strong>num_sectors</strong> – number of circular sectors to use in the
+<code class="docutils literal notranslate"><span class="pre">circular_sectors</span></code> mode. Optional, default is 8.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dataframe indexed by image region’s label, and whose columns
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe indexed by image region’s label, and whose columns
 include the area, centroid, and if included the total or scored
 counts of the image’s channels within each region.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.segmentation.replace_labeled_pixels">
-<code class="descclassname">mibidata.segmentation.</code><code class="descname">replace_labeled_pixels</code><span class="sig-paren">(</span><em>label_image</em>, <em>df</em>, <em>columns=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.replace_labeled_pixels" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.segmentation.replace_labeled_pixels">
+<span class="sig-prename descclassname"><span class="pre">mibidata.segmentation.</span></span><span class="sig-name descname"><span class="pre">replace_labeled_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.replace_labeled_pixels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replaces the pixels within each label with a value from a dataframe.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
 corresponds to the label of an image region, such as a cell or
-other segment.</li>
-<li><strong>df</strong> – A dataframe whose index corresponds to the integers in the
+other segment.</p></li>
+<li><p><strong>df</strong> – A dataframe whose index corresponds to the integers in the
 label_array, and whose column values will replace the labels in the
 returned image. It is expected that the index will have name ‘label’
-as is returned from <a href="#id1"><span class="problematic" id="id2">:function:`extract_cell_dataframe`</span></a>.</li>
-<li><strong>columns</strong> – An optional sequence of which columns from the dataframe to
+as is returned from <a href="#id1"><span class="problematic" id="id2">:function:`extract_cell_dataframe`</span></a>.</p></li>
+<li><p><strong>columns</strong> – An optional sequence of which columns from the dataframe to
 include in the returned image. Defaults to None, which uses all
-columns in the dataframe.</li>
+columns in the dataframe.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance where each channel
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance where each channel
 corresponds to a dataframe column, and the data is a copy of the label
 image where each pixel has been replaced with the corresponding value
 from that label’s row in the dataframe.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IndexError</span></code> – if the index values of the DataFrame do not match the labels
-in the image.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="mibidata.segmentation.expand_objects">
-<code class="descclassname">mibidata.segmentation.</code><code class="descname">expand_objects</code><span class="sig-paren">(</span><em>label_image</em>, <em>distance</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.expand_objects" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expands labeled objects in an image by a given number of pixels.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
-corresponds to the label of an image region, such as a cell or
-other segment.</li>
-<li><strong>distance</strong> – The distance (in pixels) to expand each object.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new label array of the expanded objects.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="mibidata.segmentation.filter_by_size">
-<code class="descclassname">mibidata.segmentation.</code><code class="descname">filter_by_size</code><span class="sig-paren">(</span><em>label_image</em>, <em>min_size</em>, <em>max_size</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.filter_by_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes segments outside of a specified size range.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
-corresponds to the label of an image region, such as a cell or
-other segment.</li>
-<li><strong>min_size</strong> – The minimum area in pixels of a segment.</li>
-<li><strong>max_size</strong> – The maximum area in pixels of a segment.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new label image, where segments outside of the size range have been
-set to zero, and a dataframe of its labels, centroids and area.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="mibidata.segmentation.get_adjacency_matrix">
-<code class="descclassname">mibidata.segmentation.</code><code class="descname">get_adjacency_matrix</code><span class="sig-paren">(</span><em>label_image</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.get_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates adjacency matrix.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
-corresponds to the label of an image region, such as a cell or
-other segment.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
-<dt>NxN array of floats (N is the number of labels)</dt>
-<dd>Each i, j element of the adjacency_matrix corresponds to the
-fraction of the i region boundary length that is shared with j
-region.</dd>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>IndexError</strong> – if the index values of the DataFrame do not match the labels
+    in the image.</p>
+</dd>
 </dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">adjacency_matrix</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.tiff">
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.segmentation.expand_objects">
+<span class="sig-prename descclassname"><span class="pre">mibidata.segmentation.</span></span><span class="sig-name descname"><span class="pre">expand_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.expand_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands labeled objects in an image by a given number of pixels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</p></li>
+<li><p><strong>distance</strong> – The distance (in pixels) to expand each object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new label array of the expanded objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.segmentation.filter_by_size">
+<span class="sig-prename descclassname"><span class="pre">mibidata.segmentation.</span></span><span class="sig-name descname"><span class="pre">filter_by_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.filter_by_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes segments outside of a specified size range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</p></li>
+<li><p><strong>min_size</strong> – The minimum area in pixels of a segment.</p></li>
+<li><p><strong>max_size</strong> – The maximum area in pixels of a segment.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new label image, where segments outside of the size range have been
+set to zero, and a dataframe of its labels, centroids and area.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.segmentation.get_adjacency_matrix">
+<span class="sig-prename descclassname"><span class="pre">mibidata.segmentation.</span></span><span class="sig-name descname"><span class="pre">get_adjacency_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.segmentation.get_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates adjacency matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>label_image</strong> – An NxM array where each pixel’s nonnegative integer value
+corresponds to the label of an image region, such as a cell or
+other segment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>NxN array of floats (N is the number of labels)</dt><dd><p>Each i, j element of the adjacency_matrix corresponds to the
+fraction of the i region boundary length that is shared with j
+region.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>adjacency_matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mibidata.tiff">
 <span id="mibidata-tiff-module"></span><h2>mibidata.tiff module<a class="headerlink" href="#module-mibidata.tiff" title="Permalink to this headline">¶</a></h2>
 <p>Read and write to and from IONpath MIBItiff files.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.tiff.write">
-<code class="descclassname">mibidata.tiff.</code><code class="descname">write</code><span class="sig-paren">(</span><em>filename</em>, <em>image</em>, <em>sed=None</em>, <em>optical=None</em>, <em>ranges=None</em>, <em>multichannel=True</em>, <em>dtype=None</em>, <em>write_float=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.write" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.tiff.write">
+<span class="sig-prename descclassname"><span class="pre">mibidata.tiff.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multichannel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_float</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes MIBI data to a multipage TIFF.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> – The path to the target file if multi-channel, or the path to
-a folder if single-channel.</li>
-<li><strong>image</strong> – A <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance.</li>
-<li><strong>sed</strong> – Optional, an array of the SED image data. This is assumed to be
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – The path to the target file if multi-channel, or the path to
+a folder if single-channel.</p></li>
+<li><p><strong>image</strong> – A <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance.</p></li>
+<li><p><strong>sed</strong> – Optional, an array of the SED image data. This is assumed to be
 grayscale even if 3-dimensional, in which case only one channel
-will be used.</li>
-<li><strong>optical</strong> – Optional, an RGB array of the optical image data.</li>
-<li><strong>ranges</strong> – A list of (min, max) tuples the same length as the number of
+will be used.</p></li>
+<li><p><strong>optical</strong> – Optional, an RGB array of the optical image data.</p></li>
+<li><p><strong>ranges</strong> – A list of (min, max) tuples the same length as the number of
 channels. If None, the min will default to zero and the max to the
 max pixel value in that channel. This is used by some external
-software to calibrate the display.</li>
-<li><strong>multichannel</strong> – Boolean for whether to create a single multi-channel TIFF,
+software to calibrate the display.</p></li>
+<li><p><strong>multichannel</strong> – Boolean for whether to create a single multi-channel TIFF,
 or a folder of single-channel TIFFs. Defaults to True; if False,
-the sed and optical options are ignored.</li>
-<li><strong>dtype</strong> – dtype: One of (<code class="docutils literal notranslate"><span class="pre">np.float32</span></code>, <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code>) to force the dtype
+the sed and optical options are ignored.</p></li>
+<li><p><strong>dtype</strong> – dtype: One of (<code class="docutils literal notranslate"><span class="pre">np.float32</span></code>, <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code>) to force the dtype
 of the saved image data. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>, which chooses the
 format based on the data’s input type, and will convert to
 <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code> from other float or int types,
-respectively, if it can do so without a loss of data.</li>
-<li><strong>write_float</strong> – Deprecated, will raise ValueError if specified. To
+respectively, if it can do so without a loss of data.</p></li>
+<li><p><strong>write_float</strong> – Deprecated, will raise ValueError if specified. To
 specify the dtype of the saved image, please use the <cite>dtype</cite>
-argument instead.</li>
+argument instead.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
-<ul class="last simple">
-<li>The image is not a <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a>
-instance.</li>
-<li>The <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> coordinates, size,
-fov_id, fov_name, run, folder, dwell, scans, mass_gain,
-mass_offset, time_resolution, masses or targets are None.</li>
-<li><cite>dtype</cite> is not one of <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code>.</li>
-<li><cite>write_float</cite> has been specified.</li>
-<li>Converting the native <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> dtype
-to the specified or inferred <code class="docutils literal notranslate"><span class="pre">dtype</span></code> results in a loss of data.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Raised if
+    
+    * The image is not a <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a>
+      instance.
+    * The <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> coordinates, size,
+      fov_id, fov_name, run, folder, dwell, scans, mass_gain,
+      mass_offset, time_resolution, masses or targets are None.
+    * <cite>dtype</cite> is not one of <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.uint16</span></code>.
+    * <cite>write_float</cite> has been specified.
+    * Converting the native <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> dtype
+      to the specified or inferred <code class="docutils literal notranslate"><span class="pre">dtype</span></code> results in a loss of data.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.tiff.read">
-<code class="descclassname">mibidata.tiff.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file</em>, <em>sims=True</em>, <em>sed=False</em>, <em>optical=False</em>, <em>label=False</em>, <em>masses=None</em>, <em>targets=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.read" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.tiff.read">
+<span class="sig-prename descclassname"><span class="pre">mibidata.tiff.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads MIBI data from an IonpathMIBI TIFF file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>file</strong> – The string path or an open file object to a MIBItiff file.</li>
-<li><strong>sims</strong> – Boolean for whether to return the SIMS (MIBI) data. Defaults to
-True.</li>
-<li><strong>sed</strong> – Boolean for whether to return the SED data. Defaults to False.</li>
-<li><strong>optical</strong> – Boolean for whether to return the optical image. Defaults to
-False.</li>
-<li><strong>label</strong> – Boolean for whether to return the slide label image. Defaults to
-False.</li>
-<li><strong>masses</strong> – A list of integer masses. If specified, only channels
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> – The string path or an open file object to a MIBItiff file.</p></li>
+<li><p><strong>sims</strong> – Boolean for whether to return the SIMS (MIBI) data. Defaults to
+True.</p></li>
+<li><p><strong>sed</strong> – Boolean for whether to return the SED data. Defaults to False.</p></li>
+<li><p><strong>optical</strong> – Boolean for whether to return the optical image. Defaults to
+False.</p></li>
+<li><p><strong>label</strong> – Boolean for whether to return the slide label image. Defaults to
+False.</p></li>
+<li><p><strong>masses</strong> – A list of integer masses. If specified, only channels
 corresponding to these masses will be included in the returned
-MibiImage. Either masses or targets can be specified, not both.</li>
-<li><strong>targets</strong> – A list of string targets. If specified, only channels
+MibiImage. Either masses or targets can be specified, not both.</p></li>
+<li><p><strong>targets</strong> – A list of string targets. If specified, only channels
 corresponding to these targets will be included in the returned
-MibiImage. Either masses or targets can be specified, not both.</li>
+MibiImage. Either masses or targets can be specified, not both.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Returns: A tuple of the image types set to True in the parameters, in the</dt>
-<dd>order SIMS, SED, Optical, Label (but including only those types
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: A tuple of the image types set to True in the parameters, in the</dt><dd><p>order SIMS, SED, Optical, Label (but including only those types
 specified). The SIMS data will be returned as a
 <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a> instance; the other image
 types will be returned as numpy arrays. If an image type is selected to
 be returned  but is not present in the image, it will be returned as
 None. If returning SIMS data and the masses or targets parameters are
 set, only those channels will be included in the MibiImage instance,
-otherwise all channels present in the file will be returned.</dd>
+otherwise all channels present in the file will be returned.</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – Raised if</p>
-<ul class="last simple">
-<li>The input file is not of the IONpath MIBItiff format</li>
-<li>No image type is selected to be returned.</li>
-<li>Both masses and targets are specified.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raised if
+    
+    * The input file is not of the IONpath MIBItiff format
+    * No image type is selected to be returned.
+    * Both masses and targets are specified.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.tiff.info">
-<code class="descclassname">mibidata.tiff.</code><code class="descname">info</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.info" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.tiff.info">
+<span class="sig-prename descclassname"><span class="pre">mibidata.tiff.</span></span><span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.tiff.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the metadata from a MIBItiff file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – The path to the TIFF.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary of metadata as could be supplied as kwargs to
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> – The path to the TIFF.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of metadata as could be supplied as kwargs to
 <a class="reference internal" href="#mibidata.mibi_image.MibiImage" title="mibidata.mibi_image.MibiImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">mibidata.mibi_image.MibiImage</span></code></a>, except with a <code class="docutils literal notranslate"><span class="pre">channels</span></code> key
-whose value is a list of (mass, target) tuples.</td>
-</tr>
-</tbody>
-</table>
+whose value is a list of (mass, target) tuples.</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata.util">
+</section>
+<section id="module-mibidata.util">
 <span id="mibidata-util-module"></span><h2>mibidata.util module<a class="headerlink" href="#module-mibidata.util" title="Permalink to this headline">¶</a></h2>
 <p>Common convenience functions used in mibidata module.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
-<dl class="function">
-<dt id="mibidata.util.encode_strings">
-<code class="descclassname">mibidata.util.</code><code class="descname">encode_strings</code><span class="sig-paren">(</span><em>string_list</em>, <em>encoding='utf-8'</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.encode_strings" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.util.encode_strings">
+<span class="sig-prename descclassname"><span class="pre">mibidata.util.</span></span><span class="sig-name descname"><span class="pre">encode_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.encode_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Encodes each string in a list into a bytes object and returns a list
 of bytes objects. Useful function when writing and reading string lists
 which are not supported in pytables.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>string_list</strong> – A list of strings to encode.</li>
-<li><strong>encoding</strong> – Encoding to use, defaults to UTF-8.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string_list</strong> – A list of strings to encode.</p></li>
+<li><p><strong>encoding</strong> – Encoding to use, defaults to UTF-8.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of bytes objects that have been encoded with the given encoding.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of bytes objects that have been encoded with the given encoding.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.util.decode_strings">
-<code class="descclassname">mibidata.util.</code><code class="descname">decode_strings</code><span class="sig-paren">(</span><em>bytes_objects_list</em>, <em>encoding='utf-8'</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.decode_strings" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.util.decode_strings">
+<span class="sig-prename descclassname"><span class="pre">mibidata.util.</span></span><span class="sig-name descname"><span class="pre">decode_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bytes_objects_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.decode_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decodes each bytes object in a list into a string and returns a list
 of strings. Useful function when writing and reading string lists which are
 not supported in pytables.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bytes_objects_list</strong> – A list of strings to encode.</li>
-<li><strong>encoding</strong> – Encoding to use, defaults to UTF-8.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes_objects_list</strong> – A list of strings to encode.</p></li>
+<li><p><strong>encoding</strong> – Encoding to use, defaults to UTF-8.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of strings that have been decoded with the given encoding.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of strings that have been decoded with the given encoding.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.util.natural_sort">
-<code class="descclassname">mibidata.util.</code><code class="descname">natural_sort</code><span class="sig-paren">(</span><em>l</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.natural_sort" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.util.natural_sort">
+<span class="sig-prename descclassname"><span class="pre">mibidata.util.</span></span><span class="sig-name descname"><span class="pre">natural_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.natural_sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sorts a list of strings in the way that humans expect, in place.</p>
 <p>For example, this would order <em>‘Depth2’</em> before <em>‘Depth11’</em>, whereas
 <code class="docutils literal notranslate"><span class="pre">sort</span></code> would place those in the opposite order.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>l</strong> – A list of strings.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>l</strong> – A list of strings.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.util.sort_channel_names">
-<code class="descclassname">mibidata.util.</code><code class="descname">sort_channel_names</code><span class="sig-paren">(</span><em>l</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.sort_channel_names" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.util.sort_channel_names">
+<span class="sig-prename descclassname"><span class="pre">mibidata.util.</span></span><span class="sig-name descname"><span class="pre">sort_channel_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.sort_channel_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sorts a list of string in place such that number only string are after
 all text strings and text strings with numbers are sorted alphabetically.</p>
-<dl class="docutils">
-<dt>ex: [‘beta-tubulin’, ‘CD20’, ‘CD4’, ‘CD45’, ‘CD8’, ‘dsDNA’, ‘Keratin’,</dt>
-<dd>‘23’, ‘97’, ‘144’, ‘150’]</dd>
+<dl class="simple">
+<dt>ex: [‘beta-tubulin’, ‘CD20’, ‘CD4’, ‘CD45’, ‘CD8’, ‘dsDNA’, ‘Keratin’,</dt><dd><p>‘23’, ‘97’, ‘144’, ‘150’]</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>l</strong> – A list of strings.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>l</strong> – A list of strings.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.util.format_for_filename">
-<code class="descclassname">mibidata.util.</code><code class="descname">format_for_filename</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.format_for_filename" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.util.format_for_filename">
+<span class="sig-prename descclassname"><span class="pre">mibidata.util.</span></span><span class="sig-name descname"><span class="pre">format_for_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.format_for_filename" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replaces delimiters and utf-8 encodes targets for use as filenames.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="mibidata.util.car2pol">
-<code class="descclassname">mibidata.util.</code><code class="descname">car2pol</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>x_c=0</em>, <em>y_c=0</em>, <em>degrees=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.car2pol" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="mibidata.util.car2pol">
+<span class="sig-prename descclassname"><span class="pre">mibidata.util.</span></span><span class="sig-name descname"><span class="pre">car2pol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibidata.util.car2pol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert cartesian to polar coordinates w.r.t. a central point.
 Angle phi is returned in the range [0, 2 pi) rad. A flag can be activated
 to return phi angles in degrees.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>y</strong> (<em>x</em><em>,</em>) – arrays of coordinates to transform.</li>
-<li><strong>y_c</strong> (<em>x_c</em><em>,</em>) – numbers representing the coordinates of the center
-(origin of polar coordinates). Optional; default is (0, 0).</li>
-<li><strong>degrees</strong> – flag to return phi angles in degrees instead of radians.
-Optional; default is False (i.e. radians).</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – arrays of coordinates to transform.</p></li>
+<li><p><strong>y</strong> – arrays of coordinates to transform.</p></li>
+<li><p><strong>x_c</strong> – numbers representing the coordinates of the center
+(origin of polar coordinates). Optional; default is (0, 0).</p></li>
+<li><p><strong>y_c</strong> – numbers representing the coordinates of the center
+(origin of polar coordinates). Optional; default is (0, 0).</p></li>
+<li><p><strong>degrees</strong> – flag to return phi angles in degrees instead of radians.
+Optional; default is False (i.e. radians).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">arrays of transformed coordinates.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">r, phi</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arrays of transformed coordinates.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>r, phi</p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-mibidata">
+</section>
+<section id="module-mibidata">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mibidata" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -1440,17 +1303,15 @@ Optional; default is False (i.e. radians).</li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1467,7 +1328,7 @@ Optional; default is False (i.e. radians).</li>
       &copy;2020, IONpath Inc..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

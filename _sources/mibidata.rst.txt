@@ -8,87 +8,86 @@ mibidata.color module
 ---------------------
 
 .. automodule:: mibidata.color
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.combine\_tiffs module
 ------------------------------
 
 .. automodule:: mibidata.combine_tiffs
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.constants module
 -------------------------
 
 .. automodule:: mibidata.constants
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.mibi\_image module
 ---------------------------
 
 .. automodule:: mibidata.mibi_image
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.panels module
 ----------------------
 
 .. automodule:: mibidata.panels
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.pseudodepths module
 ----------------------------
 
 .. automodule:: mibidata.pseudodepths
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.runs module
 --------------------
 
 .. automodule:: mibidata.runs
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.segmentation module
 ----------------------------
 
 .. automodule:: mibidata.segmentation
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.tiff module
 --------------------
 
 .. automodule:: mibidata.tiff
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mibidata.util module
 --------------------
 
 .. automodule:: mibidata.util
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: mibidata
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -28,6 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            sudo apt install default-jre
             ~/miniconda/envs/mibilib/bin/coverage run -m py.test mibitracker mibidata scripts
             ~/miniconda/envs/mibilib/bin/coverage html -i --omit=*/tests/*
       - run:
@@ -66,23 +67,21 @@ jobs:
       - deploy:
           name: Deploy docs
           command: |
-            if [ $CIRCLE_BRANCH == "master" ]; then
-              git config --global user.email $(git --no-pager show -s --format='%ae' HEAD)
-              git config --global user.name $(git --no-pager show -s --format='%an' HEAD)
-              git clone https://github.com/ionpath/mibilib out
-              cd out
-              git checkout gh-pages || git checkout --orphan gh-pages
-              git rm -rf .
-              cd ..
-              ~/miniconda/envs/mibilib/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
-              ~/miniconda/envs/mibilib/bin/sphinx-build -b html docs/source out
-              mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
-              cd out
-              touch .nojekyll
-              git add -A
-              git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
-              git push origin gh-pages
-            fi
+            git config --global user.email $(git --no-pager show -s --format='%ae' HEAD)
+            git config --global user.name $(git --no-pager show -s --format='%an' HEAD)
+            git clone https://github.com/ionpath/mibilib out
+            cd out
+            git checkout gh-pages || git checkout --orphan gh-pages
+            git rm -rf .
+            cd ..
+            ~/miniconda/envs/mibilib/bin/sphinx-apidoc -f -o docs/source ./ */tests ./setup.py
+            ~/miniconda/envs/mibilib/bin/sphinx-build -b html docs/source out
+            mkdir out/.circleci && cp -a .circleci/. out/.circleci/.
+            cd out
+            touch .nojekyll
+            git add -A
+            git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+            git push origin gh-pages
       - persist_to_workspace:
           root: ~/mibilib
           paths:
@@ -103,11 +102,11 @@ workflows:
   version: 2
   untagged-build:
     jobs:
-      - build:
-          filters:
-            branches:
-              ignore:
-                - gh-pages
+      - build
+          # filters:
+          #   branches:
+          #     ignore:
+          #       - gh-pages
   tagged-build:
     jobs:
       - tag_test:
