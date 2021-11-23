@@ -68,9 +68,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'IONpath MIBIlib'
-copyright = u'2020, IONpath Inc.'  # pylint: disable=redefined-builtin
-author = u'IONpath Inc.'
+project = u'Ionpath MIBIlib'
+copyright = u'2021, Ionpath Inc.'  # pylint: disable=redefined-builtin
+author = u'Ionpath Inc.'
 
 autodoc_member_order = 'bysource'
 napoleon_include_special_with_doc = True
