@@ -82,6 +82,7 @@ jobs:
             git add -A
             git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
             git push origin gh-pages
+
       - persist_to_workspace:
           root: ~/mibilib
           paths:
@@ -103,10 +104,10 @@ workflows:
   untagged-build:
     jobs:
       - build
-          # filters:
-          #   branches:
-          #     ignore:
-          #       - gh-pages
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - gh-pages
   tagged-build:
     jobs:
       - tag_test:
