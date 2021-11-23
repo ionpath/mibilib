@@ -104,11 +104,11 @@ workflows:
   version: 2
   untagged-build:
     jobs:
-      - build:
-          filters:
-            branches:
-              ignore:
-                - gh-pages
+      - build
+          # filters:
+          #   branches:
+          #     ignore:
+          #       - gh-pages
   tagged-build:
     jobs:
       - tag_test:
