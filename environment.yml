@@ -25,4 +25,4 @@ dependencies:
   - sphinx==4.3.0
   - tifffile==2021.4.8
   - tox==3.7.0
-  - tqdm==4.31.1
+  - tqdm==4.56.0
