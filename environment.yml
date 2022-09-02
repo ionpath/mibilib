@@ -4,7 +4,7 @@ channels:
 - defaults
 dependencies:
 - pip=19.1.1
-- python=3.7.3
+- python=3.8
 - pip:
   - astroid==2.2.5
   - attrs==17.4.0
@@ -18,11 +18,11 @@ dependencies:
   - pylint==2.3.1
   - pytest==5.2.0
   - requests==2.20.1
-  - scikit-image==0.18.0
+  - scikit-image==0.19.3
   - scikit-learn==0.23.2
   - setuptools==40.4.0
   - sphinx-argparse==0.2.2
   - sphinx==4.3.0
   - tifffile==2021.4.8
   - tox==3.7.0
-  - tqdm==4.31.1
+  - tqdm==4.56.0
