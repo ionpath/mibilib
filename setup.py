@@ -21,7 +21,7 @@ setup(name='mibilib',
           'scikit-image==0.19.3',
           'scikit-learn==0.23.2',
           'tifffile==2021.4.8',
-          'tqdm==4.31.1',
+          'tqdm==4.56.0',
       ],
       packages=['mibitracker', 'mibidata']
      )
