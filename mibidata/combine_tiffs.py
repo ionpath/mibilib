@@ -17,7 +17,7 @@ def _load_single_channel(file_name):
     array = skio.imread(file_name)
     if array.dtype not in (np.uint16, np.uint8):
         raise ValueError(
-            'Invalid dtype {0}; must be uint8 or uint16'.format(array.dtype))
+            f'Invalid dtype {array.dtype}; must be uint8 or uint16')
 
     if array.dtype == np.uint8:
         array = array.astype(np.uint16)
@@ -26,12 +26,12 @@ def _load_single_channel(file_name):
 
 def _match_target_filename(filenames, target):
     """Finds the file whose name matches target, target.tif, or target.tiff"""
-    pattern = re.compile(r'{}\.tiff?$'.format(re.escape(target).lower()))
+    pattern = re.compile(re.escape(target).lower() + r'\.tiff?$')
     matches = [f for f in filenames if re.match(pattern, f.lower())]
     try:
         assert len(matches) == 1
-    except AssertionError:
-        raise ValueError('TIFF matching {} not found'.format(target))
+    except AssertionError as ae:
+        raise ValueError(f'TIFF matching {target} not found') from ae
     return matches[0]
 
 
@@ -95,8 +95,8 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     point_number = int(point[5:])
     try:
         fov = fovs[point_number - 1] # point number is 1-based, not 0-based
-    except IndexError:
-        raise IndexError('{} not found in run xml.'.format(point))
+    except IndexError as ie:
+        raise IndexError(f'{point} not found in run xml.') from ie
     if fov['date']:
         run_date = datetime.datetime.strptime(
             fov['date'], '%Y-%m-%dT%H:%M:%S').date()

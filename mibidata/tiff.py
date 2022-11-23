@@ -185,7 +185,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 # auto-calculated value. The auto-calculated value results in
                 # the "STRIP_OFFSETS directory entry is the wrong type" error.
                 infile.write(
-                    to_save[:, :, i], compress=6, resolution=resolution,
+                    to_save[:, :, i], compression=8, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date,
                     software=SOFTWARE_VERSION, rowsperstrip=to_save.shape[0])
             if sed is not None:
@@ -199,11 +199,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 page_name = (285, 's', 0, 'SED')
                 page_tags = coordinates + [page_name]
                 infile.write(
-                    sed, compress=6, resolution=sed_resolution,
+                    sed, compression=8, resolution=sed_resolution,
                     extratags=page_tags, metadata={'image.type': 'SED'},
                     software=SOFTWARE_VERSION, rowsperstrip=sed.shape[0])
             if optical is not None:
-                infile.write(optical, compress=6, software=SOFTWARE_VERSION,
+                infile.write(optical, compression=8, software=SOFTWARE_VERSION,
                              metadata={'image.type': 'Optical'},
                              rowsperstrip=optical.shape[0])
                 label_coordinates = (
@@ -213,7 +213,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     optical[label_coordinates[0][0]:label_coordinates[0][1],
                             label_coordinates[1][0]:label_coordinates[1][1]],
                     0, 1))
-                infile.write(slide_label, compress=6, software=SOFTWARE_VERSION,
+                infile.write(slide_label, compression=8, software=SOFTWARE_VERSION,
                              metadata={'image.type': 'Label'},
                              rowsperstrip=slide_label.shape[0])
 
@@ -240,7 +240,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             with TiffWriter(target_filename) as infile:
 
                 infile.write(
-                    to_save[:, :, i], compress=6, resolution=resolution,
+                    to_save[:, :, i], compression=8, resolution=resolution,
                     metadata=metadata, datetime=image.date,
                     extratags=page_tags, software=SOFTWARE_VERSION,
                     rowsperstrip=to_save.shape[0])
