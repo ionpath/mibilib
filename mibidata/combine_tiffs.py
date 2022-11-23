@@ -126,7 +126,7 @@ def create_mibitiffs(input_folder, run_path, point, panel_path, slide, size,
     image.dwell = fov['dwell']
     image.scans = fov['scans']
     image.aperture = aperture
-    image.point_name = fov['point_name']
+    image.fov_name = fov['fov_name']
     image.folder = fov['folder']
     image.tissue = tissue
     image.panel = panel_name
