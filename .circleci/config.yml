@@ -5,6 +5,7 @@ jobs:
     docker:
       - image: cimg/python:3.11.0
     working_directory: ~/mibilib
+    resource_class: large
     steps:
       - checkout:
           path: ~/mibilib
@@ -61,7 +62,7 @@ jobs:
             if [ $(git diff origin/master --name-only -- environment.yml) ]; then
               echo "Running tox to test setup.py"
               pip install tox
-              tox -e py311
+              tox
             else
               echo "Environment did not change; skipping tox."
             fi
