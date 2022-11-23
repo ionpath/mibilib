@@ -317,7 +317,8 @@ class TestWriteReadTiff(unittest.TestCase):
         self.assertEqual(description,
                          {'mibi.fov_name': OLD_METADATA['point_name'],
                           'mibi.folder': OLD_METADATA['folder'],
-                          'mibi.fov_id': OLD_METADATA['folder'].split('/')[0]})
+                          'mibi.fov_id': OLD_METADATA['folder']
+                          .split('/', maxsplit=1)[0]})
 
     def test_sort_channels_before_writing(self):
 
@@ -341,7 +342,7 @@ class TestWriteReadTiff(unittest.TestCase):
 
         for i, (_, channel) in enumerate(CHANNELS):
             formatted = util.format_for_filename(channel)
-            filename = os.path.join(basepath, '{}.tiff'.format(formatted))
+            filename = os.path.join(basepath, f'{formatted}.tiff')
 
             tif = tiff.read(filename)
 
@@ -357,7 +358,7 @@ class TestWriteReadTiff(unittest.TestCase):
 
         for i, (_, channel) in enumerate(CHANNELS_NON_ASCII):
             formatted = util.format_for_filename(channel)
-            filename = os.path.join(basepath, '{}.tiff'.format(formatted))
+            filename = os.path.join(basepath, f'{formatted}.tiff')
 
             tif = tiff.read(filename)
 
@@ -479,7 +480,7 @@ class TestWriteReadTiff(unittest.TestCase):
         # bioformats plugin.
         self.assertEqual(os.system(
             f'./bftools/bfconvert {self.filename} converted.tiff'), 0)
-        self.assertEqual(os.system(f'rm -rf bftools'), 0)
+        self.assertEqual(os.system('rm -rf bftools'), 0)
         self.assertEqual(os.system(f'rm {self.filename} converted.tiff'), 0)
 
 if __name__ == '__main__':
