@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>mibitracker package &#8212; Ionpath MIBIlib 0.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -12,7 +12,9 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -32,12 +34,12 @@
           <div class="body" role="main">
             
   <section id="mibitracker-package">
-<h1>mibitracker package<a class="headerlink" href="#mibitracker-package" title="Permalink to this headline">¶</a></h1>
+<h1>mibitracker package<a class="headerlink" href="#mibitracker-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-mibitracker.mibitracker_exceptions">
-<span id="mibitracker-mibitracker-exceptions-module"></span><h2>mibitracker.mibitracker_exceptions module<a class="headerlink" href="#module-mibitracker.mibitracker_exceptions" title="Permalink to this headline">¶</a></h2>
+<span id="mibitracker-mibitracker-exceptions-module"></span><h2>mibitracker.mibitracker_exceptions module<a class="headerlink" href="#module-mibitracker.mibitracker_exceptions" title="Permalink to this heading">¶</a></h2>
 <p>Provides a custom exception for MibiTracker API requests.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
 <dl class="py exception">
@@ -50,7 +52,7 @@ invalid or unexpected.</p>
 
 </section>
 <section id="module-mibitracker.request_helpers">
-<span id="mibitracker-request-helpers-module"></span><h2>mibitracker.request_helpers module<a class="headerlink" href="#module-mibitracker.request_helpers" title="Permalink to this headline">¶</a></h2>
+<span id="mibitracker-request-helpers-module"></span><h2>mibitracker.request_helpers module<a class="headerlink" href="#module-mibitracker.request_helpers" title="Permalink to this heading">¶</a></h2>
 <p>Helper class for making and retrying requests to the MIBItracker.</p>
 <p>Copyright (C) 2021 Ionpath, Inc.  All rights reserved.</p>
 <dl class="py class">
@@ -72,7 +74,7 @@ instance needs to be initialized.</p>
 </li>
 </ul>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – The string url to the backend of a MIBItracker instance, e.g.
 <code class="docutils literal notranslate"><span class="pre">'https://backend-dot-mibitracker-demo.appspot.com'</span></code>.</p></li>
@@ -108,7 +110,7 @@ header and automatically raises for HTTP status errors.</p>
 </dd></dl>
 
 <dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>HTTPError</strong> – Raised by <code class="docutils literal notranslate"><span class="pre">requests.raise_for_status()</span></code>, i.e. if a
     response’s status code is &gt;= 400.</p>
 </dd>
@@ -125,7 +127,7 @@ header and automatically raises for HTTP status errors.</p>
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a GET request to the url using the session.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/images/'</span></code>
 or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ=tonsil'</span></code>.</p></li>
@@ -133,7 +135,7 @@ or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ
 <li><p><strong>**kwargs</strong> – Passes to <code class="docutils literal notranslate"><span class="pre">requests.Session.get</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.get</span></code>.</p>
 </dd>
 </dl>
@@ -144,14 +146,14 @@ or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ
 <span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a POST request to the url using the session.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/slides/1/'</span></code>.</p></li>
 <li><p><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code>.</p></li>
 <li><p><strong>**kwargs</strong> – Passes to <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code>.</p>
 </dd>
 </dl>
@@ -162,14 +164,14 @@ or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ
 <span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a PUT request to the url using the session.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/images/1/'</span></code>.</p></li>
 <li><p><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.put</span></code>.</p></li>
 <li><p><strong>**kwargs</strong> – Passes to <a href="#id1"><span class="problematic" id="id2">``</span></a>requests.Session.put`.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.put</span></code>.</p>
 </dd>
 </dl>
@@ -180,14 +182,14 @@ or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a DELETE request to the url using the session.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>route</strong> – The route to add to the base url, such as <code class="docutils literal notranslate"><span class="pre">'/images/1/'</span></code>.</p></li>
 <li><p><strong>*args</strong> – Passed to <code class="docutils literal notranslate"><span class="pre">requests.Session.delete</span></code>.</p></li>
 <li><p><strong>**kwargs</strong> – Passes to <code class="docutils literal notranslate"><span class="pre">requests.Session.delete</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response from <code class="docutils literal notranslate"><span class="pre">requests.Session.delete</span></code>.</p>
 </dd>
 </dl>
@@ -198,7 +200,7 @@ or <code class="docutils literal notranslate"><span class="pre">'/tissues/?organ
 <span class="sig-name descname"><span class="pre">download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.download_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads a file from MIBItracker storage.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> – The path to the file in storage. This usually can be
 constructed from the run and image folders.</p>
 </dd>
@@ -214,7 +216,7 @@ constructed from the run and image folders.</p>
 <span class="sig-name descname"><span class="pre">search_runs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.search_runs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Searches for runs which have the name and optionally label.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>run_name</strong> – The name of the run the image belongs to.</p></li>
 <li><p><strong>run_label</strong> – (optional) The label of the run.</p></li>
@@ -236,7 +238,7 @@ zero or one.</p>
 <span class="sig-name descname"><span class="pre">copy_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.copy_run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a copy of the run corresponding to the label.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>old_label</strong> – The label of the run to copy.</p></li>
 <li><p><strong>new_label</strong> – The label to use for the copied run.</p></li>
@@ -246,7 +248,7 @@ such as a different project id or FOV size (such as if images
 were cropped from their originals).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A tuple of the response JSON returned by old run and from creating
 its copy, respectively.</p>
 </dd>
@@ -259,7 +261,7 @@ its copy, respectively.</p>
 <dd><p>This updates image metadata but not the actual TIFF data.</p>
 <p>Each new image will remain unavailable until a TIFF is uploaded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>old_run_label</strong> – The label of the run whose images’ metadata is to
 be copied.</p></li>
@@ -271,7 +273,7 @@ runs’, such as a different project id or frame (such as if
 images were cropped from their originals).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary with keys of the original image IDs, and values of the
 response JSON returned when updating the new images.</p>
 </dd>
@@ -285,7 +287,7 @@ response JSON returned when updating the new images.</p>
 <p>This uses the ‘run’ and ‘folder’ fields in the MibiTiff’s description to
 associate this with the correct image.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tiff_file</strong> – A string path to a TIFF file or an open file object
 containing the TIFF data.</p></li>
@@ -294,11 +296,11 @@ of the image metadata against expected values and may become
 mandatory in the future.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response from the MIBItracker after uploading the file and
 queuing it to be processed into viewable data.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>TypeError</strong> – Raised if tiff_file is not a string path or file object.</p></li>
 <li><p><strong>ValueError</strong> – Raised if run_id is None.</p></li>
@@ -312,7 +314,7 @@ queuing it to be processed into viewable data.</p>
 <span class="sig-name descname"><span class="pre">upload_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.upload_channel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads a grayscale PNG or TIFF to the MIBItracker.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image_id</strong> – The integer id of the image to associate the channel with.</p></li>
 <li><p><strong>image_file</strong> – A string path to a PNG or TIFF file, or an open file
@@ -324,10 +326,10 @@ an extension to indicate format, such as “CD45.tiff” or
 “cell_boundaries.png”.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response from the MIBItracker after uploading the file.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>TypeError</strong> – Raised if image_file is not a string path or file object.</p>
 </dd>
 </dl>
@@ -338,10 +340,10 @@ an extension to indicate format, such as “CD45.tiff” or
 <span class="sig-name descname"><span class="pre">run_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.run_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a JSON array of image metadata from a given run label.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>run_label</strong> – The unique string label of a run.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of dicts of of image metadata for the specified run.</p>
 </dd>
 </dl>
@@ -352,10 +354,10 @@ an extension to indicate format, such as “CD45.tiff” or
 <span class="sig-name descname"><span class="pre">image_conjugates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.image_conjugates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a JSON array of panel conjugates from a given image id.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>image_id</strong> – The integer id of an image.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of dicts of antibody conjugate details from the image’s
 panel. This will be an empty list of the image does not have a
 section assigned, or if its section does not have a panel assigned.</p>
@@ -368,7 +370,7 @@ section assigned, or if its section does not have a panel assigned.</p>
 <span class="sig-name descname"><span class="pre">image_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fov_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.image_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the primary key of an image given the specified run and FOV.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>run_label</strong> – The label of the run the image belongs to. If no images
 found using run label (which is the unique identifier of
@@ -378,10 +380,10 @@ guaranteed to be unique per run).</p></li>
 for data generated with MIBIcontrol and MiniSIMS, respectively.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An int id corresponding to the primary key of the image.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – Raised if no images match the specified run and FOV,
     or if more than one image matches the specified run and FOV.</p>
 </dd>
@@ -393,10 +395,10 @@ for data generated with MIBIcontrol and MiniSIMS, respectively.</p></li>
 <span class="sig-name descname"><span class="pre">get_mibi_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.get_mibi_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets image data from MIBItracker and creates a MibiImage instance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>image_id</strong> – The integer id of an image.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A MibiImage instance of the requested image.</p>
 </dd>
 </dl>
@@ -407,13 +409,13 @@ for data generated with MIBIcontrol and MiniSIMS, respectively.</p></li>
 <span class="sig-name descname"><span class="pre">get_channel_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.MibiRequests.get_channel_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a single channel from MIBItracker as a 2D numpy array.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image_id</strong> – The integer id of an image.</p></li>
 <li><p><strong>channel_name</strong> – The name of the channel to download.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A MxN numpy array of the channel data.</p>
 </dd>
 </dl>
@@ -429,7 +431,7 @@ specified or in other projects to which the user has access and
 sharing is enabled.</p>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image_ids</strong> – A list of ints of ids of the images in MIBItracker
 corresponding to the images to be added to the new imageset.</p></li>
@@ -448,20 +450,20 @@ imageset. Defaults to None.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="mibitracker.request_helpers.StatusCheckedSession">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mibitracker.request_helpers.</span></span><span class="sig-name descname"><span class="pre">StatusCheckedSession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">requests.sessions.Session</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></p>
 <p>Raises for HTTP errors and adds any response JSON to the message.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mibitracker.request_helpers.StatusCheckedSession.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a GET request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
 <li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>requests.Response</p>
 </dd>
 </dl>
@@ -472,13 +474,13 @@ imageset. Defaults to None.</p></li>
 <span class="sig-name descname"><span class="pre">options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.options" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a OPTIONS request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
 <li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>requests.Response</p>
 </dd>
 </dl>
@@ -489,7 +491,7 @@ imageset. Defaults to None.</p></li>
 <span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a POST request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
 <li><p><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
@@ -498,7 +500,7 @@ object to send in the body of the <code class="xref py py-class docutils literal
 <li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>requests.Response</p>
 </dd>
 </dl>
@@ -509,7 +511,7 @@ object to send in the body of the <code class="xref py py-class docutils literal
 <span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a PUT request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
 <li><p><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
@@ -517,7 +519,7 @@ object to send in the body of the <code class="xref py py-class docutils literal
 <li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>requests.Response</p>
 </dd>
 </dl>
@@ -528,13 +530,13 @@ object to send in the body of the <code class="xref py py-class docutils literal
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mibitracker.request_helpers.StatusCheckedSession.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a DELETE request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
 <li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>requests.Response</p>
 </dd>
 </dl>
@@ -544,7 +546,7 @@ object to send in the body of the <code class="xref py py-class docutils literal
 
 </section>
 <section id="module-mibitracker">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mibitracker" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mibitracker" title="Permalink to this heading">¶</a></h2>
 <p>Provides classes and methods for interacting with the MIBItracker API</p>
 </section>
 </section>
@@ -583,7 +585,7 @@ object to send in the body of the <code class="xref py py-class docutils literal
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -600,7 +602,7 @@ object to send in the body of the <code class="xref py py-class docutils literal
       &copy;2021, Ionpath Inc..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

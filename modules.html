@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>mibilib &#8212; Ionpath MIBIlib 0.0.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
@@ -12,7 +12,9 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -32,29 +34,141 @@
           <div class="body" role="main">
             
   <section id="mibilib">
-<h1>mibilib<a class="headerlink" href="#mibilib" title="Permalink to this headline">¶</a></h1>
+<h1>mibilib<a class="headerlink" href="#mibilib" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="check_tag.html">check_tag module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="check_tag.html">check_tag module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="check_tag.html#check_tag.check_tag"><code class="docutils literal notranslate"><span class="pre">check_tag()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_tag.html#check_tag.get_latest_tag"><code class="docutils literal notranslate"><span class="pre">get_latest_tag()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_tag.html#check_tag.get_tag_in_setuppy"><code class="docutils literal notranslate"><span class="pre">get_tag_in_setuppy()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="mibidata.html">mibidata package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="mibidata.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.color">mibidata.color module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.combine_tiffs">mibidata.combine_tiffs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.color">mibidata.color module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.color.rgb2hsl"><code class="docutils literal notranslate"><span class="pre">rgb2hsl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.color.hsl2rgb"><code class="docutils literal notranslate"><span class="pre">hsl2rgb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.color.rgb2cym"><code class="docutils literal notranslate"><span class="pre">rgb2cym()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.color.invert_luminosity"><code class="docutils literal notranslate"><span class="pre">invert_luminosity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.color.composite"><code class="docutils literal notranslate"><span class="pre">composite()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.color.compose_overlay"><code class="docutils literal notranslate"><span class="pre">compose_overlay()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.combine_tiffs">mibidata.combine_tiffs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.combine_tiffs.merge_mibitiffs"><code class="docutils literal notranslate"><span class="pre">merge_mibitiffs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.combine_tiffs.create_mibitiffs"><code class="docutils literal notranslate"><span class="pre">create_mibitiffs()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.constants">mibidata.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.mibi_image">mibidata.mibi_image module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.panels">mibidata.panels module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.pseudodepths">mibidata.pseudodepths module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.runs">mibidata.runs module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.segmentation">mibidata.segmentation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.tiff">mibidata.tiff module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.util">mibidata.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.mibi_image">mibidata.mibi_image module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage"><code class="docutils literal notranslate"><span class="pre">MibiImage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.data"><code class="docutils literal notranslate"><span class="pre">MibiImage.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.channels"><code class="docutils literal notranslate"><span class="pre">MibiImage.channels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.kwargs"><code class="docutils literal notranslate"><span class="pre">MibiImage.kwargs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.add_attr"><code class="docutils literal notranslate"><span class="pre">MibiImage.add_attr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.remove_attr"><code class="docutils literal notranslate"><span class="pre">MibiImage.remove_attr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.pixel_size"><code class="docutils literal notranslate"><span class="pre">MibiImage.pixel_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.point_name"><code class="docutils literal notranslate"><span class="pre">MibiImage.point_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.folder"><code class="docutils literal notranslate"><span class="pre">MibiImage.folder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.fov_id"><code class="docutils literal notranslate"><span class="pre">MibiImage.fov_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.set_fov_id"><code class="docutils literal notranslate"><span class="pre">MibiImage.set_fov_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.aperture"><code class="docutils literal notranslate"><span class="pre">MibiImage.aperture</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#id0"><code class="docutils literal notranslate"><span class="pre">MibiImage.channels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.__eq__"><code class="docutils literal notranslate"><span class="pre">MibiImage.__eq__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.__getitem__"><code class="docutils literal notranslate"><span class="pre">MibiImage.__getitem__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.parse_aperture"><code class="docutils literal notranslate"><span class="pre">MibiImage.parse_aperture()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.metadata"><code class="docutils literal notranslate"><span class="pre">MibiImage.metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.channel_inds"><code class="docutils literal notranslate"><span class="pre">MibiImage.channel_inds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.slice_data"><code class="docutils literal notranslate"><span class="pre">MibiImage.slice_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.slice_image"><code class="docutils literal notranslate"><span class="pre">MibiImage.slice_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.copy"><code class="docutils literal notranslate"><span class="pre">MibiImage.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.append"><code class="docutils literal notranslate"><span class="pre">MibiImage.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.remove_channels"><code class="docutils literal notranslate"><span class="pre">MibiImage.remove_channels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.resize"><code class="docutils literal notranslate"><span class="pre">MibiImage.resize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.export_pngs"><code class="docutils literal notranslate"><span class="pre">MibiImage.export_pngs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibidata.html#mibidata.mibi_image.MibiImage.rename_targets"><code class="docutils literal notranslate"><span class="pre">MibiImage.rename_targets()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.panels">mibidata.panels module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.panels.read_csv"><code class="docutils literal notranslate"><span class="pre">read_csv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.panels.merge_masses"><code class="docutils literal notranslate"><span class="pre">merge_masses()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.pseudodepths">mibidata.pseudodepths module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.pseudodepths.divide"><code class="docutils literal notranslate"><span class="pre">divide()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.runs">mibidata.runs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.runs.parse_xml"><code class="docutils literal notranslate"><span class="pre">parse_xml()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.segmentation">mibidata.segmentation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.segmentation.extract_cell_dataframe"><code class="docutils literal notranslate"><span class="pre">extract_cell_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.segmentation.replace_labeled_pixels"><code class="docutils literal notranslate"><span class="pre">replace_labeled_pixels()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.segmentation.expand_objects"><code class="docutils literal notranslate"><span class="pre">expand_objects()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.segmentation.filter_by_size"><code class="docutils literal notranslate"><span class="pre">filter_by_size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.segmentation.get_adjacency_matrix"><code class="docutils literal notranslate"><span class="pre">get_adjacency_matrix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.tiff">mibidata.tiff module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.tiff.write"><code class="docutils literal notranslate"><span class="pre">write()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.tiff.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.tiff.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata.util">mibidata.util module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.util.encode_strings"><code class="docutils literal notranslate"><span class="pre">encode_strings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.util.decode_strings"><code class="docutils literal notranslate"><span class="pre">decode_strings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.util.natural_sort"><code class="docutils literal notranslate"><span class="pre">natural_sort()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.util.sort_channel_names"><code class="docutils literal notranslate"><span class="pre">sort_channel_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.util.format_for_filename"><code class="docutils literal notranslate"><span class="pre">format_for_filename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mibidata.html#mibidata.util.car2pol"><code class="docutils literal notranslate"><span class="pre">car2pol()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="mibidata.html#module-mibidata">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mibitracker.html">mibitracker package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="mibitracker.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker.mibitracker_exceptions">mibitracker.mibitracker_exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker.request_helpers">mibitracker.request_helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker.mibitracker_exceptions">mibitracker.mibitracker_exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibitracker.html#mibitracker.mibitracker_exceptions.MibiTrackerError"><code class="docutils literal notranslate"><span class="pre">MibiTrackerError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker.request_helpers">mibitracker.request_helpers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests"><code class="docutils literal notranslate"><span class="pre">MibiRequests</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.url"><code class="docutils literal notranslate"><span class="pre">MibiRequests.url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.session"><code class="docutils literal notranslate"><span class="pre">MibiRequests.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.refresh"><code class="docutils literal notranslate"><span class="pre">MibiRequests.refresh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.get"><code class="docutils literal notranslate"><span class="pre">MibiRequests.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.post"><code class="docutils literal notranslate"><span class="pre">MibiRequests.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.put"><code class="docutils literal notranslate"><span class="pre">MibiRequests.put()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.delete"><code class="docutils literal notranslate"><span class="pre">MibiRequests.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.download_file"><code class="docutils literal notranslate"><span class="pre">MibiRequests.download_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.search_runs"><code class="docutils literal notranslate"><span class="pre">MibiRequests.search_runs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.copy_run"><code class="docutils literal notranslate"><span class="pre">MibiRequests.copy_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.copy_run_image_metadata"><code class="docutils literal notranslate"><span class="pre">MibiRequests.copy_run_image_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.upload_mibitiff"><code class="docutils literal notranslate"><span class="pre">MibiRequests.upload_mibitiff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.upload_channel"><code class="docutils literal notranslate"><span class="pre">MibiRequests.upload_channel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.run_images"><code class="docutils literal notranslate"><span class="pre">MibiRequests.run_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.image_conjugates"><code class="docutils literal notranslate"><span class="pre">MibiRequests.image_conjugates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.image_id"><code class="docutils literal notranslate"><span class="pre">MibiRequests.image_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.get_mibi_image"><code class="docutils literal notranslate"><span class="pre">MibiRequests.get_mibi_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.get_channel_data"><code class="docutils literal notranslate"><span class="pre">MibiRequests.get_channel_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.MibiRequests.create_imageset"><code class="docutils literal notranslate"><span class="pre">MibiRequests.create_imageset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.StatusCheckedSession"><code class="docutils literal notranslate"><span class="pre">StatusCheckedSession</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.StatusCheckedSession.get"><code class="docutils literal notranslate"><span class="pre">StatusCheckedSession.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.StatusCheckedSession.options"><code class="docutils literal notranslate"><span class="pre">StatusCheckedSession.options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.StatusCheckedSession.post"><code class="docutils literal notranslate"><span class="pre">StatusCheckedSession.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.StatusCheckedSession.put"><code class="docutils literal notranslate"><span class="pre">StatusCheckedSession.put()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mibitracker.html#mibitracker.request_helpers.StatusCheckedSession.delete"><code class="docutils literal notranslate"><span class="pre">StatusCheckedSession.delete()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="mibitracker.html#module-mibitracker">Module contents</a></li>
 </ul>
 </li>
@@ -96,7 +210,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -113,7 +227,7 @@
       &copy;2021, Ionpath Inc..
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
