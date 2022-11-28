@@ -185,7 +185,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 # auto-calculated value. The auto-calculated value results in
                 # the "STRIP_OFFSETS directory entry is the wrong type" error.
                 infile.write(
-                    to_save[:, :, i], compress=6, resolution=resolution,
+                    to_save[:, :, i], compression=8, resolution=resolution,
                     extratags=page_tags, metadata=metadata, datetime=image.date,
                     software=SOFTWARE_VERSION, rowsperstrip=to_save.shape[0])
             if sed is not None:
@@ -199,11 +199,11 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 page_name = (285, 's', 0, 'SED')
                 page_tags = coordinates + [page_name]
                 infile.write(
-                    sed, compress=6, resolution=sed_resolution,
+                    sed, compression=8, resolution=sed_resolution,
                     extratags=page_tags, metadata={'image.type': 'SED'},
                     software=SOFTWARE_VERSION, rowsperstrip=sed.shape[0])
             if optical is not None:
-                infile.write(optical, compress=6, software=SOFTWARE_VERSION,
+                infile.write(optical, compression=8, software=SOFTWARE_VERSION,
                              metadata={'image.type': 'Optical'},
                              rowsperstrip=optical.shape[0])
                 label_coordinates = (
@@ -213,7 +213,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                     optical[label_coordinates[0][0]:label_coordinates[0][1],
                             label_coordinates[1][0]:label_coordinates[1][1]],
                     0, 1))
-                infile.write(slide_label, compress=6, software=SOFTWARE_VERSION,
+                infile.write(slide_label, compression=8,
+                             software=SOFTWARE_VERSION,
                              metadata={'image.type': 'Label'},
                              rowsperstrip=slide_label.shape[0])
 
@@ -234,13 +235,12 @@ def write(filename, image, sed=None, optical=None, ranges=None,
             page_tags = coordinates + [page_name, min_value, max_value]
 
             target_filename = os.path.join(
-                filename, '{}.tiff'.format(
-                    util.format_for_filename(image.targets[i])))
+                filename, f'{util.format_for_filename(image.targets[i])}.tiff')
 
             with TiffWriter(target_filename) as infile:
 
                 infile.write(
-                    to_save[:, :, i], compress=6, resolution=resolution,
+                    to_save[:, :, i], compression=8, resolution=resolution,
                     metadata=metadata, datetime=image.date,
                     extratags=page_tags, software=SOFTWARE_VERSION,
                     rowsperstrip=to_save.shape[0])
@@ -396,16 +396,17 @@ def _convert_from_previous(description):
         description['mibi.fov_name'] = description.pop('mibi.description')
     if description.get('mibi.folder') and not description.get('mibi.fov_id'):
         description['mibi.fov_id'] = description['mibi.folder'].split('/')[0]
+        desc = description["mibi.fov_id"]
         warnings.warn(
             'The "fov_id" attribute is now required if "folder" is '
-            'specified. Setting "fov_id" to {}.'.format(
-                description['mibi.fov_id']))
+            f'specified. Setting "fov_id" to {desc}.')
     if (not description.get('mibi.folder') and description.get('mibi.fov_id')
             and description.get('mibi.fov_id').startswith('FOV')):
         description['mibi.folder'] = description['mibi.fov_id']
+        desc = description['mibi.folder']
         warnings.warn(
-            'The "folder" attribute is required if "fov_id" is specified. '
-            'Setting "folder" to {}.'.format(description['mibi.folder']))
+            f'The "folder" attribute is required if "fov_id" is specified. '
+            f'Setting "folder" to {desc}.')
     if description.get('mibi.aperture'):
         description['mibi.aperture'] = mi.MibiImage.parse_aperture(
             description['mibi.aperture'])
