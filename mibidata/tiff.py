@@ -130,7 +130,7 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         save_dtype = np.uint16
         range_dtype = 'I'
 
-    to_save = image.data.astype(save_dtype)
+    to_save = image.data.astype(save_dtype, copy=False)
     if not np.all(np.equal(to_save, image.data)):
         raise ValueError('Cannot convert data from '
                          f'{image.data.dtype} to {save_dtype}')
