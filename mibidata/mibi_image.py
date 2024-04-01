@@ -754,7 +754,7 @@ class MibiImage():
         """
         # Save original size details
         original_image_shape = self.data.shape
-        original_image_size = self.size
+        original_image_size = self.size  # pylint: disable=no-member
         if not isinstance(original_image_size, (list, tuple)):
             # Originally a square
             original_image_size = [original_image_size, original_image_size]
@@ -782,11 +782,11 @@ class MibiImage():
         # Crop and recalculate size of image
         self.data = self.data[y_min:y_max, x_min:x_max, :]
         if self.data.shape[0] == self.data.shape[1]:
-            # pylint: disable=no-member,attribute-defined-outside-init
+            # pylint: disable=attribute-defined-outside-init
             self.size = original_image_size[0] * self.data.shape[1] / \
                 original_image_shape[1]
         else:
-            # pylint: disable=no-member,attribute-defined-outside-init
+            # pylint: disable=attribute-defined-outside-init
             self.size = (
                 original_image_size[0] * self.data.shape[1] / \
                     original_image_shape[1],
