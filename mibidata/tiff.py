@@ -135,9 +135,20 @@ def write(filename, image, sed=None, optical=None, ranges=None,
         (286, '2i', 1, _micron_to_cm(image.coordinates[0])),  # x-position
         (287, '2i', 1, _micron_to_cm(image.coordinates[1])),  # y-position
     ]
-    resolution = (image.data.shape[0] * 1e4 / float(image.size),
-                  image.data.shape[1] * 1e4 / float(image.size),
-                  'cm')
+    if isinstance(image.size, (tuple, list)):
+        resolution = (image.data.shape[1] * 1e4 / float(image.size[0]),  # x-resolution
+                      image.data.shape[0] * 1e4 / float(image.size[1]),  # y-resolution
+                      'cm')
+    elif image.data.shape[0] != image.data.shape[1]:
+        # Size is assumed to be square, but the dimensions of the image are not
+        raise ValueError('Non-square images must be given a tuple for size in '
+                         'um dimensions (x-um-size, y-um-size). Provided size '
+                         f'of {image.size} is incompatible')
+    else:
+        # Image is a square
+        resolution = (image.data.shape[1] * 1e4 / float(image.size),  # x-resolution
+                      image.data.shape[0] * 1e4 / float(image.size),  # y-resolution
+                      'cm')
 
     # The mibi. prefix is added to attributes defined in the spec.
     # Other user-defined attributes are included too but without the prefix.
@@ -181,8 +192,8 @@ def write(filename, image, sed=None, optical=None, ranges=None,
                 if sed.ndim > 2:
                     sed = sed[:, :, 0]
 
-                sed_resolution = (sed.shape[0] * 1e4 / float(image.size),
-                                  sed.shape[1] * 1e4 / float(image.size),
+                sed_resolution = (sed.shape[1] * 1e4 / float(image.size),
+                                  sed.shape[0] * 1e4 / float(image.size),
                                   'cm')
 
                 page_name = (285, 's', 0, 'SED')
@@ -344,9 +355,18 @@ def _page_metadata(page, description):
                    page.tags['x_resolution'].value[1]
     y_resolution = page.tags['y_resolution'].value[0] / \
                    page.tags['y_resolution'].value[1]
+    # Asserts that the scaling of pixels to distance-length the x and y
+    # dimension are the same. This does not mean that the number of pixels in
+    # each direction is the same.
     assert x_resolution == y_resolution, \
-        'x-resolution and y-resolution are not equal'
-    size = page.tags['image_width'].value / x_resolution * 1e4
+        f'x-resolution ({x_resolution}) and y-resolution ({y_resolution}) are not equal'
+    x_size = page.tags['image_width'].value / x_resolution * 1e4
+    y_size = page.tags['image_length'].value / y_resolution * 1e4
+    if x_size == y_size:
+        size = x_size
+    else:
+        size = [x_size, y_size]
+
     date = datetime.datetime.strptime(
         page.tags['datetime'].value.decode(ENCODING),
         _DATETIME_FORMAT)

@@ -735,3 +735,52 @@ class MibiImage():
             else:
                 existing[index] = channel_map[key]
         self.channels = existing
+    
+    def crop_image(self, x_min=0, x_max=None, y_min=0, y_max=None):
+        """Crops the image data and recalculates image size
+        
+        Args:
+            x_min: X-index to start the crop from (left side, inclusive). If
+                no value provided, image will not crop any pixels on the left
+                side.
+            x_max: X-index to stop the crop at (right side, non-inclusive). If
+                no value provided, image will not crop any pixels on the right
+                side.
+            y_min: Y-index to start the crop from (top side, inclusive). If no
+                value provided, image will not crop any pixels on the top side.
+            y_max: Y-index to stop the crop at (bottom side, non-inclusive). If
+                no value provided, image will not crop any pixels on the bottom
+                side.
+        """
+        # Save original size details
+        original_image_shape = self.data.shape
+        original_image_size = self.size
+        if not isinstance(original_image_size, (list, tuple)):
+            # Originally a square
+            original_image_size = [original_image_size, original_image_size]
+        
+        # Check x_min and y_min
+        if x_min < 0 or x_min > original_image_shape[1]:
+            raise ValueError(f'x_min must be within 0 and {original_image_shape[1] - 1}')
+        if y_min < 0 or y_min > original_image_shape[0]:
+            raise ValueError(f'y_min must be within 0 and {original_image_shape[0] - 1}')
+
+        # Check x_max and y_max
+        if x_max is None:
+            x_max = original_image_shape[1]
+        elif x_max <= x_min or x_max > original_image_shape[1]:
+            raise ValueError(f'x_max must be within {x_min + 1} and {original_image_shape[1]}')
+        if y_max is None:
+            y_max = original_image_shape[0]
+        elif y_max <= y_min or y_max > original_image_shape[0]:
+            raise ValueError(f'y_max must be within {y_min + 1} and {original_image_shape[0]}')
+
+        # Crop and recalculate size of image
+        self.data = self.data[y_min:y_max, x_min:x_max, :]
+        if self.data.shape[0] == self.data.shape[1]:
+            self.size = original_image_size[0] * self.data.shape[1] / original_image_shape[1]
+        else:
+            self.size = (
+                original_image_size[0] * self.data.shape[1] / original_image_shape[1],
+                original_image_size[1] * self.data.shape[0] / original_image_shape[0]
+            )
