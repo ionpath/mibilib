@@ -752,9 +752,6 @@ class MibiImage():
                 no value provided, image will not crop any pixels on the bottom
                 side.
         """
-        if not self.size:
-            raise ValueError('Unable to crop if size does not exist')
-
         # Save original size details
         original_image_shape = self.data.shape
         original_image_size = self.size
@@ -785,11 +782,11 @@ class MibiImage():
         # Crop and recalculate size of image
         self.data = self.data[y_min:y_max, x_min:x_max, :]
         if self.data.shape[0] == self.data.shape[1]:
-            # pylint: disable-next=attribute-defined-outside-init
+            # pylint: disable=no-member,attribute-defined-outside-init
             self.size = original_image_size[0] * self.data.shape[1] / \
                 original_image_shape[1]
         else:
-            # pylint: disable-next=attribute-defined-outside-init
+            # pylint: disable=no-member,attribute-defined-outside-init
             self.size = (
                 original_image_size[0] * self.data.shape[1] / \
                     original_image_shape[1],
