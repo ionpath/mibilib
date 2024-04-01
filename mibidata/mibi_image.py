@@ -787,6 +787,7 @@ class MibiImage():
             self.size = original_image_size[0] * self.data.shape[1] / \
                 original_image_shape[1]
         else:
+            # pylint: disable=attribute-defined-outside-init
             self.size = (
                 original_image_size[0] * self.data.shape[1] / \
                     original_image_shape[1],
