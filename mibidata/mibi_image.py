@@ -787,10 +787,9 @@ class MibiImage():
             self.size = original_image_size[0] * self.data.shape[1] / \
                 original_image_shape[1]
         else:
+            x_size = original_image_size[0] * self.data.shape[1] / \
+                original_image_shape[1]
+            y_size = original_image_size[1] * self.data.shape[0] / \
+                original_image_shape[0]
             # pylint: disable=attribute-defined-outside-init
-            self.size = (
-                original_image_size[0] * self.data.shape[1] / \
-                    original_image_shape[1],
-                original_image_size[1] * self.data.shape[0] / \
-                    original_image_shape[0]
-            )  # pylint: disable=attribute-defined-outside-init
+            self.size = (x_size, y_size)
