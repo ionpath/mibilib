@@ -1,11 +1,7 @@
 """ Script for creating a stitched ROI MIBItiff from a folder of FOVs
 """
 
-from mibiprism.structure.file_path_templates import *
-from mibiprism.structure import file_path_templates
-from mibiprism.utils import gcs
 import numpy as np
-import pandas as pd
 import os
 from mibidata import mibi_image as mi
 from mibitracker.request_helpers import MibiRequests
@@ -14,7 +10,7 @@ import time
 from mibidata import tiff
 import json
 
-MAX_TRIES = 20
+MAX_TRIES = 10
 
 
 def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
@@ -27,8 +23,8 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
 
     panel = None
     out_img = None
-    for i,roi_fov_path in enumerate(roi_fov_paths):
-        print(roi_fov_path)
+    for fov_i,roi_fov_path in enumerate(roi_fov_paths):
+        print(fov_i+1,roi_fov_path)
 
         fov_img = tiff.read(roi_fov_path)
         panel = fov_img.channels
@@ -36,68 +32,28 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
 
         img_shape = list(np.shape(fov_img))
         ch_count = np.min(img_shape)
-        if img_shape[-1] == ch_count:
-            shape_2d = img_shape[:-1]
-            ch_last = True
-        elif img_shape[0] == ch_count:
-            shape_2d = img_shape[1:]
-            ch_last = False
-        print("fov shape",np.shape(fov_img))
+        shape_2d = img_shape[:-1]
 
         if out_img is None:
-            if img_shape[-1] == ch_count:
-                out_img = np.zeros(
-                    (h*shape_2d[0], w*shape_2d[1], ch_count), dtype=fov_img.dtype)
-            elif img_shape[0] == ch_count:
-                out_img = np.zeros((ch_count, h*shape_2d[0], w*shape_2d[1]), dtype=fov_img.dtype)
-
+            out_img = np.zeros((h*shape_2d[0], w*shape_2d[1], ch_count), dtype=fov_img.dtype)
             out_img_shape = list(np.shape(out_img))
-            print("out shape",out_img_shape)
 
-        if ch_last:
-            print("ch last")
-            for i in range(ch_count):
-                out_img[((rows[i]-1)*shape_2d[0]):(rows[i]*shape_2d[0]), 
-                        ((cols[i]-1)*shape_2d[1]):(cols[i]*shape_2d[1]), i] = fov_img[:,:,i]
-        else:
-            print("ch first")
-            for i in range(ch_count):
-                out_img[i, 
-                        ((rows[i]-1)*shape_2d[0]):(rows[i]*shape_2d[0]), 
-                        ((cols[i]-1)*shape_2d[1]):(cols[i]*shape_2d[1])] = fov_img[i,:,:]
+        for ch_i in range(ch_count):
+            out_img[((rows[fov_i]-1)*shape_2d[0]):(rows[fov_i]*shape_2d[0]), 
+                    ((cols[fov_i]-1)*shape_2d[1]):(cols[fov_i]*shape_2d[1]), ch_i] = fov_img[:,:,ch_i]
     
     if enforce_square:
-        if ch_last:
-            if out_img_shape[0] > out_img_shape[1]:
-                out_img = np.pad(out_img,((0,0),(0,out_img_shape[0]-out_img_shape[1]),(0,0)))
-            elif out_img_shape[0] < out_img_shape[1]:
-                out_img = np.pad(out_img,((0,out_img_shape[1]-out_img_shape[0]),(0,0),(0,0)))
-        else:
-            if out_img_shape[-2] > out_img_shape[-1]:
-                out_img = np.pad(out_img,((0,0),(0,0),(0,out_img_shape[-2]-out_img_shape[-1])))
-            elif out_img_shape[-2] < out_img_shape[-1]:
-                out_img = np.pad(out_img,((0,0),(0,out_img_shape[-1]-out_img_shape[-2]),(0,0)))
+        if out_img_shape[0] > out_img_shape[1]:
+            out_img = np.pad(out_img,((0,0),(0,out_img_shape[0]-out_img_shape[1]),(0,0)))
+        elif out_img_shape[0] < out_img_shape[1]:
+            out_img = np.pad(out_img,((0,out_img_shape[1]-out_img_shape[0]),(0,0),(0,0)))
         
-    print("padded shape",np.shape(out_img))
-
     return out_img.astype(out_img.dtype, copy=False), panel, int(max(w*shape_2d[1], h*shape_2d[0]))
-
-    
-def invert_dict(d):
-    n = OrderedDict({})
-    for k, v in d.items():
-        if v not in n:
-            n[v] = [k]
-        else:
-            n[v].append(k)
-    return n
 
 
 def run_task(fov_paths, out_path, session_dict, mt_upload):
-    "fov-01-ROI01_C01_R03.tiff"
     unique_rois = np.unique([os.path.basename(p).split("-")[-1].split(".tiff")[0].split("_")[0] for p in fov_paths])
     roi_path_groups = dict([(u,[p for p in fov_paths if u in p]) for u in unique_rois])
-
     mr = None
     for t in range(MAX_TRIES):
         try:
@@ -112,22 +68,21 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
     for roi,roi_fov_paths in roi_path_groups.items():
         print(roi)
 
-        # find the combining params
         cols = []
         rows = []
         for fov_path in roi_fov_paths:
             fov_name = os.path.basename(fov_path).split("-")[-1].split(".tiff")[0]
-            _, c, r = fov_name.split("_")
+            c, r = fov_name.split("_")[1:]
             cols.append(int(c[1:].lstrip("0")))
             rows.append(int(r[1:].lstrip("0")))
 
         out_img, panel, max_dim = combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square=True)
         out_img = out_img.astype(np.uint8, copy=False)
 
-        "fov-04-scan-1.json"
         um_min_x, um_min_y = 999999999, 999999999
         for fov_path in roi_fov_paths:
-            json_file = "-".join(roi_fov_paths.split("-")[:2])+"-scan-1.json"
+            
+            json_file = os.path.dirname(fov_path)+"/"+"-".join(os.path.basename(fov_path).split("-")[:2])+"-scan-1.json"
             with open(json_file) as f:
                 bin_json = json.load(f)
                 coord = bin_json["coordinates"]
@@ -136,8 +91,9 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
                 if coord["y"] < um_min_y:
                     um_min_y = coord["y"]
 
-        run = os.path.dirname(roi_fov_paths)
-        fov = "FOV"+os.path.basename(roi_fov_paths).split("-")[1]
+        run = os.path.basename(os.path.dirname(roi_fov_paths[0]))
+        fov = "FOV"+os.path.basename(roi_fov_paths[0]).split("-")[1]
+        print(run, fov)
         
         for t in range(MAX_TRIES):
             try:
@@ -202,13 +158,13 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
 
         out_mibi_tiff = mi.MibiImage(
             out_img, panel, datetime_format='%Y-%m-%d', **metadata)
-        print("out_mibi_tiff as mibitiff success")
 
         f_split = out_mibi_tiff.folder.split('/')
         f_split[0] = sample_id
         out_mibi_tiff.set_fov_id(f_split[0], '/'.join(f_split))
 
         tiff.write(out_path, out_mibi_tiff, dtype=np.float32)
+        print(f"Stitched MIBItiff saved to {out_path}.")
 
         if mt_upload:
             for t in range(MAX_TRIES):
@@ -265,7 +221,6 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
                         else:
                             _ = mr.post('/images/', json=new_im_metadata)
 
-        
             for t in range(MAX_TRIES):
                 try:
                     mr.upload_mibitiff(out_path, run_id=ref_json['run']['id'])
@@ -275,14 +230,15 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
                         time.sleep(0.50)
                     else:
                         mr.upload_mibitiff(out_path, run_id=ref_json['run']['id'])
-            print("mibi_tiff_buf upload to mibitracker success")
+            
+            print(f"Stitched MIBItiff, {out_path} uploaded to MIBItracker.")
                         
 
 if __name__ == "__main__":
 
-    fovs_folder = "/Users/mnagy/projects/stitch_script_test/images"
-    out_path = "/Users/mnagy/projects/stitch_script_test/image.tiff"
-    cmd = f'ls "{fovs_folder}"'
+    fovs_folder = "/Users/mnagy/projects/stitch_script_test/2024-04-29T10-07-46_gold_tonsil_3x3_coarse_ROI"
+    out_path = "/Users/mnagy/projects/stitch_script_test/2024-04-29T10-07-46_gold_tonsil_3x3_coarse_ROI.tiff"
+    cmd = f'ls {fovs_folder}/*.tiff'
     fov_paths = os.popen(cmd).read().strip().split("\n")
     try:
         fov_paths.remove("")
@@ -290,11 +246,11 @@ if __name__ == "__main__":
         pass
 
     session_dict = {
-        "url": "",  # MIBItracker backend URL
+        "url": "https://mibitracker.api.ionpath.com/",  # MIBItracker backend URL
         "email": "",  # User name
         "password": ""  # User password
     }
-    mt_upload = False
+    mt_upload = True
 
     run_task(fov_paths, out_path, session_dict, mt_upload)
 
