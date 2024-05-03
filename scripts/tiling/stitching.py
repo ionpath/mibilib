@@ -5,7 +5,6 @@ import numpy as np
 import os
 from mibidata import mibi_image as mi
 from mibitracker.request_helpers import MibiRequests
-from collections import OrderedDict
 import time
 from mibidata import tiff
 import json
@@ -38,9 +37,8 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
             out_img = np.zeros((h*shape_2d[0], w*shape_2d[1], ch_count), dtype=fov_img.dtype)
             out_img_shape = list(np.shape(out_img))
 
-        for ch_i in range(ch_count):
-            out_img[((rows[fov_i]-1)*shape_2d[0]):(rows[fov_i]*shape_2d[0]), 
-                    ((cols[fov_i]-1)*shape_2d[1]):(cols[fov_i]*shape_2d[1]), ch_i] = fov_img[:,:,ch_i]
+        out_img[((rows[fov_i]-1)*shape_2d[0]):(rows[fov_i]*shape_2d[0]), 
+                ((cols[fov_i]-1)*shape_2d[1]):(cols[fov_i]*shape_2d[1]), :] = fov_img[:,:,:]
     
     if enforce_square:
         if out_img_shape[0] > out_img_shape[1]:
@@ -132,10 +130,10 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
             'run': '{}'.format(ref_json['run']['label']),
             'date': ref_json['run']['run_date'],
             'coordinates': (um_min_x, um_min_y),
-            'size': max_dim/px_per_u,  # issue: assumption that w==h doens't hold
+            'size': max_dim/px_per_u,  # issue: assumption that w==h doesn't hold
             'slide': ref_json['section']['slide']['id'],
             'fov_name': sample_id,
-            'frame': max_dim,  # issue: assumption that w==h doens't hold
+            'frame': max_dim,  # issue: assumption that w==h doesn't hold
             'folder': folder_name,
             'fov_id': f_split[0],
             # assumption that all fovs are same
