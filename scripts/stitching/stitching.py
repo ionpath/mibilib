@@ -8,11 +8,12 @@ from mibitracker.request_helpers import MibiRequests
 import time
 from mibidata import tiff
 import json
+import glob
 
 MAX_TRIES = 10
 
 
-def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
+def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square=False):
     min_col = np.min(cols)
     min_row = np.min(rows)
     cols=[v-min_col+1 for v in cols]
@@ -40,7 +41,7 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
         out_img[((rows[fov_i]-1)*shape_2d[0]):(rows[fov_i]*shape_2d[0]), 
                 ((cols[fov_i]-1)*shape_2d[1]):(cols[fov_i]*shape_2d[1]), :] = fov_img[:,:,:]
     
-    if enforce_square:
+    if enforce_square:  # Set to True if there is a need to pad the image to be a square
         if out_img_shape[0] > out_img_shape[1]:
             out_img = np.pad(out_img,((0,0),(0,out_img_shape[0]-out_img_shape[1]),(0,0)))
         elif out_img_shape[0] < out_img_shape[1]:
@@ -49,7 +50,8 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square):
     return out_img.astype(out_img.dtype, copy=False), panel, int(max(w*shape_2d[1], h*shape_2d[0]))
 
 
-def run_task(fov_paths, out_path, session_dict, mt_upload):
+def stitch_fovs(fovs_folder, out_path, session_dict, upload_to_mibitracker):
+    fov_paths = glob.glob(f'{fovs_folder}/*.tiff')
     unique_rois = np.unique([os.path.basename(p).split("-")[-1].split(".tiff")[0].split("_")[0] for p in fov_paths])
     roi_path_groups = dict([(u,[p for p in fov_paths if u in p]) for u in unique_rois])
     mr = None
@@ -74,7 +76,7 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
             cols.append(int(c[1:].lstrip("0")))
             rows.append(int(r[1:].lstrip("0")))
 
-        out_img, panel, max_dim = combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square=True)
+        out_img, panel, max_dim = combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square=False)
         out_img = out_img.astype(np.uint8, copy=False)
 
         um_min_x, um_min_y = 999999999, 999999999
@@ -164,7 +166,7 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
         tiff.write(out_path, out_mibi_tiff, dtype=np.float32)
         print(f"Stitched MIBItiff saved to {out_path}.")
 
-        if mt_upload:
+        if upload_to_mibitracker:
             for t in range(MAX_TRIES):
                 try:
                     exists = mr.get(
@@ -234,21 +236,14 @@ def run_task(fov_paths, out_path, session_dict, mt_upload):
 
 if __name__ == "__main__":
 
-    fovs_folder = "/Users/mnagy/projects/stitch_script_test/2024-04-29T10-07-46_gold_tonsil_3x3_coarse_ROI"
-    out_path = "/Users/mnagy/projects/stitch_script_test/2024-04-29T10-07-46_gold_tonsil_3x3_coarse_ROI.tiff"
-    cmd = f'ls {fovs_folder}/*.tiff'
-    fov_paths = os.popen(cmd).read().strip().split("\n")
-    try:
-        fov_paths.remove("")
-    except:
-        pass
-
+    fovs_folder = ""  # Local folder path with the original Run name and contents
+    out_path = ""  # Local file path to save the stitched MIBItiff into
     session_dict = {
-        "url": "https://mibitracker.api.ionpath.com/",  # MIBItracker backend URL
-        "email": "",  # User name
-        "password": ""  # User password
+        "url": "",  # MIBItracker backend URL (ex: https://mibitracker.api.ionpath.com/)
+        "email": "",  # MIBItracker user name
+        "password": ""  # MIBItrackefr user password
     }
-    mt_upload = True
+    upload_to_mibitracker = False  # Set to True to upload the resulting stitched MIBItiff to MIBItracker 
 
-    run_task(fov_paths, out_path, session_dict, mt_upload)
+    stitch_fovs(fovs_folder, out_path, session_dict, upload_to_mibitracker)
 
