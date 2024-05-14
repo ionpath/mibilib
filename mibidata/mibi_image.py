@@ -746,7 +746,8 @@ class MibiImage():
         if isinstance(size, (tuple, list)):
             # size is represented in (width, length). data.shape is represented in
             # (rows, columns)
-            assert size[0] / size[1] == self.data.shape[1] / self.data.shape[0]
+            assert round(size[0] / size[1], 7) == \
+                round(self.data.shape[1] / self.data.shape[0], 7)
         else:
             # If size was not a tuple, the image was a square. data.shape is represented
             # in (rows, columns)
