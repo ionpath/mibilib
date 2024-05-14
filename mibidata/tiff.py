@@ -376,8 +376,8 @@ def _page_metadata(page, description):
     assert x_resolution == y_resolution, (f'x-resolution ({x_resolution}) and '
                                           f'y-resolution ({y_resolution}) are '
                                           'not equal')
-    x_size = page.tags['image_width'].value / x_resolution * 1e4
-    y_size = page.tags['image_length'].value / y_resolution * 1e4
+    x_size = page.tags['ImageWidth'].value / x_resolution * 1e4
+    y_size = page.tags['ImageLength'].value / y_resolution * 1e4
     if x_size == y_size:
         size = x_size
     else:
