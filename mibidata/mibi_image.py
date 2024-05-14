@@ -731,3 +731,25 @@ class MibiImage():
             else:
                 existing[index] = channel_map[key]
         self.channels = existing
+
+    def set_image_size(self, size):
+        """Set the image size in µm.
+        
+        Args:
+            size: Can be either a float (if the image is square), or a tuple of
+                floats representing the (width, length) of the image in µm.
+
+        Raises:
+            AssertionError: Raised if the ratios between `width / length` do
+                not match `num_pixels_x / num_pixels_y`
+        """
+        if isinstance(size, (tuple, list)):
+            # size is represented in (width, length). data.shape is represented in
+            # (rows, columns)
+            assert size[0] / size[1] == self.data.shape[1] / self.data.shape[0]
+        else:
+            # If size was not a tuple, the image was a square. data.shape is represented
+            # in (rows, columns)
+            assert self.data.shape[1] == self.data.shape[0]
+
+        self.size = size
