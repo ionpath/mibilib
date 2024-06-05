@@ -107,6 +107,8 @@ def stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker, fov
 
             out_mibi_tiff = mi.MibiImage(
                 out_img, panel, datetime_format='%Y-%m-%d', **metadata)
+            if dims[0] != dims[1]:  # non-square
+                out_mibi_tiff.set_image_size((dims[0], dims[1]))
             
             f_split = out_mibi_tiff.folder.split('/')
             f_split[0] = roi
