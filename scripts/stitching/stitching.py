@@ -17,8 +17,8 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square=False, marg
     min_row = np.min(rows)
     cols=[v-min_col+1 for v in cols]
     rows=[v-min_row+1 for v in rows]
-    w = np.max(cols)
-    h = np.max(rows)
+    w = int(np.max(cols))
+    h = int(np.max(rows))
 
     panel = None
     out_img = None
@@ -32,7 +32,7 @@ def combine_entity_by_name(roi_fov_paths, cols, rows, enforce_square=False, marg
 
         img_shape = list(np.shape(fov_img))
         ch_count = np.min(img_shape)
-        shape_2d = img_shape[:-1]
+        shape_2d = [int(v) for v in img_shape[:-1]]
 
         if out_img is None:
             out_img = np.zeros((h*shape_2d[0]+(h-1)*margin["y"], w*shape_2d[1]+(w-1)*margin["x"], ch_count), 
@@ -59,7 +59,7 @@ def stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker, fov
     with open(run_json_file) as rf:
         run_json = json.load(rf)
         for r in run_json["rois"]:
-            if r["standardTarget"] in ["Auto Gain"]:
+            if r["standardTarget"] in ["Auto Gain", "Molybdenum Foil"]:
                 continue
             roi = r["name"]
             if isinstance(r["fovSizeMicrons"],(tuple,list)):  # image is non-square
@@ -81,6 +81,8 @@ def stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker, fov
             um_min_x, um_min_y = 999999999, 999999999
             roi_fov_paths=[]
             for f in r["fovs"]:
+                if not f["enabled"]:
+                    continue
                 fov_name = f["name"]
                 cols.append(f["gridPosition"]["x"]+1)
                 rows.append(f["gridPosition"]["y"]+1)
@@ -92,23 +94,24 @@ def stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker, fov
                 roi_fov_paths.append(os.path.join(run_folder,"fov"+"-"+str(f["runOrder"]).zfill(2)+"-"+fov_name)+".tiff")
         
             print(run, roi, f"{len(roi_fov_paths)} FOVs")
-            out_img, panel, dims, ref_metadata = combine_entity_by_name(roi_fov_paths, cols, rows, 
-                                                                        enforce_square=enforce_square, 
-                                                                        margin=margin)
+            try:
+                out_img, panel, dims, ref_metadata = combine_entity_by_name(roi_fov_paths, cols, rows, 
+                                                                            enforce_square=enforce_square, 
+                                                                            margin=margin)
+            except:
+                continue
             out_img = out_img.astype(np.uint8, copy=False)
 
             metadata = ref_metadata.copy()
             metadata["coordinates"] = (um_min_x, um_min_y)
-            if dims[0] != dims[1]:  # non-square
-                metadata["size"] = (dims[0]/px_per_u, dims[1]/px_per_u)
-            else:  # square
-                metadata["size"] = dims[0]/px_per_u
             metadata["fov_name"] = roi
 
             out_mibi_tiff = mi.MibiImage(
                 out_img, panel, datetime_format='%Y-%m-%d', **metadata)
             if dims[0] != dims[1]:  # non-square
-                out_mibi_tiff.set_image_size((dims[0], dims[1]))
+                out_mibi_tiff.set_image_size((dims[0]/px_per_u, dims[1]/px_per_u))
+            else:  # square
+                out_mibi_tiff.set_image_size(dims[0]/px_per_u)
             
             f_split = out_mibi_tiff.folder.split('/')
             f_split[0] = roi
@@ -159,16 +162,16 @@ def stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker, fov
                 new_im_metadata['point'] = roi
                 new_im_metadata['number'] = out_mibi_tiff.fov_id
                 new_im_metadata['folder'] = out_mibi_tiff.folder
-                if dims[0] != dims[1]:  # non-square
-                    new_im_metadata["fov_size"] = (dims[0]/px_per_u, dims[1]/px_per_u)
-                else:  # square
-                    new_im_metadata["fov_size"] = dims[0]/px_per_u
+                # if dims[0] != dims[1]:  # non-square: to be used in MT 2.0
+                #     new_im_metadata["fov_size"] = (dims[0]/px_per_u, dims[1]/px_per_u)
+                # else:  # square
+                new_im_metadata["fov_size"] = dims[0]/px_per_u
                 new_im_metadata['dwell_time'] = metadata['dwell']
                 new_im_metadata['depths'] = metadata['scans']
-                if dims[0] != dims[1]:  # non-square
-                    new_im_metadata["frame"] = (dims[0], dims[1])
-                else:  # square
-                    new_im_metadata["frame"] = dims[0]
+                # if dims[0] != dims[1]:  # non-square: to be used in MT 2.0
+                #     new_im_metadata["frame"] = (dims[0], dims[1])
+                # else:  # square
+                new_im_metadata["frame"] = dims[0]
                 new_im_metadata['time_bin'] = metadata['time_resolution']
                 new_im_metadata['mass_gain'] = metadata['mass_gain']
                 new_im_metadata['mass_offset'] = metadata['mass_offset']
@@ -223,10 +226,9 @@ if __name__ == "__main__":
     session_dict = {  # Only needed if uploading to MIBItracker
         "url": "",  # MIBItracker backend URL (ex: https://mibitracker.api.ionpath.com/)
         "email": "",  # MIBItracker user name
-        "password": ""  # MIBItrackefr user password
+        "password": ""  # MIBItracker user password
     }
     fov_margin_size = None  # Sets the margin size in pixels when defined (int, list [x,y], or dict {x:0,y:0}); Leave as None to use as defined during imaging Run
     enforce_square = False  # Set to True to pad the stitched image to be padded with blank space to make it square
 
     stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker, fov_margin_size, enforce_square)
-
