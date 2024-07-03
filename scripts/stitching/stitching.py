@@ -199,7 +199,7 @@ def stitch_fovs(run_folder, out_folder, session_dict, upload_to_mibitracker,
             if not full_id:
                 for t in range(MAX_TRIES):
                     try:
-                        _ = mr.post('/images/', json=new_im_metadata)
+                        mr.post('/images/', json=new_im_metadata)
                         break
                     except:
                         if t < MAX_TRIES-1:
