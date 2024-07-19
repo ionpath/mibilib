@@ -187,9 +187,9 @@ class TestSegmentation(unittest.TestCase):
         second_total = [1, 3]
         # Check coords and areas only
         expected_from_labels = pd.DataFrame(
-            np.array([areas, x_centroids, y_centroids]).T,
+            np.array([areas, x_centroids, y_centroids]).T.astype(np.int64),
             columns=['area', 'x_centroid', 'y_centroid'],
-            index=pd.Index(labels, name='label'))
+            index=pd.Index(labels, name='label', dtype=np.int32))
         pdt.assert_frame_equal(
             segmentation.extract_cell_dataframe(cell_labels),
             expected_from_labels)
@@ -272,13 +272,13 @@ class TestSegmentation(unittest.TestCase):
             [1, 1, 3, 3],
             [4, 4, 3, 3],
             [0, 4, 3, 3]
-        ])
+        ], dtype=np.int64)
         expected = np.array([
             [0, 1, 1, 0],
             [1, 1, 0, 0],
             [2, 2, 0, 0],
             [0, 2, 0, 0]
-        ])
+        ], dtype=np.int64)
         df = segmentation.extract_cell_dataframe(expected)
         filtered_image, filtered_df = segmentation.filter_by_size(
             cell_labels, 3, 5)

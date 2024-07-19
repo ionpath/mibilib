@@ -104,7 +104,7 @@ class MibiRequests():
                 'Provide either both an email and password or a token'
             )
 
-        retry = Retry(status=retries, method_whitelist=retry_methods,
+        retry = Retry(status=retries, allowed_methods=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
         # Set this session to use these retry settings for all http[s] requests
         self.session.mount('http://', HTTPAdapter(max_retries=retry))
