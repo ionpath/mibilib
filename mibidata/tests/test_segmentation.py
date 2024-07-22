@@ -189,7 +189,7 @@ class TestSegmentation(unittest.TestCase):
         expected_from_labels = pd.DataFrame(
             np.array([areas, x_centroids, y_centroids]).T.astype(np.int64),
             columns=['area', 'x_centroid', 'y_centroid'],
-            index=pd.Index(labels, name='label', dtype=np.int32))
+            index=pd.Index(labels, name='label', dtype=np.int64))
         pdt.assert_frame_equal(
             segmentation.extract_cell_dataframe(cell_labels),
             expected_from_labels)
