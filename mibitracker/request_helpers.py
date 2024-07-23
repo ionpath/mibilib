@@ -142,7 +142,7 @@ class MibiRequests():
     @staticmethod
     def _prepare_route(route):
         if not route.startswith('/'):
-            return '/{route}'
+            return f'/{route}'
         return route
 
     def get(self, route, *args, **kwargs):
