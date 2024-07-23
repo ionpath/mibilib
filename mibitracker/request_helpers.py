@@ -584,7 +584,7 @@ class MibiRequests():
         Return:
             A MibiImage instance of the requested image.
         """
-        image_info = self.get(f'images/{image_id}/')
+        image_info = self.get(f'images/{image_id}/').json()
         tiff_path = '/'.join((image_info['run']['path'], image_info['folder'],
                               'summed_image.tiff'))
         tiff_data = self.download_file(tiff_path)
