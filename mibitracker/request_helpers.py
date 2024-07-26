@@ -288,7 +288,7 @@ class MibiRequests():
             'project': data['project'] and data['project']['id'],  # optional
             'description': data['description'],
             'operator': data['operator'],  # Not yet used, but field exists
-            'user_run_date': f'{data['run_date']}T00:00:00',
+            'user_run_date': f"{data['run_date']}T00:00:00",
         }
         # The old run date supercedes the possibly-missing date in the xml
         # A timestamp is temporarily added for the JSON encoded but will be
@@ -327,7 +327,7 @@ class MibiRequests():
 
             # Get image from copied run
             response = self.get(
-                f'/images/?run__label={new_run_label}&folder={item['folder']}'
+                f"/images/?run__label={new_run_label}&folder={item['folder']}"
                 '&paging=no')
             assert len(response.json()) == 1
             new_image = response.json()[0]
@@ -382,7 +382,7 @@ class MibiRequests():
                 headers.update({'content-type': 'application/json'})
 
             response = self.put(
-                f'/images/{new_image['id']}/',
+                f"/images/{new_image['id']}/",
                 files=files,
                 data=data,
                 headers=headers
