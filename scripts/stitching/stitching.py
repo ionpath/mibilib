@@ -9,6 +9,8 @@ import time
 
 import numpy as np
 
+sys.path.append('../..')
+
 from mibidata import mibi_image as mi
 from mibidata import tiff
 from mibitracker.request_helpers import MibiRequests
