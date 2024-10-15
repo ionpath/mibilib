@@ -1,7 +1,6 @@
 """Helper class for making and retrying requests to the MIBItracker.
 
 Copyright (C) 2021 Ionpath, Inc.  All rights reserved."""
-
 import datetime
 import io
 import json
@@ -94,7 +93,7 @@ class MibiRequests():
         # The token will be used in lieu of email and password if provided
         if token is not None:
             self.session.headers.update({
-                'Authorization': 'JWT {}'.format(token)
+                'Authorization': f'JWT {token}'
             })
             self.session.options(self.url)
         elif email is not None and password is not None:
@@ -104,7 +103,7 @@ class MibiRequests():
                 'Provide either both an email and password or a token'
             )
 
-        retry = Retry(status=retries, method_whitelist=retry_methods,
+        retry = Retry(status=retries, allowed_methods=retry_methods,
                       status_forcelist=retry_codes, backoff_factor=0.3)
         # Set this session to use these retry settings for all http[s] requests
         self.session.mount('http://', HTTPAdapter(max_retries=retry))
@@ -113,24 +112,24 @@ class MibiRequests():
     def _auth(self, url, email, password):
         """Adds an authorization token to the session's default header."""
         response = self.session.post(
-            '{}/api-token-auth/'.format(url),
+            f'{url}/api-token-auth/',
             headers={'content-type': 'application/json'},
             data=json.dumps({'email': email, 'password': password}))
         token = response.json()['token']
-        self.session.headers.update({'Authorization': 'JWT {}'.format(token)})
+        self.session.headers.update({'Authorization': f'JWT {token}'})
 
     def refresh(self):
         """Refreshes the authorization token stored in the session header.
 
         Raises HTTP 400 if attempting to refresh an expired token."""
         token = self.session.post(  # use the session to avoid recursion
-            '{}/api-token-refresh/'.format(self.url),
+            f'{self.url}/api-token-refresh/',
             data=json.dumps(
                 {'token': self.session.headers['Authorization'][4:]}
             ),
             headers={'content-type': 'application/json'},
         ).json()['token']
-        self.session.headers.update({'Authorization': 'JWT {}'.format(token)})
+        self.session.headers.update({'Authorization': f'JWT {token}'})
 
     def _check_refresh(self):
         current_time = datetime.datetime.now()
@@ -143,7 +142,7 @@ class MibiRequests():
     @staticmethod
     def _prepare_route(route):
         if not route.startswith('/'):
-            return '/{}'.format(route)
+            return f'/{route}'
         return route
 
     def get(self, route, *args, **kwargs):
@@ -159,8 +158,8 @@ class MibiRequests():
             The response from ``requests.Session.get``.
         """
         self._check_refresh()
-        return self.session.get('{}{}'.format(
-            self.url, self._prepare_route(route)), *args, **kwargs)
+        return self.session.get(f'{self.url}{self._prepare_route(route)}',
+                                *args, **kwargs)
 
     def post(self, route, *args, **kwargs):
         """Makes a POST request to the url using the session.
@@ -174,8 +173,8 @@ class MibiRequests():
             The response from ``requests.Session.post``.
         """
         self._check_refresh()
-        return self.session.post('{}{}'.format(
-            self.url, self._prepare_route(route)), *args, **kwargs)
+        return self.session.post(f'{self.url}{self._prepare_route(route)}',
+                                 *args, **kwargs)
 
     def put(self, route, *args, **kwargs):
         """Makes a PUT request to the url using the session.
@@ -189,8 +188,8 @@ class MibiRequests():
             The response from ``requests.Session.put``.
         """
         self._check_refresh()
-        return self.session.put('{}{}'.format(
-            self.url, self._prepare_route(route)), *args, **kwargs)
+        return self.session.put(f'{self.url}{self._prepare_route(route)}',
+                                 *args, **kwargs)
 
     def delete(self, route, *args, **kwargs):
         """Makes a DELETE request to the url using the session.
@@ -204,8 +203,8 @@ class MibiRequests():
             The response from ``requests.Session.delete``.
         """
         self._check_refresh()
-        return self.session.delete('{}{}'.format(
-            self.url, self._prepare_route(route)), *args, **kwargs)
+        return self.session.delete(f'{self.url}{self._prepare_route(route)}',
+                                   *args, **kwargs)
 
     def download_file(self, path):
         """Downloads a file from MIBItracker storage.
@@ -264,13 +263,14 @@ class MibiRequests():
         """
         # We don't expect there to be many runs with the same label, so it is
         # safe to turn paging off.
-        response = self.get('/runs/?label={}&paging=no'.format(old_label))
+        response = self.get(f'/runs/?label={old_label}&paging=no')
         data = response.json()
         try:
             assert len(data) == 1
-        except AssertionError:
-            raise MibiTrackerError('Expected 1 run with label {}, but {} were '
-                                   'found'.format(old_label, len(data)))
+        except AssertionError as err:
+            raise MibiTrackerError(f'Expected 1 run with label {old_label},'
+                                   f' but {len(data)} were found')\
+                                    from err
         data = data[0]
 
         # Get the XMLs from the original runs. They may not have the date and
@@ -288,7 +288,7 @@ class MibiRequests():
             'project': data['project'] and data['project']['id'],  # optional
             'description': data['description'],
             'operator': data['operator'],  # Not yet used, but field exists
-            'user_run_date': '{}T00:00:00'.format(data['run_date']),
+            'user_run_date': f"{data['run_date']}T00:00:00",
         }
         # The old run date supercedes the possibly-missing date in the xml
         # A timestamp is temporarily added for the JSON encoded but will be
@@ -320,15 +320,15 @@ class MibiRequests():
             response JSON returned when updating the new images.
         """
         old_images = self.get(
-            '/images/?run__label={}&paging=no'.format(old_run_label))
+            f'/images/?run__label={old_run_label}&paging=no')
 
         image_map = {}
         for item in old_images.json():
 
             # Get image from copied run
             response = self.get(
-                '/images/?run__label={}&folder={}&paging=no'.format(
-                    new_run_label, item['folder']))
+                f"/images/?run__label={new_run_label}&folder={item['folder']}"
+                '&paging=no')
             assert len(response.json()) == 1
             new_image = response.json()[0]
             # Update the section and tissue of the copied image using
@@ -371,6 +371,7 @@ class MibiRequests():
                     content_type = 'image/png'
 
                 buf = self.download_file(sed_path)
+                # pylint: disable=possibly-used-before-assignment
                 files = {'attachment': (sed, buf, content_type)}
                 data = updated_image
             else:
@@ -381,7 +382,7 @@ class MibiRequests():
                 headers.update({'content-type': 'application/json'})
 
             response = self.put(
-                '/images/{}/'.format(new_image['id']),
+                f"/images/{new_image['id']}/",
                 files=files,
                 data=data,
                 headers=headers
@@ -429,11 +430,12 @@ class MibiRequests():
         try:
             with open(tiff_file, 'rb') as fh:
                 self._upload_mibitiff(response['url'], fh)
-        except TypeError:
+        except TypeError as err:
             try:
                 tiff_file.seek(0)
             except:
-                raise TypeError('tiff_file must be a string or file object')
+                raise TypeError('tiff_file must be a string'
+                                'or file object') from err
             self._upload_mibitiff(response['url'], tiff_file)
         return self.post(
             '/upload_mibitiff/',
@@ -447,7 +449,7 @@ class MibiRequests():
         files = {
             'attachment': (filename,
                            image_file,
-                           'image/{}'.format(ext[1:].lower()))
+                           f'image/{ext[1:].lower()}')
         }
 
         response = self.post(
@@ -480,17 +482,19 @@ class MibiRequests():
                 if not filename:
                     filename = os.path.basename(image_file)
                 return self._upload_channel(image_id, fh, filename)
-        except TypeError:
+        except TypeError as err:
             try:
                 image_file.seek(0)
             except:
-                raise TypeError('image_file must be a string or file object')
+                raise TypeError('image_file must be a '
+                                'string or file object') from err
             if not filename:
                 try:
                     filename = os.path.basename(image_file.name)
-                except AttributeError:
+                except AttributeError as aErr:
                     raise ValueError('filename must be provided with a file '
-                                     'object that does not have a name')
+                                     'object that does not have a name'
+                                     ) from aErr
             return self._upload_channel(image_id, image_file, filename)
 
     def run_images(self, run_label):
@@ -518,7 +522,7 @@ class MibiRequests():
             section assigned, or if its section does not have a panel assigned.
         """
         return self.get(
-            '/images/{}/conjugates/'.format(image_id),
+            f'/images/{image_id}/conjugates/',
             params={'paging': 'no'}).json()
 
     def image_id(self, run_label, fov_id):
@@ -580,7 +584,7 @@ class MibiRequests():
         Return:
             A MibiImage instance of the requested image.
         """
-        image_info = self.get('images/{}/'.format(image_id)).json()
+        image_info = self.get(f'images/{image_id}/').json()
         tiff_path = '/'.join((image_info['run']['path'], image_info['folder'],
                               'summed_image.tiff'))
         tiff_data = self.download_file(tiff_path)
@@ -605,10 +609,11 @@ class MibiRequests():
             response.raise_for_status()
         except HTTPError as e:
             if e.response.status_code == 404:
-                raise MibiTrackerError(
-                    f'Channel \'{channel_name}\' not found in the image.')
+                raise MibiTrackerError(f'Channel \'{channel_name}\' '
+                                       'not found in the image.') from e
             raise e
 
+        # pylint: disable=missing-timeout
         png = requests.get(response.json()['url'])
         buf = io.BytesIO()
         buf.write(png.content)
@@ -647,7 +652,7 @@ class StatusCheckedSession(requests.Session):
     """Raises for HTTP errors and adds any response JSON to the message."""
 
     def __init__(self, timeout=SESSION_TIMEOUT):
-        super(StatusCheckedSession, self).__init__()
+        super().__init__()
         self.timeout = timeout
 
     @staticmethod
@@ -659,7 +664,8 @@ class StatusCheckedSession(requests.Session):
                 response_json = response.json()
             except json.decoder.JSONDecodeError:
                 response_json = None
-            raise HTTPError(str(e), response_json, response=response)
+            raise HTTPError(str(e), response_json,
+                            response=response) from e
         return response
 
     def _set_timeout(self, kwargs):
